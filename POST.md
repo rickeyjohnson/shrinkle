@@ -3,7 +3,7 @@
 **Theme:** Your answers literally shrink. Each word sets the next letter box at one letter shorter than what you typed, and your points pull you down through 11 layers of scale, from the Cosmic Web to an atomic nucleus.
 
 **Controls:**
-- Click **Start today's dive** (or press Enter).
+- Click **Start shrinking** (or press Enter).
 - Type your answer (spaces don't count), press **Enter** to submit, and **Backspace** to delete. On a phone, tap the box to type.
 - **Esc** or the **skip** button skips a round: 0 points, and you stay on your layer.
 - 7 rounds × 20 seconds, then the "Dive complete" screen (under 3 minutes).
