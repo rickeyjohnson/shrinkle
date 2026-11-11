@@ -8,4 +8,4 @@
 - **Esc** or the **skip** button skips a round: 0 points, and you stay on your layer.
 - 7 rounds × 20 seconds, then the "Dive complete" screen (under 3 minutes).
 
-**How it plays:** Each round gives you a category (5,200 possible, like "Vegetables", "Fast food chains", "Animals starting with L"). Points = letters + up to 4 for speed, and every point threshold is a deeper layer, so a big round can skip layers. Long answers score more but short ones box you in. Everyone gets the same daily dive, so copy your result and compare.
+**How it plays:** Each round gives you a category (5,200 possible, like "Vegetables", "Fast food chains", "Animals starting with L"). Points = length + time (10 per letter + 3 per second left, about 1,000 max), and every point threshold is a deeper layer, so a big round can skip layers. Long answers score more but short ones box you in. Everyone gets the same daily dive, so copy your result and compare.

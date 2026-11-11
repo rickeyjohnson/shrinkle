@@ -107,7 +107,7 @@ html,body{height:100%;margin:0;overflow:hidden;background:#05060b;color:var(--fg
 .big{font-family:var(--mono);font-size:44px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1}
 .endT{font-size:clamp(30px,5vw,46px);font-weight:800;letter-spacing:-.02em;line-height:1.05}
 .recap{width:100%;max-width:440px;display:flex;flex-direction:column;gap:2px;font-size:14px}
-.recap div{display:grid;grid-template-columns:110px 1fr auto;gap:10px;padding:5px 0;border-bottom:1px solid var(--faint);text-align:left}
+.recap div{display:grid;grid-template-columns:100px 1fr auto;gap:10px;padding:5px 0;border-bottom:1px solid var(--faint);text-align:left}
 .recap .l{font-family:var(--mono);font-size:11.5px;color:var(--mute);padding-top:2px;letter-spacing:.04em}
 .recap .p{font-family:var(--mono);font-variant-numeric:tabular-nums}
 .recap .x{color:var(--red)}
@@ -183,7 +183,7 @@ pre#share{text-align:left}
     <ul class="steps">
       <li><span class="k">01</span><span>Each round gives you a <b>category</b> and a <b>letter box</b>. Type any answer that fits the box.</span></li>
       <li><span class="k">02</span><span><b>Your word sets the next box</b>: it's one letter shorter than what you typed. Long answers leave room. Short ones box you in.</span></li>
-      <li><span class="k">03</span><span>Points = <b>letters + up to 4 for speed</b>. Every point threshold is a deeper layer, and a big round can skip layers.</span></li>
+      <li><span class="k">03</span><span>Points = <b>10 per letter + 3 per second left</b>. Every point threshold is a deeper layer, and a big round can skip layers.</span></li>
       <li><span class="k">04</span><span><b>20 seconds</b> per round. If you skip or run out of time, you score 0 and stay on your layer.</span></li>
     </ul>
     <div class="btns"><button class="btn" id="btnDaily" type="button">Start shrinking</button><button class="btn sec" id="btnPractice" type="button">Practice</button></div>
@@ -368,17 +368,17 @@ POOLS.forEach(genPool);
 /* ============================== DIVE ============================== */
 const LEVELS=[
   {name:'Cosmic Web',sc:'10²⁴ m',say:'a billion light-years of galaxies',em:'🕸️',at:0},
-  {name:'Milky Way',sc:'10²¹ m',say:'100,000 light-years across',em:'🌌',at:6},
-  {name:'Solar System',sc:'10¹³ m',say:'about 60 AU wide',em:'☀️',at:12},
-  {name:'Earth',sc:'10⁷ m',say:'12,742 km across',em:'🌍',at:18},
-  {name:'Continent',sc:'10⁶ m',say:'a thousand kilometers',em:'🗺️',at:24},
-  {name:'City',sc:'10⁴ m',say:'ten kilometers',em:'🏙️',at:31},
-  {name:'Human',sc:'10⁰ m',say:'1.7 meters',em:'🧍',at:38},
-  {name:'Ant',sc:'10⁻³ m',say:'3 millimeters',em:'🐜',at:45},
-  {name:'Cell',sc:'10⁻⁵ m',say:'10 micrometers',em:'🧫',at:53},
-  {name:'Virus',sc:'10⁻⁷ m',say:'100 nanometers',em:'🦠',at:61},
-  {name:'Atom',sc:'10⁻¹⁰ m',say:'0.1 nanometers',em:'⚛️',at:70},
-  {name:'Nucleus',sc:'10⁻¹⁵ m',say:'one femtometer, the deepest layer',em:'💥',at:82},
+  {name:'Milky Way',sc:'10²¹ m',say:'100,000 light-years across',em:'🌌',at:70},
+  {name:'Solar System',sc:'10¹³ m',say:'about 60 AU wide',em:'☀️',at:140},
+  {name:'Earth',sc:'10⁷ m',say:'12,742 km across',em:'🌍',at:210},
+  {name:'Continent',sc:'10⁶ m',say:'a thousand kilometers',em:'🗺️',at:280},
+  {name:'City',sc:'10⁴ m',say:'ten kilometers',em:'🏙️',at:350},
+  {name:'Human',sc:'10⁰ m',say:'1.7 meters',em:'🧍',at:430},
+  {name:'Ant',sc:'10⁻³ m',say:'3 millimeters',em:'🐜',at:510},
+  {name:'Cell',sc:'10⁻⁵ m',say:'10 micrometers',em:'🧫',at:590},
+  {name:'Virus',sc:'10⁻⁷ m',say:'100 nanometers',em:'🦠',at:680},
+  {name:'Atom',sc:'10⁻¹⁰ m',say:'0.1 nanometers',em:'⚛️',at:780},
+  {name:'Nucleus',sc:'10⁻¹⁵ m',say:'one femtometer, the deepest layer',em:'💥',at:900},
 ];
 const ROUNDS=7, TIME=20, BOX0=12, MINBOX=3;
 const layerFor=sc=>{let i=0;LEVELS.forEach((l,k)=>{if(sc>=l.at)i=k;});return i;};
@@ -658,12 +658,12 @@ function submit(){
   const it=list.items[idx];
   if(!catSet(c).has(w))return fail(`${it.d} doesn't fit this category`);
   if(G.used.has(list.id+':'+idx))return fail('Already used this game');
-  const secs=Math.ceil(G.t),bonus=Math.min(4,Math.floor(secs/5)),pts=w.length+bonus,before=G.layer;
+  const secs=Math.ceil(G.t),lenPts=w.length*10,timePts=secs*3,pts=lenPts+timePts,before=G.layer;
   G.score+=pts;G.layer=layerFor(G.score);G.used.add(list.id+':'+idx);G.usedLists.add(list.id);G.state='gap';kb.value='';
-  G.hist.push({ok:true,word:it.d,len:w.length,box:G.box,pts,bonus,layer:G.layer});
+  G.hist.push({ok:true,word:it.d,len:w.length,box:G.box,pts,lenPts,timePts,layer:G.layer});
   G.box=Math.max(MINBOX,w.length-1);
   $('score').textContent=G.score;
-  toast(`${it.d} · ${w.length} letters${bonus?` + ${bonus} speed`:''}`,'good');sfx.good();fly(`+${pts}`,'#7ce7ff');
+  toast(`${it.d} · +${lenPts} length · +${timePts} time`,'good');sfx.good();fly(`+${pts}`,'#7ce7ff');
   document.querySelectorAll('#tiles .t').forEach(t=>t.classList.add('full'));
   setTimeout(()=>advance(before),850);
 }
@@ -705,14 +705,14 @@ function finish(){
   $('endSub').innerHTML=`<b>${l.sc}</b> · ${l.say}.`+(nx?` ${nx.at-G.score} more point${nx.at-G.score===1?'':'s'} would have reached the ${nx.name}.`:' The deepest layer there is.');
   $('endScore').textContent=`${G.score} pts`;
   $('recap').innerHTML=G.hist.map((h,i)=>h.ok
-    ?`<div><span class="l">ROUND ${i+1}</span><span>${esc(h.word)} <span style="color:var(--mute)">(${h.len}/${h.box})</span></span><span class="p">+${h.pts} ${LEVELS[h.layer].em}</span></div>`
+    ?`<div><span class="l">ROUND ${i+1}</span><span>${esc(h.word)} <span style="color:var(--mute)">(${h.len}/${h.box})</span></span><span class="p">${h.lenPts} + ${h.timePts} = ${h.pts} ${LEVELS[h.layer].em}</span></div>`
     :`<div><span class="l">ROUND ${i+1}</span><span class="x">${h.why==='time'?'time ran out':'skipped'}</span><span class="p">0 ${LEVELS[h.layer].em}</span></div>`).join('');
-  const rows=G.hist.map(h=>h.ok?'🟩'.repeat(h.len)+'⬜'.repeat(Math.max(0,h.box-h.len))+` ${h.len} ${LEVELS[h.layer].em}`:`🟥 0 ${LEVELS[h.layer].em}`);
+  const rows=G.hist.map(h=>h.ok?'🟩'.repeat(h.len)+'⬜'.repeat(Math.max(0,h.box-h.len))+` ${h.len} · ${h.pts} ${LEVELS[h.layer].em}`:`🟥 0 ${LEVELS[h.layer].em}`);
   const head=G.mode==='daily'?`SHRINKLE #${dailyNum()}`:'SHRINKLE practice';
   $('share').textContent=`${head} · ${l.em} ${l.name} · ${G.score} pts\n${words}/${ROUNDS} words · layer ${G.layer+1} of ${LEVELS.length}\n`+rows.join('\n')+'\nrickeyjohnson.github.io/shrinkle';
   if(G.mode==='daily'&&!loadJSON(DKEY())){
     saveJSON(DKEY(),{kicker:$('endKicker').textContent,title:$('endTitle').textContent,sub:$('endSub').innerHTML,score:$('endScore').textContent,recap:$('recap').innerHTML,share:$('share').textContent});
-    const st=stats(),t=todayKey();st.streak=st.last===yesterdayKey()?st.streak+1:(st.last===t?st.streak:1);st.played++;st.total+=G.score;st.best=Math.max(st.best,G.score);st.deepest=Math.max(st.deepest,G.layer);st.last=t;saveJSON('shrinkle-stats',st);
+    const st=stats(),t=todayKey();st.streak=st.last===yesterdayKey()?st.streak+1:(st.last===t?st.streak:1);st.played++;st.total+=G.score;st.best=Math.max(st.best,G.score);st.deepest=Math.max(st.deepest,G.layer);st.last=t;saveJSON('shrinkle1k-stats',st);
   }
   $('endFoot').textContent=(G.mode==='daily'&&statsLine()?statsLine()+' · ':'')+LEGEND;
   $('endNext').textContent=G.mode==='daily'?`Next dive in ${untilMidnight()}`:'';
@@ -723,10 +723,10 @@ function finish(){
 
 /* ============================== DAILY LOCK + STATS (per browser) ============================== */
 const LEGEND='🟩 letters · ⬜ unused box · 🟥 skipped';
-const DKEY=()=>'shrinkle-daily-'+todayKey();
+const DKEY=()=>'shrinkle1k-daily-'+todayKey();
 function loadJSON(k){try{return JSON.parse(store(k)||'null');}catch(e){return null;}}
 function saveJSON(k,v){store(k,JSON.stringify(v));}
-function stats(){return Object.assign({played:0,total:0,best:0,deepest:0,streak:0,last:''},loadJSON('shrinkle-stats')||{});}
+function stats(){return Object.assign({played:0,total:0,best:0,deepest:0,streak:0,last:''},loadJSON('shrinkle1k-stats')||{});}
 function yesterdayKey(){const d=new Date();d.setDate(d.getDate()-1);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function untilMidnight(){const n=new Date(),m=new Date(n);m.setHours(24,0,0,0);const s=Math.max(0,Math.floor((m-n)/1000));return [Math.floor(s/3600),Math.floor(s%3600/60),s%60].map(x=>String(x).padStart(2,'0')).join(':');}
 function statsLine(){const s=stats();if(!s.played)return '';return `PLAYED ${s.played} · AVG ${Math.round(s.total/s.played)} · BEST ${s.best} · DEEPEST ${LEVELS[s.deepest].em} · STREAK ${s.streak}`;}

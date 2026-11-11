@@ -10,7 +10,7 @@ Built in one class period for a Class Jam (theme: **shrinking**, constraint: win
 
 1. Each round gives you a **category** and a **letter box**. Type any answer that fits the box.
 2. **Your word sets the next box**: it's one letter shorter than what you typed (minimum 3). Long answers leave room. Short ones box you in.
-3. Points = **letters + up to 4 for speed** (1 per 5 seconds left).
+3. Points = **length + time**: **10 per letter** plus **3 per second left**. That's up to 180 a round, and about 1,000 for a near-perfect dive.
 4. Your total score decides your **layer**. A big round can skip layers.
 5. **7 rounds × 20 seconds**. If you skip or run out of time, you score 0 and stay on your layer.
 
@@ -31,33 +31,33 @@ Everyone gets the same daily dive (seeded by date), so scores can be compared. Y
 | Layer | Scale | Points |
 |---|---|---|
 | 🕸️ Cosmic Web | 10²⁴ m | 0 |
-| 🌌 Milky Way | 10²¹ m | 6 |
-| ☀️ Solar System | 10¹³ m | 12 |
-| 🌍 Earth | 10⁷ m | 18 |
-| 🗺️ Continent | 10⁶ m | 24 |
-| 🏙️ City | 10⁴ m | 31 |
-| 🧍 Human | 10⁰ m | 38 |
-| 🐜 Ant | 10⁻³ m | 45 |
-| 🧫 Cell | 10⁻⁵ m | 53 |
-| 🦠 Virus | 10⁻⁷ m | 61 |
-| ⚛️ Atom | 10⁻¹⁰ m | 70 |
-| 💥 Nucleus | 10⁻¹⁵ m | 82 |
+| 🌌 Milky Way | 10²¹ m | 70 |
+| ☀️ Solar System | 10¹³ m | 140 |
+| 🌍 Earth | 10⁷ m | 210 |
+| 🗺️ Continent | 10⁶ m | 280 |
+| 🏙️ City | 10⁴ m | 350 |
+| 🧍 Human | 10⁰ m | 430 |
+| 🐜 Ant | 10⁻³ m | 510 |
+| 🧫 Cell | 10⁻⁵ m | 590 |
+| 🦠 Virus | 10⁻⁷ m | 680 |
+| ⚛️ Atom | 10⁻¹⁰ m | 780 |
+| 💥 Nucleus | 10⁻¹⁵ m | 900 |
 
 ## Sharing
 
 The end screen copies a result like this:
 
 ```
-SHRINKLE #1 · 🐜 Ant · 50 pts
+SHRINKLE #1 · 🧫 Cell · 612 pts
 6/7 words · layer 8 of 12
-🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩⬜ 11 ☀️
-🟩🟩🟩⬜⬜⬜⬜⬜⬜⬜ 3 🌍
-🟥 0 🗺️
+🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩⬜ 11 · 158 🌌
+🟩🟩🟩🟩🟩🟩🟩🟩🟩⬜ 9 · 132 🌍
+🟥 0 🌍
 ...
 rickeyjohnson.github.io/shrinkle
 ```
 
-🟩 letters used · ⬜ unused box · 🟥 skipped · emoji = layer reached after that round
+🟩 letters used · ⬜ unused box · 🟥 skipped · number = letters · points · emoji = layer reached after that round
 
 ## Categories
 
