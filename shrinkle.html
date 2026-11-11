@@ -1,0 +1,611 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Shrinkle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Layout: full-screen low-poly 3D zoom scene behind a chunky .io-style HUD (top bar, center play area, ladder at right) */
+:root{
+  --ink:#1b1f3b; --paper:#ffffff; --sun:#ffd23f; --mint:#3ddc84; --coral:#ff5a5f; --sky:#2ec4ff; --grape:#b388ff;
+  --f:'Baloo 2','Arial Rounded MT Bold',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;overflow:hidden;background:#07041a;font-family:var(--f);color:var(--paper)}
+.sky{position:fixed;inset:0;opacity:0;transition:opacity 1.2s ease}
+.sky.on{opacity:1}
+#bg{position:fixed;inset:0;width:100%;height:100%;display:block;image-rendering:pixelated}
+.ol{text-shadow:3px 0 0 var(--ink),-3px 0 0 var(--ink),0 3px 0 var(--ink),0 -3px 0 var(--ink),2px 2px 0 var(--ink),-2px 2px 0 var(--ink),2px -2px 0 var(--ink),-2px -2px 0 var(--ink),0 7px 0 rgba(0,0,0,.28)}
+#hud{position:fixed;inset:0;display:flex;flex-direction:column;gap:10px;padding-block:max(14px,env(safe-area-inset-top,0px)) 14px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+#top{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px}
+.pill{background:var(--paper);color:var(--ink);border:4px solid var(--ink);border-radius:999px;box-shadow:0 5px 0 var(--ink);font-weight:800;padding:2px 18px;line-height:1.3;white-space:nowrap}
+.pill small{display:block;font-size:12px;letter-spacing:.12em;text-transform:uppercase;opacity:.6;font-weight:700;line-height:1.1;margin-top:4px}
+#lvlPill{justify-self:start;font-size:20px}
+#scorePill{justify-self:end;font-size:26px;text-align:right;font-variant-numeric:tabular-nums}
+#timerWrap{position:relative;width:84px;height:84px}
+#timerWrap svg{width:84px;height:84px;transform:rotate(-90deg)}
+#timerNum{position:absolute;inset:0;display:grid;place-items:center;font-size:34px;font-weight:800}
+#stage{flex:1;display:flex;gap:24px;align-items:center;justify-content:center;min-height:0}
+#play{flex:1;max-width:760px;display:flex;flex-direction:column;align-items:center;gap:12px;min-width:0;transition:opacity .25s}
+#play.intro{opacity:0}
+#kb{position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;border:0;padding:0;font-size:16px}
+#prompt{font-size:clamp(28px,4.4vw,54px);font-weight:800;text-align:center;line-height:1.05;text-wrap:balance;max-width:20ch}
+#hint{font-size:18px;font-weight:700;background:rgba(27,31,59,.72);padding:3px 16px;border-radius:999px}
+#hint b{color:var(--sun)}
+#tiles{display:flex;gap:6px;justify-content:center;min-height:80px;align-items:center;padding-bottom:6px}
+.t{width:var(--ts);height:calc(var(--ts)*1.18);background:rgba(255,255,255,.88);border:4px solid var(--ink);border-radius:calc(var(--ts)*.26);box-shadow:0 5px 0 var(--ink);
+  display:grid;place-items:center;color:var(--ink);font-weight:800;font-size:calc(var(--ts)*.62);text-transform:uppercase;transition:width .35s cubic-bezier(.3,1.6,.5,1),height .35s cubic-bezier(.3,1.6,.5,1),font-size .35s}
+.t.f{background:var(--sun);animation:pop .14s ease-out}
+.t.full{background:var(--mint)}
+#tiles.shake{animation:shake .32s}
+#tiles.off .t{opacity:.55}
+@keyframes pop{0%{transform:scale(1.25)}100%{transform:scale(1)}}
+@keyframes shake{20%{transform:translateX(-10px)}40%{transform:translateX(10px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
+#toast{min-height:34px;font-size:22px;font-weight:800;text-align:center}
+#toast.good{color:var(--mint)}#toast.bad{color:var(--coral)}#toast.rare{color:var(--grape)}
+#keys{font-size:14px;font-weight:700;opacity:.85;display:flex;gap:14px;align-items:center;flex-wrap:wrap;justify-content:center}
+kbd{font-family:var(--f);background:var(--paper);color:var(--ink);border:3px solid var(--ink);border-radius:8px;padding:0 8px;box-shadow:0 3px 0 var(--ink);font-weight:800}
+#ladder{width:310px;flex:none;list-style:none;margin:0;padding:12px;background:rgba(27,31,59,.78);border:4px solid var(--ink);border-radius:22px;display:flex;flex-direction:column;gap:6px}
+#ladder h3{margin:0 4px 2px;font-size:13px;letter-spacing:.14em;text-transform:uppercase;opacity:.75}
+#ladder li{display:grid;grid-template-columns:auto 1fr auto;gap:2px 10px;align-items:center;padding:6px 10px;border-radius:14px;background:rgba(255,255,255,.07);font-size:14px;line-height:1.15}
+#ladder li .n{grid-row:span 2;width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.15);display:grid;place-items:center;font-weight:800;font-size:13px}
+#ladder li .lv{font-size:11px;letter-spacing:.12em;text-transform:uppercase;opacity:.6;font-weight:700}
+#ladder li .c{font-weight:700;grid-column:2}
+#ladder li .r{grid-row:1/span 2;grid-column:3;font-weight:800;text-align:right;font-variant-numeric:tabular-nums}
+#ladder li .w{font-size:12px;opacity:.8;font-weight:700}
+#ladder li.cur{background:var(--paper);color:var(--ink)}
+#ladder li.cur .n{background:var(--sun)}
+#ladder li.ok .n{background:var(--mint);color:var(--ink)}
+#ladder li.zero .n{background:var(--coral)}
+#ladder li.zero .r{color:var(--coral)}
+#ladder li.rare .r{color:var(--grape)}
+#banner{position:fixed;left:50%;top:44%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;opacity:0;width:min(92vw,900px)}
+#banner.show{animation:ban 1.25s ease forwards}
+#banner .a{font-size:22px;font-weight:800;letter-spacing:.14em}
+#banner .b{font-size:clamp(34px,6vw,72px);font-weight:800;line-height:1}
+@keyframes ban{0%{opacity:0;transform:translate(-50%,-50%) scale(.6)}18%{opacity:1;transform:translate(-50%,-50%) scale(1.06)}30%{transform:translate(-50%,-50%) scale(1)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-50%) scale(.92)}}
+.fly{position:fixed;font-size:42px;font-weight:800;pointer-events:none;animation:fly 1s ease-out forwards;z-index:5}
+@keyframes fly{0%{opacity:1;transform:translate(-50%,0) scale(.7)}25%{transform:translate(-50%,-20px) scale(1.15)}100%{opacity:0;transform:translate(-50%,-90px) scale(1)}}
+.screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:20px;z-index:10;overflow:auto}
+.card{background:var(--paper);color:var(--ink);border:5px solid var(--ink);border-radius:30px;box-shadow:0 10px 0 var(--ink);padding:26px 30px;max-width:560px;width:100%;display:flex;flex-direction:column;gap:14px;align-items:center;text-align:center}
+.logo{display:flex;align-items:flex-end;justify-content:center;gap:2px;font-weight:800;line-height:.9;color:var(--paper)}
+.logo span{display:inline-block}
+.sub{font-weight:700;opacity:.7;font-size:16px;margin-top:-6px}
+.rules{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;text-align:left;font-size:17px;font-weight:600;line-height:1.3;width:100%}
+.rules li{display:flex;gap:12px;align-items:center;background:#f1f4ff;border-radius:14px;padding:8px 12px}
+.rules .ic{flex:none;width:34px;height:34px;border-radius:10px;border:3px solid var(--ink);display:grid;place-items:center;font-weight:800;font-size:16px}
+.row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.btn{font-family:var(--f);font-weight:800;font-size:22px;color:var(--ink);background:var(--mint);border:4px solid var(--ink);border-radius:18px;box-shadow:0 6px 0 var(--ink);padding:8px 26px;cursor:pointer;transition:transform .08s}
+.btn:hover{transform:translateY(-2px)}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 var(--ink)}
+.btn.alt{background:var(--sky)}
+.btn.sm{font-size:15px;padding:2px 14px;border-radius:12px;box-shadow:0 4px 0 var(--ink);background:var(--paper)}
+.btn:focus-visible{outline:4px solid var(--sun);outline-offset:3px}
+.foot{font-size:13px;font-weight:700;opacity:.55}
+.big{font-size:64px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+.rank{font-size:22px;font-weight:800;background:var(--sun);border:4px solid var(--ink);border-radius:999px;padding:0 18px}
+.recap{width:100%;display:flex;flex-direction:column;gap:4px;font-size:15px;font-weight:700}
+.recap div{display:flex;justify-content:space-between;gap:10px;background:#f1f4ff;border-radius:10px;padding:3px 12px}
+.recap .z{color:#b0b6cc}
+pre#share{margin:0;font-family:var(--f);font-weight:700;font-size:16px;background:#f1f4ff;border-radius:14px;padding:10px 14px;white-space:pre-wrap;user-select:all;width:100%}
+[hidden]{display:none!important}
+@media (max-width:980px){#stage{flex-direction:column;justify-content:flex-start}#ladder{width:100%;max-width:760px;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}#ladder h3{grid-column:1/-1}}
+@media (max-height:720px){#prompt{font-size:clamp(24px,3.6vw,42px)}#timerWrap,#timerWrap svg{width:68px;height:68px}#timerNum{font-size:28px}}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="sky" style="background:radial-gradient(ellipse at 50% 40%,#3a1670,#120733 55%,#05020f)"></div>
+<div class="sky" style="background:radial-gradient(ellipse at 50% 40%,#1b2a6b,#0a1236 55%,#02040d)"></div>
+<div class="sky" style="background:radial-gradient(ellipse at 50% 40%,#1d4a8c,#0b1d45 55%,#040a1c)"></div>
+<div class="sky" style="background:linear-gradient(#49b6ff,#9fdcff 60%,#d8f3ff)"></div>
+<div class="sky" style="background:linear-gradient(#ff8a7a,#ffb38a 50%,#ffe3b0)"></div>
+<div class="sky" style="background:linear-gradient(#5fd3b5,#a5ecd9 55%,#e7fff7)"></div>
+<div class="sky" style="background:radial-gradient(ellipse at 50% 40%,#0f5a66,#06262e 55%,#010809)"></div>
+<canvas id="bg"></canvas>
+
+<div id="hud" hidden>
+  <div id="top">
+    <div class="pill" id="lvlPill"><small id="roundLbl">Round 1 of 7</small><span id="lvlName">Milky Way</span></div>
+    <div id="timerWrap">
+      <svg viewBox="0 0 84 84"><circle cx="42" cy="42" r="34" fill="#1b1f3b" stroke="#1b1f3b" stroke-width="12"/><circle id="ring" cx="42" cy="42" r="34" fill="none" stroke="#3ddc84" stroke-width="8" stroke-linecap="round" stroke-dasharray="213.6" stroke-dashoffset="0"/></svg>
+      <div id="timerNum">20</div>
+    </div>
+    <div class="pill" id="scorePill"><small>Score</small><span id="score">0</span></div>
+  </div>
+  <div id="stage">
+    <div id="play">
+      <div id="prompt" class="ol">Countries</div>
+      <div id="hint">Up to <b>12</b> letters</div>
+      <div id="tiles"></div>
+      <div id="toast" class="ol"></div>
+      <div id="keys"><span><kbd>Enter</kbd> submit</span><span><kbd>⌫</kbd> delete</span><button class="btn sm" id="btnSkip" type="button">Skip round (0 pts)</button></div>
+    </div>
+    <ol id="ladder"></ol>
+  </div>
+</div>
+<input id="kb" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Type your answer">
+<div id="banner"><div class="a ol" id="banA"></div><div class="b ol" id="banB"></div></div>
+
+<div class="screen" id="scrTitle">
+  <div class="card">
+    <div class="logo ol" id="logo"></div>
+    <div class="sub" id="dailyLbl"></div>
+    <ul class="rules">
+      <li><span class="ic" style="background:#ffd23f">7</span><span><b>7 rounds</b>, zooming from the Milky Way down to an atom. <b>20 seconds</b> per word.</span></li>
+      <li><span class="ic" style="background:#2ec4ff">↓</span><span>Each round is a <b>new category</b>, and every word must be <b>shorter than your last one</b>.</span></li>
+      <li><span class="ic" style="background:#3ddc84">★</span><span>Score = <b>letters × (10 + seconds left)</b>. Obscure "deep cut" answers get <b>×1.5</b>. Start big and drop one letter at a time.</span></li>
+    </ul>
+    <div class="row"><button class="btn" id="btnDaily" type="button">Play today's puzzle</button><button class="btn alt" id="btnPractice" type="button">Practice</button></div>
+    <div class="foot" id="catCount"></div>
+  </div>
+</div>
+
+<div class="screen" id="scrEnd" hidden>
+  <div class="card">
+    <div class="logo ol" style="font-size:40px">YOU SHRANK!</div>
+    <div class="sub" id="endSub">Milky Way → Atom</div>
+    <div class="big" id="endScore">0</div>
+    <div class="rank" id="endRank">Atomic</div>
+    <div class="recap" id="recap"></div>
+    <pre id="share"></pre>
+    <div class="row"><button class="btn" id="btnCopy" type="button">Copy result</button><button class="btn alt" id="btnAgain" type="button">Practice round</button></div>
+    <div class="foot" id="endFoot"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+'use strict';
+/* ============================== DATA ============================== */
+// Countries: name|alias:continent(s):population in millions[:L = landlocked]
+const D_COUNTRIES=`afghanistan:AS:42:L,albania:EU:2.8,algeria:AF:46,andorra:EU:0.08:L,angola:AF:37,antigua and barbuda:NA:0.09,argentina:SA:46,armenia:AS:2.8:L,australia:OC:27,austria:EU:9.1:L,azerbaijan:AS:10.1:L,bahamas|the bahamas:NA:0.41,bahrain:AS:1.5,bangladesh:AS:173,barbados:NA:0.28,belarus:EU:9.2:L,belgium:EU:11.7,belize:NA:0.41,benin:AF:14,bhutan:AS:0.8:L,bolivia:SA:12.4:L,bosnia and herzegovina|bosnia:EU:3.2,botswana:AF:2.6:L,brazil:SA:216,brunei:AS:0.45,bulgaria:EU:6.4,burkina faso:AF:23:L,burundi:AF:13:L,cabo verde|cape verde:AF:0.6,cambodia:AS:17,cameroon:AF:29,canada:NA:40,central african republic:AF:5.7:L,chad:AF:18:L,chile:SA:19.6,china:AS:1410,colombia:SA:52,comoros:AF:0.9,congo|republic of the congo:AF:6,democratic republic of the congo|dr congo:AF:105,costa rica:NA:5.2,croatia:EU:3.9,cuba:NA:11,cyprus:EU:1.3,czechia|czech republic:EU:10.9:L,denmark:EU:5.9,djibouti:AF:1.1,dominica:NA:0.07,dominican republic:NA:11.3,ecuador:SA:18,egypt:AF:112,el salvador:NA:6.3,equatorial guinea:AF:1.7,eritrea:AF:3.7,estonia:EU:1.4,eswatini|swaziland:AF:1.2:L,ethiopia:AF:127:L,fiji:OC:0.93,finland:EU:5.6,france:EU:68,gabon:AF:2.4,gambia|the gambia:AF:2.7,georgia:AS/EU:3.7,germany:EU:84,ghana:AF:34,greece:EU:10.4,grenada:NA:0.13,guatemala:NA:18,guinea:AF:14,guinea bissau:AF:2.1,guyana:SA:0.8,haiti:NA:11.7,honduras:NA:10.6,hungary:EU:9.6:L,iceland:EU:0.39,india:AS:1430,indonesia:AS:278,iran:AS:89,iraq:AS:45,ireland:EU:5.3,israel:AS:9.8,italy:EU:59,ivory coast|cote d'ivoire:AF:29,jamaica:NA:2.8,japan:AS:124,jordan:AS:11.3,kazakhstan:AS/EU:20:L,kenya:AF:55,kiribati:OC:0.13,kosovo:EU:1.8:L,kuwait:AS:4.3,kyrgyzstan:AS:7:L,laos:AS:7.6:L,latvia:EU:1.9,lebanon:AS:5.4,lesotho:AF:2.3:L,liberia:AF:5.4,libya:AF:6.9,liechtenstein:EU:0.04:L,lithuania:EU:2.9,luxembourg:EU:0.67:L,madagascar:AF:30,malawi:AF:21:L,malaysia:AS:34,maldives:AS:0.5,mali:AF:23:L,malta:EU:0.55,marshall islands:OC:0.04,mauritania:AF:4.9,mauritius:AF:1.3,mexico:NA:129,micronesia:OC:0.11,moldova:EU:2.5:L,monaco:EU:0.04,mongolia:AS:3.4:L,montenegro:EU:0.62,morocco:AF:37,mozambique:AF:34,myanmar|burma:AS:54,namibia:AF:2.6,nauru:OC:0.013,nepal:AS:31:L,netherlands|holland:EU:17.9,new zealand:OC:5.2,nicaragua:NA:7,niger:AF:27:L,nigeria:AF:224,north korea:AS:26,north macedonia|macedonia:EU:1.8:L,norway:EU:5.5,oman:AS:4.6,pakistan:AS:240,palau:OC:0.018,palestine:AS:5.4,panama:NA:4.5,papua new guinea:OC:10.3,paraguay:SA:6.9:L,peru:SA:34,philippines:AS:117,poland:EU:37,portugal:EU:10.5,qatar:AS:2.7,romania:EU:19,russia:EU/AS:144,rwanda:AF:14:L,saint kitts and nevis:NA:0.05,saint lucia:NA:0.18,saint vincent and the grenadines:NA:0.1,samoa:OC:0.22,san marino:EU:0.03:L,sao tome and principe:AF:0.2,saudi arabia:AS:37,senegal:AF:18,serbia:EU:6.6:L,seychelles:AF:0.1,sierra leone:AF:8.8,singapore:AS:5.9,slovakia:EU:5.4:L,slovenia:EU:2.1,solomon islands:OC:0.74,somalia:AF:18,south africa:AF:60,south korea|korea:AS:52,south sudan:AF:11:L,spain:EU:48,sri lanka:AS:22,sudan:AF:48,suriname:SA:0.62,sweden:EU:10.5,switzerland:EU:8.9:L,syria:AS:23,taiwan:AS:23.4,tajikistan:AS:10.1:L,tanzania:AF:67,thailand:AS:72,timor leste|east timor:AS:1.4,togo:AF:9,tonga:OC:0.1,trinidad and tobago:NA:1.5,tunisia:AF:12,turkey|turkiye:AS/EU:85,turkmenistan:AS:6.5:L,tuvalu:OC:0.011,uganda:AF:48:L,ukraine:EU:37,united arab emirates:AS:9.5,united kingdom|great britain|britain:EU:68,united states|united states of america|america:NA:335,uruguay:SA:3.4,uzbekistan:AS:36:L,vanuatu:OC:0.33,vatican city|vatican|holy see:EU:0.001:L,venezuela:SA:28,vietnam:AS:99,yemen:AS:34,zambia:AF:20:L,zimbabwe:AF:16:L`;
+const C_COUNTRIES=`united states,canada,mexico,brazil,argentina,chile,peru,colombia,cuba,jamaica,united kingdom,france,germany,spain,italy,portugal,ireland,netherlands,switzerland,sweden,norway,poland,greece,russia,ukraine,turkey,china,japan,india,pakistan,iran,iraq,israel,egypt,south africa,nigeria,kenya,morocco,australia,new zealand,south korea,north korea,vietnam,thailand,philippines,indonesia,saudi arabia,afghanistan,iceland,denmark,finland,austria,belgium,venezuela`;
+const D_STATES=`alabama:S,alaska:W,arizona:W,arkansas:S,california:W,colorado:W,connecticut:NE,delaware:S,florida:S,georgia:S,hawaii:W,idaho:W,illinois:MW,indiana:MW,iowa:MW,kansas:MW,kentucky:S,louisiana:S,maine:NE,maryland:S,massachusetts:NE,michigan:MW,minnesota:MW,mississippi:S,missouri:MW,montana:W,nebraska:MW,nevada:W,new hampshire:NE,new jersey:NE,new mexico:W,new york:NE,north carolina:S,north dakota:MW,ohio:MW,oklahoma:S,oregon:W,pennsylvania:NE,rhode island:NE,south carolina:S,south dakota:MW,tennessee:S,texas:S,utah:W,vermont:NE,virginia:S,washington:W,west virginia:S,wisconsin:MW,wyoming:W`;
+const C_STATES=`california,texas,florida,new york,alaska,hawaii,washington,ohio,georgia,north carolina,virginia,michigan,illinois,arizona,nevada,colorado,new jersey,pennsylvania,massachusetts,louisiana`;
+const D_ELEMENTS=`hydrogen,helium,lithium,beryllium,boron,carbon,nitrogen,oxygen,fluorine,neon,sodium,magnesium,aluminum|aluminium,silicon,phosphorus,sulfur|sulphur,chlorine,argon,potassium,calcium,scandium,titanium,vanadium,chromium,manganese,iron,cobalt,nickel,copper,zinc,gallium,germanium,arsenic,selenium,bromine,krypton,rubidium,strontium,yttrium,zirconium,niobium,molybdenum,technetium,ruthenium,rhodium,palladium,silver,cadmium,indium,tin,antimony,tellurium,iodine,xenon,cesium|caesium,barium,lanthanum,cerium,praseodymium,neodymium,promethium,samarium,europium,gadolinium,terbium,dysprosium,holmium,erbium,thulium,ytterbium,lutetium,hafnium,tantalum,tungsten,rhenium,osmium,iridium,platinum,gold,mercury,thallium,lead,bismuth,polonium,astatine,radon,francium,radium,actinium,thorium,protactinium,uranium,neptunium,plutonium,americium,curium,berkelium,californium,einsteinium,fermium,mendelevium,nobelium,lawrencium,rutherfordium,dubnium,seaborgium,bohrium,hassium,meitnerium,darmstadtium,roentgenium,copernicium,nihonium,flerovium,moscovium,livermorium,tennessine,oganesson`;
+const C_ELEMENTS=`hydrogen,helium,lithium,carbon,nitrogen,oxygen,neon,sodium,magnesium,aluminum,silicon,chlorine,potassium,calcium,iron,copper,zinc,silver,gold,mercury,lead,uranium,plutonium,tin,nickel,titanium,iodine,platinum,sulfur,fluorine,argon`;
+const D_MAMMALS=`dog,cat,horse,cow,pig,sheep,goat,lion,tiger,bear,wolf,fox,deer,rabbit,mouse,rat,squirrel,monkey,gorilla,elephant,giraffe,zebra,camel,kangaroo,koala,panda,cheetah,leopard,hippopotamus|hippo,rhinoceros|rhino,dolphin,whale,bat,raccoon,skunk,beaver,otter,moose,elk,chimpanzee|chimp,hamster,donkey,llama,polar bear,seal,walrus,squirrel monkey,jaguar,hyena,hedgehog,sloth,orangutan,baboon,lemur,armadillo,anteater,aardvark,alpaca,wombat,platypus,wallaby,cougar|puma,lynx,bobcat,jackal,coyote,meerkat,mongoose,weasel,ferret,mink,wolverine,bison,buffalo,yak,ox,antelope,gazelle,impala,wildebeest|gnu,okapi,tapir,sea lion,porpoise,manatee,narwhal,orca,gerbil,guinea pig,mule,reindeer,caribou,ibex,marmot,lemming,vole,shrew,chinchilla,capybara,ocelot,serval,dingo,chipmunk,badger,opossum|possum,porcupine,mole,hare`;
+const D_BIRDS=`eagle,owl,parrot,penguin,chicken,duck,goose,swan,turkey,pigeon,crow,robin,flamingo,ostrich,peacock,hawk,falcon,sparrow,hummingbird,woodpecker,seagull|gull,pelican,toucan,blue jay|bluejay,cardinal,raven,dove,heron,crane,stork,emu,kiwi,albatross,vulture,condor,kingfisher,macaw,cockatoo,canary,finch,magpie,starling,swallow,wren,lark,puffin,quail,pheasant,grouse,partridge,ibis,egret,cormorant,osprey,kestrel,buzzard,roadrunner,mockingbird,nightingale,oriole,warbler,loon,tern,sandpiper,dodo,parakeet,budgie,bald eagle`;
+const D_SEA=`shark,octopus,jellyfish,crab,lobster,shrimp,starfish|sea star,squid,seahorse,stingray,clownfish,salmon,tuna,eel,oyster,clam,goldfish,swordfish,whale shark,coral,prawn,mussel,scallop,trout,bass,carp,catfish,marlin,barracuda,piranha,anchovy,sardine,herring,mackerel,halibut,flounder,cod,perch,pike,sturgeon,krill,plankton,sponge,sea urchin|urchin,manta ray,pufferfish,anglerfish,sea cucumber,hermit crab,sea turtle,barnacle,cuttlefish,nautilus,sea slug,anemone|sea anemone,tilapia,mahi mahi`;
+const D_BUGS=`ant,bee,butterfly,spider,fly,mosquito,ladybug|ladybird,beetle,grasshopper,cricket,dragonfly,moth,wasp,cockroach|roach,worm,snail,caterpillar,firefly,termite,flea,tick,scorpion,centipede,millipede,hornet,locust,gnat,aphid,praying mantis|mantis,cicada,weevil,earwig,silverfish,stick insect,bumblebee,tarantula,slug,maggot,larva,louse|lice,earthworm,black widow,daddy longlegs,stink bug,horsefly,fruit fly`;
+const D_REPTILES=`snake,turtle,frog,lizard,crocodile,alligator,tortoise,toad,iguana,gecko,chameleon,cobra,python,rattlesnake,komodo dragon,salamander,newt,axolotl,tadpole,anaconda,boa,viper,skink,gila monster,mamba,adder,caiman,bullfrog,tree frog,sea snake,garter snake,king cobra,bearded dragon,monitor lizard`;
+const D_DOGS=`labrador|lab,golden retriever,poodle,beagle,bulldog,german shepherd,chihuahua,pug,husky,dachshund,rottweiler,boxer,corgi,dalmatian,great dane,shih tzu,pomeranian,doberman,greyhound,border collie,collie,yorkie|yorkshire terrier,maltese,terrier,schnauzer,mastiff,bloodhound,basset hound,whippet,pit bull|pitbull,akita,shiba inu,samoyed,malamute,sheepdog,saint bernard,newfoundland,cocker spaniel,spaniel,setter,pointer,weimaraner,vizsla,papillon,havanese,labradoodle,goldendoodle,cavapoo,chow chow,basenji,airedale,borzoi,saluki,bichon frise|bichon,sheltie,boston terrier,french bulldog|frenchie,bernese mountain dog,cane corso,jack russell`;
+const D_FRUITS=`apple,banana,orange,grape,strawberry,watermelon,pineapple,mango,peach,pear,cherry,lemon,lime,blueberry,raspberry,blackberry,kiwi,coconut,avocado,plum,tomato,grapefruit,cantaloupe,honeydew,melon,papaya,cranberry,tangerine,clementine,mandarin,apricot,nectarine,fig,date,pomegranate,guava,passion fruit,lychee,dragon fruit,persimmon,kumquat,quince,starfruit,jackfruit,durian,plantain,gooseberry,elderberry,mulberry,boysenberry,currant,raisin,prune,olive,huckleberry,breadfruit,yuzu`;
+const D_VEG=`carrot,potato,broccoli,onion,lettuce,corn,tomato,cucumber,spinach,celery,cabbage,garlic,pea,peas,pumpkin,pepper,bell pepper,mushroom,cauliflower,zucchini,eggplant|aubergine,green bean|bean,asparagus,kale,sweet potato,squash,radish,beet|beetroot,artichoke,turnip,parsnip,leek,shallot,okra,yam,brussels sprouts|brussels sprout,arugula,bok choy,chard,endive,fennel,ginger,jalapeno,rhubarb,scallion,edamame,collard greens|collards,watercress,horseradish,kohlrabi,rutabaga,chickpea,lentil,cassava`;
+const D_FOODS=`pizza,burger|hamburger,taco,sushi,pasta,spaghetti,hot dog,sandwich,salad,soup,steak,fries|french fries,pancake,waffle,donut|doughnut,cookie,cake,pie,ice cream,burrito,nachos,lasagna,ramen,curry,dumpling,bagel,croissant,muffin,cupcake,brownie,cheesecake,omelet|omelette,chili,meatloaf,mac and cheese,popcorn,pretzel,ravioli,risotto,paella,pho,quesadilla,enchilada,fajita,tamale,pudding,gumbo,jambalaya,biscuit,cornbread,kebab,falafel,hummus,gyro,shawarma,samosa,naan,tofu,dim sum,bibimbap,kimchi,tempura,teriyaki,fried rice,lo mein,chow mein,spring roll,egg roll,empanada,ceviche,poutine,schnitzel,bratwurst,pierogi,goulash,fondue,crepe,gelato,tiramisu,baklava,churro,cannoli,lobster roll,meatball,grilled cheese,tostada,dal,biryani,pad thai,udon,gnocchi`;
+const D_SPORTS=`soccer|football,basketball,baseball,tennis,golf,hockey,volleyball,swimming,boxing,football,cricket,rugby,wrestling,surfing,skiing,snowboarding,skateboarding,cycling,running,bowling,badminton,lacrosse,softball,gymnastics,karate,fencing,archery,rowing,sailing,diving,handball,polo,judo,taekwondo,track,marathon,triathlon,curling,bobsled,luge,darts,billiards|pool,snooker,squash,pickleball,racquetball,kickball,dodgeball,climbing,kayaking,canoeing,weightlifting,powerlifting,hurling,netball,jiu jitsu,sumo,motocross,water polo,ping pong|table tennis,figure skating,speed skating,ultimate frisbee,cheerleading,parkour,biathlon,decathlon,equestrian,kickboxing,mma`;
+const D_INSTR=`piano,guitar,drums|drum,violin,flute,trumpet,saxophone|sax,cello,clarinet,harp,ukulele,bass,trombone,tuba,banjo,harmonica,accordion,organ,keyboard,xylophone,tambourine,triangle,viola,oboe,bassoon,french horn,mandolin,synthesizer,marimba,cymbal,bongo,conga,bagpipes,sitar,recorder,piccolo,kazoo,lute,harpsichord,glockenspiel,cowbell,timpani,didgeridoo,theremin,tabla,gong,maracas,steel drum,bugle,lyre,zither,cornet,euphonium,dulcimer`;
+const D_BODY=`head,hair,face,eye,ear,nose,mouth,lip,tongue,tooth|teeth,chin,cheek,neck,shoulder,arm,elbow,wrist,hand,finger,thumb,chest,back,stomach|belly,hip,leg,knee,ankle,foot|feet,toe,heart,brain,lung,liver,kidney,skin,bone,muscle,jaw,throat,nail,palm,spine,waist,heel,shin,calf,thigh,skull,rib,pelvis,bladder,eyebrow,eyelash,forehead,nostril,armpit,knuckle,collarbone,kneecap,intestine,pancreas,spleen,tonsil,appendix,femur,tibia,vein,artery,gallbladder,esophagus,earlobe,belly button|navel,pinky,uvula,cornea,retina,eardrum`;
+const D_COLORS=`red,orange,yellow,green,blue,purple,pink,brown,black,white,gray|grey,gold,silver,violet,indigo,cyan,magenta,teal,turquoise,navy,maroon,beige,tan,bronze,ivory,cream,lavender,lilac,mauve,coral,salmon,peach,crimson,scarlet,burgundy,olive,lime,mint,emerald,jade,aqua,azure,cerulean,chartreuse,fuchsia,khaki,ochre,amber,sepia,charcoal,plum,rust,sapphire,ruby,periwinkle,vermilion,cobalt,taupe`;
+const D_JOBS=`doctor,teacher,nurse,firefighter,police officer|cop,chef,pilot,farmer,lawyer,engineer,dentist,artist,actor,singer,scientist,astronaut,plumber,electrician,carpenter,mechanic,cashier,waiter|waitress,baker,barber,judge,soldier,programmer|developer,cook,pharmacist,accountant,architect,dancer,musician,writer,author,journalist,editor,photographer,janitor,bartender,butcher,banker,chemist,biologist,sailor,designer,librarian,mail carrier|mailman,surgeon,therapist,veterinarian|vet,professor,coach,athlete,painter,sculptor,tailor,florist,jeweler,lifeguard,paramedic,secretary,receptionist,manager,realtor,economist,translator,gardener,miner,fisherman,welder,roofer,model,comedian,magician,detective,spy,astronomer,geologist,nanny,dietitian,optometrist,zookeeper,blacksmith,locksmith,plumber,firefighter,cowboy,clown`;
+const D_NFL=`cowboys,patriots,packers,steelers,chiefs,eagles,giants,bears,raiders,dolphins,niners,broncos,seahawks,ravens,rams,bills,jets,lions,vikings,saints,falcons,panthers,buccaneers|bucs,colts,texans,titans,jaguars,chargers,bengals,browns,cardinals,commanders`;
+const D_NBA=`lakers,celtics,bulls,warriors,heat,knicks,nets,spurs,rockets,mavericks|mavs,suns,clippers,sixers,bucks,nuggets,raptors,hawks,cavaliers|cavs,pistons,pacers,hornets,magic,wizards,thunder,jazz,kings,grizzlies,pelicans,timberwolves|wolves,trail blazers|blazers`;
+const D_POKEMON=`pikachu,charizard,bulbasaur,squirtle,charmander,mewtwo,mew,eevee,snorlax,jigglypuff,meowth,psyduck,gengar,gyarados,magikarp,dragonite,lapras,ditto,onix,machamp,raichu,blastoise,venusaur,ivysaur,charmeleon,wartortle,caterpie,metapod,butterfree,weedle,kakuna,beedrill,pidgey,pidgeotto,pidgeot,rattata,raticate,spearow,fearow,ekans,arbok,sandshrew,sandslash,nidoran,nidorina,nidoqueen,nidorino,nidoking,clefairy,clefable,vulpix,ninetales,wigglytuff,zubat,golbat,oddish,gloom,vileplume,paras,parasect,venonat,venomoth,diglett,dugtrio,persian,golduck,mankey,primeape,growlithe,arcanine,poliwag,poliwhirl,poliwrath,abra,kadabra,alakazam,machop,machoke,bellsprout,weepinbell,victreebel,tentacool,tentacruel,geodude,graveler,golem,ponyta,rapidash,slowpoke,slowbro,magnemite,magneton,farfetchd,doduo,dodrio,seel,dewgong,grimer,muk,shellder,cloyster,gastly,haunter,drowzee,hypno,krabby,kingler,voltorb,electrode,exeggcute,exeggutor,cubone,marowak,hitmonlee,hitmonchan,lickitung,koffing,weezing,rhyhorn,rhydon,chansey,tangela,kangaskhan,horsea,seadra,goldeen,seaking,staryu,starmie,mr mime,scyther,jynx,electabuzz,magmar,pinsir,tauros,vaporeon,jolteon,flareon,porygon,omanyte,omastar,kabuto,kabutops,aerodactyl,articuno,zapdos,moltres,dratini,dragonair`;
+const D_LANG=`english,spanish,french,german,italian,chinese|mandarin,japanese,korean,russian,arabic,portuguese,hindi,greek,latin,dutch,swedish,hebrew,turkish,polish,vietnamese,thai,cantonese,urdu,bengali,punjabi,tamil,telugu,persian|farsi,norwegian,danish,finnish,czech,hungarian,romanian,ukrainian,indonesian,malay,tagalog|filipino,swahili,zulu,amharic,yoruba,hausa,igbo,somali,irish,welsh,icelandic,basque,catalan,serbian,croatian,bulgarian,nepali,sanskrit,esperanto,hawaiian,navajo,cherokee`;
+const D_CAPITALS=`london,paris,tokyo,washington,berlin,rome,madrid,moscow,beijing,ottawa,mexico city,cairo,athens,dublin,seoul,canberra,bangkok,lisbon,amsterdam,vienna,havana,ottawa,stockholm,oslo,copenhagen,helsinki,new delhi|delhi,buenos aires,lima,bogota,caracas,quito,santiago,montevideo,brasilia,kingston,panama city,la paz,asuncion,bern,brussels,reykjavik,warsaw,prague,budapest,bratislava,ljubljana,zagreb,belgrade,sarajevo,sofia,bucharest,kyiv|kiev,minsk,vilnius,riga,tallinn,chisinau,tirana,skopje,podgorica,valletta,nicosia,ankara,tbilisi,yerevan,baku,tehran,baghdad,damascus,beirut,amman,jerusalem,riyadh,doha,abu dhabi,muscat,kuwait city,manama,sanaa,kabul,islamabad,kathmandu,thimphu,dhaka,colombo,pyongyang,ulaanbaatar,taipei,hanoi,vientiane,phnom penh,kuala lumpur,singapore,jakarta,manila,wellington,suva,tripoli,tunis,algiers,rabat,dakar,accra,abuja,nairobi,addis ababa,kampala,kigali,dodoma,lusaka,harare,pretoria,luanda,kinshasa,khartoum,mogadishu,antananarivo,maputo,windhoek,gaborone,bamako,niamey,yaounde,astana,tashkent,bishkek,dushanbe,ashgabat,monrovia,freetown,conakry,lome,ouagadougou,nouakchott`;
+const D_SPACE=`moon,sun,earth,mars,venus,mercury,jupiter,saturn,uranus,neptune,pluto,titan,europa,io,ganymede,callisto,phobos,deimos,enceladus,mimas,rhea,iapetus,dione,tethys,triton,charon,oberon,titania,miranda,ariel,umbriel,ceres,eris,makemake,haumea,vesta,nereid,proteus,hyperion,phoebe`;
+const D_PRES=`washington,lincoln,jefferson,roosevelt,kennedy,obama,trump,biden,reagan,clinton,bush,adams,madison,monroe,jackson,van buren,harrison,tyler,polk,taylor,fillmore,pierce,buchanan,johnson,grant,hayes,garfield,arthur,cleveland,mckinley,taft,wilson,harding,coolidge,hoover,truman,eisenhower,nixon,ford,carter`;
+const D_GODS=`zeus,poseidon,hades,athena,apollo,aphrodite,ares,hermes,hera,artemis,jupiter,mars,venus,cupid,neptune,pluto,mercury,minerva,hephaestus,dionysus,demeter,hestia,persephone,eros,nike,gaia,kronos|cronus,rhea,uranus,helios,selene,eos,nyx,pan,hecate,nemesis,iris,morpheus,hypnos,thanatos,juno,vulcan,bacchus,ceres,vesta,diana,janus,saturn,aurora,fortuna,atlas,prometheus`;
+const D_CARS=`toyota,honda,ford,chevrolet|chevy,tesla,bmw,mercedes|mercedes benz,audi,ferrari,lamborghini,porsche,nissan,hyundai,kia,subaru,mazda,volkswagen,jeep,dodge,volvo,lexus,cadillac,jaguar,maserati,bugatti,bentley,rolls royce,land rover,mini,chrysler,ram,buick,gmc,lincoln,acura,infiniti,genesis,mitsubishi,suzuki,fiat,alfa romeo,peugeot,renault,citroen,skoda,mclaren,aston martin,lotus,rivian,lucid,polestar,pagani,koenigsegg`;
+const D_CLOTHES=`shirt,pants,jeans,shorts,dress,skirt,jacket,coat,sweater,hoodie,hat,socks|sock,shoes|shoe,boots|boot,sneakers,scarf,gloves|glove,tie,belt,cap,vest,blazer,suit,beanie,mittens,sandals,slippers,heels,pajamas,robe,blouse,cardigan,overalls,leggings,tuxedo,gown,kimono,sari,poncho,parka,raincoat,bikini,swimsuit,underwear,tank top,polo,turtleneck,sweatpants,joggers,apron,bandana,beret,fedora,sombrero,toga,kilt,tutu,uniform,t shirt|tshirt,flip flops,crop top,trench coat,windbreaker,onesie`;
+const D_FASTFOOD=`mcdonalds,burger king,wendys,taco bell,subway,kfc,chick fil a,starbucks,dominos,pizza hut,chipotle,popeyes,arbys,sonic,dunkin,five guys,in n out,shake shack,panera,dairy queen,jack in the box,whataburger,papa johns,little caesars,wingstop,culvers,raising canes,panda express,white castle,checkers,del taco,zaxbys,bojangles,hardees,carls jr,krispy kreme,jimmy johns,jersey mikes,firehouse subs,qdoba,tim hortons,el pollo loco,steak n shake,jollibee,church's|churchs,long john silvers`;
+const D_ZODIAC=`aries,taurus,gemini,cancer,leo,virgo,libra,scorpio,sagittarius,capricorn,aquarius,pisces`;
+const D_CAL=`january,february,march,april,may,june,july,august,september,october,november,december,monday,tuesday,wednesday,thursday,friday,saturday,sunday`;
+const D_SHAPES=`circle,square,triangle,rectangle,star,heart,oval,diamond,hexagon,pentagon,octagon,cube,sphere,cone,cylinder,pyramid,rhombus,trapezoid,parallelogram,ellipse,heptagon,nonagon,decagon,crescent,prism,cross,arrow,spiral,kite,cuboid,dodecagon,tetrahedron,octahedron,torus`;
+
+/* ============================== LISTS ============================== */
+const norm=s=>s.normalize('NFD').toLowerCase().replace(/[^a-z]/g,'');
+const tcase=s=>s.replace(/(^|[\s-])([a-z])/g,(m,a,b)=>a+b.toUpperCase());
+const LISTS=[];
+function addList(id,label,one,str,common){
+  const L={id,label,one,items:[],map:Object.create(null)};
+  const seen=new Set();
+  str.split(',').map(s=>s.trim()).filter(Boolean).forEach(entry=>{
+    const parts=entry.split(':'); const raws=parts[0].split('|').map(s=>s.trim());
+    const key=norm(raws[0]); if(seen.has(key)) return; seen.add(key);
+    const it={d:tcase(raws[0]),raws,ns:[],tags:parts.slice(1),common:false,idx:L.items.length};
+    raws.forEach(r=>{const n=norm(r); if(n.length&&L.map[n]===undefined){L.map[n]=it.idx; it.ns.push(n);} });
+    if(it.ns.length) L.items.push(it);
+  });
+  if(typeof common==='string'){const cs=new Set(common.split(',').map(norm));L.items.forEach(it=>it.common=cs.has(it.ns[0]));}
+  else {const k=Math.ceil(L.items.length*(common||0.4));L.items.forEach((it,i)=>it.common=i<k);}
+  LISTS.push(L); return L;
+}
+const LC=addList('country','Countries','country',D_COUNTRIES,C_COUNTRIES);
+const LS=addList('state','U.S. states','U.S. state',D_STATES,C_STATES);
+const LE=addList('element','Chemical elements','element',D_ELEMENTS,C_ELEMENTS);
+const animalStr=[D_MAMMALS,D_BIRDS,D_SEA,D_BUGS,D_REPTILES].join(',');
+const animalCommon=[D_MAMMALS,D_BIRDS,D_SEA,D_BUGS,D_REPTILES].map(s=>{const a=s.split(',');return a.slice(0,Math.ceil(a.length*0.4)).map(e=>e.split('|')[0]).join(',');}).join(',');
+const LA=addList('animal','Animals','animal',animalStr,animalCommon);
+addList('dog','Dog breeds','dog breed',D_DOGS);
+addList('fruit','Fruits','fruit',D_FRUITS);
+addList('veg','Vegetables','vegetable',D_VEG);
+addList('food','Foods & dishes','food',D_FOODS);
+addList('sport','Sports','sport',D_SPORTS);
+addList('instr','Musical instruments','instrument',D_INSTR);
+addList('body','Body parts','body part',D_BODY);
+addList('color','Colors','color',D_COLORS);
+addList('job','Jobs','job',D_JOBS);
+addList('nfl','NFL team nicknames','NFL team',D_NFL,0.5);
+addList('nba','NBA team nicknames','NBA team',D_NBA,0.5);
+addList('poke','Original 151 Pokémon','Gen 1 Pokémon',D_POKEMON,0.15);
+addList('lang','Languages','language',D_LANG);
+addList('cap','World capitals','capital city',D_CAPITALS,0.3);
+addList('space','Planets, moons & dwarf planets','space body',D_SPACE,0.3);
+addList('pres','U.S. presidents (last name)','president',D_PRES,0.3);
+addList('gods','Greek & Roman gods','god',D_GODS,0.3);
+addList('car','Car brands','car brand',D_CARS);
+addList('clothes','Clothing','clothing item',D_CLOTHES);
+addList('ff','Fast food chains','fast food chain',D_FASTFOOD);
+addList('zodiac','Zodiac signs','zodiac sign',D_ZODIAC,0.5);
+addList('cal','Months & days of the week','month or day',D_CAL,0.8);
+addList('shape','Shapes','shape',D_SHAPES);
+
+/* ============================== CATEGORY GENERATOR ============================== */
+const POOLS=[];
+const pool=(list,label,pred,kind)=>POOLS.push({list,label,kind,items:list.items.filter(pred||(()=>true))});
+LISTS.forEach(L=>pool(L,L.label,null,'base'));
+[['AF','African countries'],['AS','Asian countries'],['EU','European countries'],['NA','North American countries'],['SA','South American countries'],['OC','Oceanian countries']]
+  .forEach(([c,l])=>pool(LC,l,it=>it.tags[0].split('/').includes(c),'tag'));
+pool(LC,'Countries with 10M+ people',it=>+it.tags[1]>=10,'tag');
+pool(LC,'Countries with 50M+ people',it=>+it.tags[1]>=50,'tag');
+pool(LC,'Countries with 100M+ people',it=>+it.tags[1]>=100,'tag');
+pool(LC,'Countries under 1M people',it=>+it.tags[1]<1,'tag');
+pool(LC,'Landlocked countries',it=>it.tags[2]==='L','tag');
+[['NE','Northeastern states'],['MW','Midwestern states'],['S','Southern states'],['W','Western states']].forEach(([c,l])=>pool(LS,l,it=>it.tags[0]===c,'tag'));
+pool(LE,'The first 30 elements',it=>it.idx<30,'tag');
+pool(LE,'Noble gases',it=>[2,10,18,36,54,86,118].includes(it.idx+1),'tag');
+pool(LE,'Elements that are gases at room temp',it=>[1,2,7,8,9,10,17,18,36,54,86].includes(it.idx+1),'tag');
+pool(LE,'Halogens',it=>[9,17,35,53,85,117].includes(it.idx+1),'tag');
+pool(LE,'Alkali metals',it=>[3,11,19,37,55,87].includes(it.idx+1),'tag');
+const animalSets=[['Mammals',D_MAMMALS],['Birds',D_BIRDS],['Sea creatures',D_SEA],['Bugs & creepy crawlies',D_BUGS],['Reptiles & amphibians',D_REPTILES]];
+animalSets.forEach(([l,s])=>{const ks=new Set(s.split(',').map(e=>norm(e.split('|')[0])));pool(LA,l,it=>ks.has(it.ns[0]),'tag');});
+
+const CATS=[]; const seenCat=new Set();
+const AN=new Set('AEFHILMNORSX');
+function addCat(p,label,ents,w){
+  if(ents.length<3) return;
+  const words=ents.map(e=>e.n);
+  const key=p.list.id+'|'+words.join(',');
+  if(seenCat.has(key)) return; seenCat.add(key);
+  const cum=new Array(41).fill(0), byLen=new Array(41).fill(0);
+  words.forEach(x=>byLen[Math.min(40,x.length)]++);
+  for(let i=1;i<41;i++) cum[i]=cum[i-1]+byLen[i];
+  CATS.push({label,list:p.list,words,byLen,cum,w,kind:p.kind,whole:w===40});
+}
+function genPool(p){
+  const P=p.label, ents=[];
+  p.items.forEach(it=>it.ns.forEach((n,k)=>ents.push({n,raw:it.raws[k]||it.raws[0]})));
+  const tot=ents.length;
+  addCat(p,P,ents,40);
+  const f=(label,pred,w,maxFrac=0.92)=>{const ws=ents.filter(e=>pred(e.n,e.raw)); if(ws.length>=3&&ws.length<=tot*maxFrac) addCat(p,label,ws,w);};
+  for(const c of 'abcdefghijklmnopqrstuvwxyz'){
+    const C=c.toUpperCase();
+    f(`${P} starting with ${C}`,n=>n[0]===c,5);
+    f(`${P} ending in ${C}`,n=>n[n.length-1]===c,2);
+    f(`${P} with ${AN.has(C)?'an':'a'} ${C}`,n=>n.includes(c),0.8,0.7);
+  }
+  const s2=new Set(),s3=new Set(),bg=new Set(),p2=new Set(),tg=new Set();
+  ents.forEach(({n})=>{ if(n.length>3){s2.add(n.slice(-2));s3.add(n.slice(-3));} if(n.length>2)p2.add(n.slice(0,2)); for(let k=0;k<n.length-1;k++) bg.add(n.substr(k,2)); for(let k=0;k<n.length-2;k++) tg.add(n.substr(k,3)); });
+  p2.forEach(s=>f(`${P} starting with "${s.toUpperCase()}"`,n=>n.startsWith(s),1.5));
+  tg.forEach(s=>f(`${P} containing "${s.toUpperCase()}"`,n=>n.includes(s),0.3,0.5));
+  s2.forEach(s=>f(`${P} ending in "-${s.toUpperCase()}"`,n=>n.length>3&&n.endsWith(s),2));
+  s3.forEach(s=>f(`${P} ending in "-${s.toUpperCase()}"`,n=>n.length>4&&n.endsWith(s),2));
+  bg.forEach(b=>f(`${P} containing "${b.toUpperCase()}"`,n=>n.includes(b),0.4,0.6));
+  f(`${P} with a double letter`,n=>/(.)\1/.test(n),1.5);
+  for(const c of 'eaiorstnlu') f(`${P} with no ${c.toUpperCase()}`,n=>!n.includes(c),0.4);
+  f(`${P} ending in a vowel`,n=>/[aeiou]$/.test(n),2);
+  f(`${P} starting with a vowel`,n=>/^[aeiou]/.test(n),2);
+  f(`${P} with 2+ words`,(n,raw)=>/\s/.test(raw.trim()),2);
+  f(`${P} with only one vowel type`,n=>new Set(n.replace(/[^aeiou]/g,'')).size===1,0.4);
+  f(`${P} that start and end with the same letter`,n=>n[0]===n[n.length-1],1.5);
+}
+POOLS.forEach(genPool);
+
+/* ============================== DAILY LADDER ============================== */
+const ROUNDS=7, TIME=20;
+const LEVELS=['Milky Way','Solar System','Earth','Continent','Country','Human','Atom'];
+function hashStr(s){let h=2166136261>>>0;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
+function rng32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function todayKey(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function dailyNum(){const d=new Date();const a=Date.UTC(d.getFullYear(),d.getMonth(),d.getDate());return Math.floor((a-Date.UTC(2026,10,11))/864e5)+1;}
+function makeLadder(seed){
+  const rng=rng32(seed);
+  for(let attempt=0;attempt<300;attempt++){
+    const start=10+Math.floor(rng()*3);
+    const pars=Array.from({length:ROUNDS},(_,i)=>start-i);
+    const usedLists=new Set(), cats=[]; let ok=true;
+    for(let i=0;i<ROUNDS;i++){
+      const p=pars[i], need=i===0?8:3, byList=new Map();
+      for(const c of CATS){
+        if(usedLists.has(c.list.id)||!c.byLen[p]||c.cum[p]<need) continue;
+        if(i===0&&(!c.whole||c.list.id==='cal')) continue;
+        if(!byList.has(c.list.id)) byList.set(c.list.id,[]);
+        byList.get(c.list.id).push(c);
+      }
+      if(!byList.size){ok=false;break;}
+      const keys=[...byList.keys()]; const cand=byList.get(keys[Math.floor(rng()*keys.length)]);
+      let tw=0; cand.forEach(c=>tw+=c.w); let r=rng()*tw, pick=cand[cand.length-1];
+      for(const c of cand){r-=c.w;if(r<=0){pick=c;break;}}
+      cats.push(pick); usedLists.add(pick.list.id);
+    }
+    if(ok) return {pars,cats};
+  }
+  return null;
+}
+const catSet=c=>c._set||(c._set=new Set(c.words));
+const fitCount=(c,cap)=>c.cum[Math.max(0,Math.min(40,cap))];
+
+/* ============================== SOUND ============================== */
+let AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();}catch(e){AC=null;}return AC;}
+function tone(f,d,type='sine',v=0.08,slide=0,delay=0){const a=AC;if(!a)return;const o=a.createOscillator(),g=a.createGain(),t=a.currentTime+delay;o.type=type;o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(f*slide,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(0.0001,t+d);o.connect(g).connect(a.destination);o.start(t);o.stop(t+d+0.02);}
+const sfx={
+  key:()=>tone(520+Math.random()*80,0.05,'triangle',0.04),
+  good:()=>{[523,659,784,1046].forEach((f,i)=>tone(f,0.16,'triangle',0.07,0,i*0.07));},
+  rare:()=>{[659,830,988,1318,1568].forEach((f,i)=>tone(f,0.18,'sine',0.07,0,i*0.06));},
+  bad:()=>tone(180,0.25,'sawtooth',0.05,0.6),
+  tick:()=>tone(1100,0.04,'square',0.025),
+  zoom:()=>tone(220,0.9,'sine',0.05,4),
+};
+
+/* ============================== 3D (optional) ============================== */
+let R=null;
+function init3D(){
+  if(!window.THREE) return;
+  try{
+    const T=THREE, canvas=document.getElementById('bg');
+    const renderer=new T.WebGLRenderer({canvas,antialias:false,alpha:true});
+    renderer.setPixelRatio(0.5);
+    const scene=new T.Scene(), cam=new T.PerspectiveCamera(50,1,0.1,200);
+    cam.position.set(0,1.4,9.5); cam.lookAt(0,0.4,0);
+    scene.add(new T.HemisphereLight(0xffffff,0x445577,0.85));
+    const dl=new T.DirectionalLight(0xffffff,0.9); dl.position.set(5,8,6); scene.add(dl);
+    const holder=new T.Group(); holder.position.set(0,0.7,0); scene.add(holder);
+    const lam=(c,o={})=>new T.MeshLambertMaterial(Object.assign({color:c,flatShading:true},o));
+    const basic=(c,o={})=>new T.MeshBasicMaterial(Object.assign({color:c},o));
+    const ico=(r,d,m)=>new T.Mesh(new T.IcosahedronGeometry(r,d),m);
+    const levels=[];
+    // 0 Milky Way
+    {const g=new T.Group(),N=3600,pos=new Float32Array(N*3),col=new Float32Array(N*3),c1=new T.Color('#ff7ad9'),c2=new T.Color('#62e8ff'),c3=new T.Color('#fff4c2'),c=new T.Color();
+     for(let i=0;i<N;i++){const arm=i%3,r=Math.pow(Math.random(),0.75)*5.2,a=r*1.15+arm*2.094+(Math.random()-0.5)*0.7;
+       pos[i*3]=Math.cos(a)*r+(Math.random()-0.5)*0.3;pos[i*3+1]=(Math.random()-0.5)*0.35*(1.2-r/5.2);pos[i*3+2]=Math.sin(a)*r+(Math.random()-0.5)*0.3;
+       c.copy(c3).lerp(c1,Math.min(1,r/2.5)).lerp(c2,Math.max(0,(r-2.5)/2.7));col[i*3]=c.r;col[i*3+1]=c.g;col[i*3+2]=c.b;}
+     const geo=new T.BufferGeometry();geo.setAttribute('position',new T.BufferAttribute(pos,3));geo.setAttribute('color',new T.BufferAttribute(col,3));
+     g.add(new T.Points(geo,new T.PointsMaterial({size:0.09,vertexColors:true})));
+     g.add(ico(0.45,1,basic('#fff1b8')));
+     g.rotation.x=0.55; levels.push({g,up:(t,dt)=>{g.rotation.y+=dt*0.12;}});}
+    // 1 Solar System
+    {const g=new T.Group(); g.add(ico(0.9,1,basic('#ffc93c')));
+     const pl=[[1.7,0.16,'#c9b8a6',1.6],[2.4,0.24,'#ffb36b',1.2],[3.2,0.27,'#3fa9f5',1],[3.9,0.2,'#ff6b4a',0.8],[4.9,0.5,'#e8b98a',0.45],[5.9,0.42,'#f4dd9c',0.33]];
+     const piv=[];pl.forEach(([r,s,c,sp],i)=>{const p=new T.Object3D();p.rotation.y=i*1.7;const m=ico(s,0,lam(c));m.position.x=r;p.add(m);
+       if(i===5){const ring=new T.Mesh(new T.RingGeometry(s*1.4,s*2.1,12),basic('#f7e6b5',{side:T.DoubleSide}));ring.rotation.x=1.2;m.add(ring);}
+       g.add(p);piv.push([p,sp]);
+       const orb=new T.Mesh(new T.RingGeometry(r-0.015,r+0.015,64),basic('#ffffff',{transparent:true,opacity:0.22,side:T.DoubleSide}));orb.rotation.x=-Math.PI/2;g.add(orb);});
+     g.rotation.x=0.42; levels.push({g,up:(t,dt)=>{piv.forEach(([p,sp])=>p.rotation.y+=dt*sp*0.5);}});}
+    // 2 Earth
+    {const g=new T.Group(),geo=new T.IcosahedronGeometry(2.1,2),pos=geo.attributes.position,col=new Float32Array(pos.count*3),c=new T.Color();
+     for(let i=0;i<pos.count;i+=3){let x=0,y=0,z=0;for(let k=0;k<3;k++){x+=pos.getX(i+k);y+=pos.getY(i+k);z+=pos.getZ(i+k);}x/=3;y/=3;z/=3;
+       const nz=Math.sin(x*1.6+0.5)+Math.sin(y*2.1+1.3)+Math.sin(z*1.8+2.2)+Math.sin((x+z)*2.7)*0.5;
+       if(Math.abs(y)>1.75)c.set('#f4fbff');else if(nz>0.55)c.set(nz>1.4?'#2e9e5b':'#4cc26f');else if(nz>0.4)c.set('#f2d98d');else c.set(nz<-0.6?'#1f6fd1':'#2f8ff0');
+       for(let k=0;k<3;k++){col[(i+k)*3]=c.r;col[(i+k)*3+1]=c.g;col[(i+k)*3+2]=c.b;}}
+     geo.setAttribute('color',new T.BufferAttribute(col,3));
+     const earth=new T.Mesh(geo,new T.MeshLambertMaterial({vertexColors:true,flatShading:true}));g.add(earth);
+     const clouds=new T.Object3D();for(let i=0;i<9;i++){const m=ico(0.22+Math.random()*0.18,0,lam('#ffffff'));const a=i*0.7,b=(Math.random()-0.5)*1.6;m.position.set(Math.cos(a)*2.45,b,Math.sin(a)*2.45);m.scale.set(1.6,0.7,1);clouds.add(m);}g.add(clouds);
+     const moonP=new T.Object3D();const moon=ico(0.36,0,lam('#c8c8d8'));moon.position.x=3.6;moonP.add(moon);moonP.rotation.z=0.3;g.add(moonP);
+     g.rotation.z=0.35; levels.push({g,up:(t,dt)=>{earth.rotation.y+=dt*0.25;clouds.rotation.y+=dt*0.33;moonP.rotation.y+=dt*0.4;}});}
+    // 3 Continent
+    {const g=new T.Group();let geo=new T.PlaneGeometry(9,9,26,26);geo.rotateX(-Math.PI/2);geo=geo.toNonIndexed();
+     const pos=geo.attributes.position,col=new Float32Array(pos.count*3),c=new T.Color();
+     const h=(x,z)=>{const d=Math.max(0,1-(x*x+z*z)/18);return((Math.sin(x*0.9)+Math.cos(z*0.8)+Math.sin((x+z)*1.4)*0.6+1.2)*0.55)*d-0.15;};
+     for(let i=0;i<pos.count;i++)pos.setY(i,h(pos.getX(i),pos.getZ(i)));
+     for(let i=0;i<pos.count;i+=3){const y=(pos.getY(i)+pos.getY(i+1)+pos.getY(i+2))/3;c.set(y<0.05?'#e9d48f':y<0.75?'#5cc46b':y<1.05?'#3c9a52':y<1.35?'#8a7f74':'#f6f9ff');
+       for(let k=0;k<3;k++){col[(i+k)*3]=c.r;col[(i+k)*3+1]=c.g;col[(i+k)*3+2]=c.b;}}
+     geo.setAttribute('color',new T.BufferAttribute(col,3));geo.computeVertexNormals();
+     g.add(new T.Mesh(geo,new T.MeshLambertMaterial({vertexColors:true,flatShading:true})));
+     const water=new T.Mesh(new T.CircleGeometry(6.5,24),lam('#2f9cf0',{transparent:true,opacity:0.88}));water.rotation.x=-Math.PI/2;water.position.y=0.06;g.add(water);
+     for(let i=0;i<26;i++){const x=(Math.random()-0.5)*5,z=(Math.random()-0.5)*5,y=h(x,z);if(y<0.15||y>1)continue;const tr=new T.Mesh(new T.ConeGeometry(0.16,0.5,5),lam('#2f8f4e'));tr.position.set(x,y+0.25,z);g.add(tr);}
+     g.rotation.x=0.38; g.position.y=-0.6; levels.push({g,up:(t,dt)=>{g.rotation.y+=dt*0.15;}});}
+    // 4 Country / City
+    {const g=new T.Group();const ground=new T.Mesh(new T.BoxGeometry(8,0.25,8),lam('#7bd389'));ground.position.y=-0.15;g.add(ground);
+     const road=new T.Mesh(new T.BoxGeometry(8,0.26,0.7),lam('#4b4f6b'));road.position.y=-0.14;g.add(road);const road2=road.clone();road2.rotation.y=Math.PI/2;g.add(road2);
+     const pal=['#ff7aa2','#7ad7ff','#ffd166','#9b8cff','#6ee7b7','#f9a8d4','#ffffff'];
+     for(let i=-3;i<=3;i++)for(let j=-3;j<=3;j++){if(i===0||j===0)continue;if(Math.random()<0.18)continue;const hgt=0.4+Math.random()*(2.4-Math.hypot(i,j)*0.3);
+       const b=new T.Mesh(new T.BoxGeometry(0.75,hgt,0.75),lam(pal[(i*7+j*3+21)%pal.length]));b.position.set(i*1.05,hgt/2,j*1.05);g.add(b);}
+     g.rotation.x=0.5;g.rotation.y=0.7;g.position.y=-0.5;levels.push({g,up:(t,dt)=>{g.rotation.y+=dt*0.12;}});}
+    // 5 Human
+    {const g=new T.Group(),skin=lam('#ffcc9a'),shirt=lam('#2ec4ff'),pants=lam('#3b3f8f'),dark=lam('#1b1f3b'),hair=lam('#5a3418');
+     const box=(w,h,d,m,x,y,z)=>{const b=new T.Mesh(new T.BoxGeometry(w,h,d),m);b.position.set(x,y,z);g.add(b);return b;};
+     box(1.1,1.3,0.62,shirt,0,0.55,0);const head=ico(0.55,1,skin);head.position.y=1.75;g.add(head);
+     const hr=ico(0.58,0,hair);hr.position.set(0,1.98,-0.06);hr.scale.set(1,0.62,1);g.add(hr);
+     box(0.11,0.15,0.05,dark,-0.18,1.78,0.52);box(0.11,0.15,0.05,dark,0.18,1.78,0.52);
+     box(0.42,1.15,0.44,pants,-0.27,-0.65,0);box(0.42,1.15,0.44,pants,0.27,-0.65,0);
+     box(0.46,0.22,0.62,dark,-0.27,-1.3,0.07);box(0.46,0.22,0.62,dark,0.27,-1.3,0.07);
+     box(0.3,1.1,0.32,skin,-0.72,0.5,0);
+     const sh=new T.Object3D();sh.position.set(0.72,1.05,0);g.add(sh);const arm=new T.Mesh(new T.BoxGeometry(0.3,1.1,0.32),skin);arm.position.y=-0.55;sh.add(arm);
+     const disc=new T.Mesh(new T.CylinderGeometry(1.6,1.6,0.12,8),lam('#ffffff'));disc.position.y=-1.47;g.add(disc);
+     g.position.y=-0.2;levels.push({g,up:(t,dt)=>{sh.rotation.z=2.6+Math.sin(t*6)*0.35;g.rotation.y=Math.sin(t*0.8)*0.5;}});}
+    // 6 Atom
+    {const g=new T.Group(),nuc=new T.Group();for(let i=0;i<14;i++){const m=ico(0.3,1,lam(i%2?'#ff5a5f':'#2ec4ff'));const v=new T.Vector3(Math.random()-0.5,Math.random()-0.5,Math.random()-0.5).normalize().multiplyScalar(Math.random()*0.42);m.position.copy(v);nuc.add(m);}g.add(nuc);
+     const rings=[];for(let i=0;i<3;i++){const p=new T.Object3D();p.rotation.set(i===0?1.3:i===1?0.4:-0.6,i*1.05,i===2?0.9:0);
+       p.add(new T.Mesh(new T.TorusGeometry(2.5,0.035,6,48),basic('#bff6ff')));const e=ico(0.17,1,basic('#ffd23f'));p.add(e);g.add(p);rings.push([e,i*2.1,1.6+i*0.4]);}
+     levels.push({g,up:(t,dt)=>{nuc.rotation.y+=dt*0.6;nuc.rotation.x+=dt*0.3;rings.forEach(([e,o,s])=>{const a=t*s+o;e.position.set(Math.cos(a)*2.5,Math.sin(a)*2.5,0);});g.rotation.y+=dt*0.15;}});}
+    levels.forEach((L,i)=>{L.g.visible=i===0;holder.add(L.g);});
+    R={renderer,scene,cam,levels,cur:0,trans:null,t:0};
+    const resize=()=>{const w=innerWidth,h=innerHeight;renderer.setSize(w,h,false);cam.aspect=w/h;cam.position.z=w/h<1?13:9.5;cam.updateProjectionMatrix();};
+    addEventListener('resize',resize);resize();
+  }catch(e){console.warn('3D disabled',e);R=null;}
+}
+function zoomTo(i){
+  document.querySelectorAll('.sky').forEach((s,k)=>s.classList.toggle('on',k===i));
+  if(!R||i===R.cur)return;
+  if(R.trans){R.levels[R.trans.from].g.visible=false;R.levels[R.trans.from].g.scale.setScalar(1);R.levels[R.trans.to].g.scale.setScalar(1);}
+  R.trans={from:R.cur,to:i,t:0};R.levels[i].g.visible=true;R.levels[i].g.scale.setScalar(0.03);R.cur=i;
+}
+function step3D(dt){
+  if(!R)return; R.t+=dt;
+  const L=R.levels;
+  if(R.trans){const tr=R.trans;tr.t+=dt/1.25;const k=Math.min(1,tr.t),e=k<0.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+    L[tr.from].g.scale.setScalar(1+e*16);L[tr.to].g.scale.setScalar(0.03+0.97*e);
+    if(k>=1){L[tr.from].g.visible=false;L[tr.from].g.scale.setScalar(1);R.trans=null;}}
+  L.forEach(l=>{if(l.g.visible)l.up(R.t,dt);});
+  R.renderer.render(R.scene,R.cam);
+}
+
+/* ============================== GAME ============================== */
+const $=id=>document.getElementById(id);
+let G=null;
+function store(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v);}catch(e){return null;}}
+
+function startRun(mode){
+  ac();
+  const seed=mode==='daily'?hashStr('shrinkle:'+todayKey()):(Math.random()*4294967296)>>>0;
+  const lad=makeLadder(seed);
+  G={mode,lad,round:-1,cap:lad.pars[0],total:0,res:[],used:new Set(),buf:'',state:'intro',t:TIME,t0:0,lastTick:99};
+  $('scrTitle').hidden=true;$('scrEnd').hidden=true;$('hud').hidden=false;
+  $('score').textContent='0';
+  renderLadder(); nextRound();
+}
+function nextRound(){
+  G.round++;
+  if(G.round>=ROUNDS) return finish();
+  const cat=G.lad.cats[G.round];
+  G.buf='';G.state='intro';G.t=TIME;$('kb').value='';$('play').classList.add('intro');
+  zoomTo(G.round); if(G.round>0) sfx.zoom();
+  $('roundLbl').textContent=`Round ${G.round+1} of ${ROUNDS}`;$('lvlName').textContent=LEVELS[G.round];
+  $('prompt').textContent=cat.label; toast('');
+  renderTiles(); renderHint(); renderTimer(); renderLadder();
+  banner(`ROUND ${G.round+1} · ${LEVELS[G.round].toUpperCase()}`,cat.label);
+  setTimeout(()=>{
+    if(!G||G.state!=='intro')return;
+    $('play').classList.remove('intro');
+    if(fitCount(cat,G.cap)===0){G.state='gap';record(null,0,'none');toast(`Nothing fits in ${G.cap} letters · 0`,'bad');sfx.bad();setTimeout(nextRound,1500);return;}
+    G.state='play';G.t0=performance.now();G.lastTick=99;$('kb').value='';focusKb();renderTiles();
+  },1250);
+}
+function record(hit,pts,why){G.res[G.round]=Object.assign({pts,why},hit||{});renderLadder();$('score').textContent=G.total.toLocaleString();}
+function submit(){
+  if(!G||G.state!=='play')return;
+  const cat=G.lad.cats[G.round],w=G.buf,list=cat.list; if(!w)return;
+  const idx=list.map[w];
+  if(idx===undefined)return fail(`${w.toUpperCase()} isn't on our ${list.one} list`);
+  const it=list.items[idx];
+  if(!catSet(cat).has(w))return fail(`${it.d} doesn't fit this category`);
+  if(G.used.has(list.id+':'+idx))return fail('Already used');
+  const secs=Math.ceil(G.t), rare=!it.common, perfect=w.length===G.cap;
+  const pts=Math.round(w.length*(10+secs)*(rare?1.5:1));
+  G.used.add(list.id+':'+idx); G.total+=pts; G.state='gap'; kb.value='';
+  record({word:it.d,len:w.length,rare,perfect},pts,'ok');
+  G.cap=w.length-1;
+  toast(rare?`DEEP CUT! ${it.d} +${pts}`:`${it.d} +${pts}`,rare?'rare':'good');
+  (rare?sfx.rare:sfx.good)(); fly(`+${pts}`,rare?'#b388ff':'#3ddc84');
+  $('tiles').querySelectorAll('.t').forEach(t=>t.classList.add('full'));
+  setTimeout(nextRound,950);
+}
+function fail(msg){toast(msg,'bad');sfx.bad();const t=$('tiles');t.classList.remove('shake');void t.offsetWidth;t.classList.add('shake');}
+function skip(){if(!G||G.state!=='play')return;G.state='gap';record(null,0,'skip');toast('Skipped · 0','bad');setTimeout(nextRound,700);}
+function timeout(){G.state='gap';record(null,0,'time');toast("Time's up · 0",'bad');sfx.bad();setTimeout(nextRound,1100);}
+
+function renderTiles(){
+  const n=Math.max(1,G.cap), el=$('tiles');
+  const avail=Math.min(760,$('play').clientWidth||innerWidth-32);
+  const ts=Math.max(18,Math.min(62,Math.floor((avail-6*(n-1))/n)-4));
+  el.style.setProperty('--ts',ts+'px');
+  const full=G.buf.length===n;
+  let h='';for(let i=0;i<n;i++){const ch=G.buf[i];h+=`<div class="t${ch?' f':''}${ch&&full?' full':''}">${ch||''}</div>`;}
+  el.innerHTML=h; el.classList.toggle('off',G.state!=='play');
+}
+function renderHint(){const cat=G.lad.cats[G.round];const fit=fitCount(cat,G.cap);$('hint').innerHTML=`Up to <b>${G.cap}</b> letters · <b>${fit}</b> answer${fit===1?'':'s'} fit`;}
+function renderTimer(){
+  const t=G?G.t:TIME, frac=Math.max(0,t/TIME), ring=$('ring');
+  ring.style.strokeDashoffset=(213.6*(1-frac)).toFixed(1);
+  ring.style.stroke=frac>0.5?'#3ddc84':frac>0.25?'#ffd23f':'#ff5a5f';
+  $('timerNum').textContent=Math.ceil(t);
+}
+function renderLadder(){
+  if(!G)return;
+  let h='<h3>Today\'s ladder</h3>'; if(G.mode!=='daily')h='<h3>Practice ladder</h3>';
+  G.lad.cats.forEach((c,i)=>{const r=G.res[i];let cls='',rs='',ws='';
+    if(i===G.round&&!r)cls='cur';
+    if(r){if(r.why==='ok'){cls='ok'+(r.rare?' rare':'');rs='+'+r.pts;ws=`${r.word} (${r.len})`;}else{cls='zero';rs='0';ws=r.why==='time'?'time ran out':r.why==='skip'?'skipped':'nothing fit';}}
+    h+=`<li class="${cls}"><span class="n">${i+1}</span><span class="lv">${LEVELS[i]}${ws?' · <span class="w">'+esc(ws)+'</span>':''}</span><span class="c">${esc(c.label)}</span><span class="r">${rs}</span></li>`;});
+  $('ladder').innerHTML=h;
+}
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let toastT=0;function toast(m,cls=''){const t=$('toast');t.textContent=m;t.className='ol '+cls;}
+function banner(a,b){$('banA').textContent=a;$('banB').textContent=b;const el=$('banner');el.classList.remove('show');void el.offsetWidth;el.classList.add('show');}
+function fly(text,color){const d=document.createElement('div');d.className='fly ol';d.textContent=text;d.style.color=color;const r=$('tiles').getBoundingClientRect();d.style.left=(r.left+r.width/2)+'px';d.style.top=(r.top-30)+'px';document.body.appendChild(d);setTimeout(()=>d.remove(),1000);}
+
+const RANKS=[[1500,'Quantum'],[1150,'Atomic'],[850,'Ant-sized'],[600,'Human-sized'],[380,'Countrywide'],[180,'Continental'],[60,'Planetary'],[0,'Still galactic']];
+function finish(){
+  G.state='done';
+  const t=G.total, rank=RANKS.find(r=>t>=r[0])[1];
+  const answered=G.res.filter(r=>r&&r.why==='ok').length;
+  $('endScore').textContent=t.toLocaleString();$('endRank').textContent=rank;
+  $('endSub').textContent=`Milky Way → Atom · ${answered}/${ROUNDS} words`;
+  $('recap').innerHTML=G.res.map((r,i)=>r.why==='ok'?`<div><span>${i+1}. ${esc(r.word)} <span style="opacity:.5">(${r.len})</span>${r.rare?' <span style="color:#8a5cf6">deep cut</span>':''}</span><span>+${r.pts}</span></div>`:`<div class="z"><span>${i+1}. ${LEVELS[i]}: ${r.why==='time'?'time ran out':r.why==='skip'?'skipped':'nothing fit'}</span><span>0</span></div>`).join('');
+  const em=G.res.map(r=>r.why!=='ok'?'⬛':r.rare?'🟪':r.perfect?'🟩':'🟨').join('');
+  const head=G.mode==='daily'?`SHRINKLE #${dailyNum()}`:'SHRINKLE (practice)';
+  $('share').textContent=`${head} · ${t.toLocaleString()} pts · ${rank}\n🌌${em}⚛️`;
+  if(G.mode==='daily'){const k='shrinkle-best-'+todayKey();const b=+(store(k)||0);if(t>b)store(k,String(t));$('endFoot').textContent=`Today's best: ${Math.max(b,t).toLocaleString()} · 🟩 used every tile · 🟨 shorter · 🟪 deep cut · ⬛ zero`;}
+  else $('endFoot').textContent='🟩 used every tile · 🟨 shorter · 🟪 deep cut · ⬛ zero';
+  $('btnCopy').textContent='Copy result';
+  $('hud').hidden=true;$('scrEnd').hidden=false;
+  sfx.rare();
+}
+
+/* ============================== INPUT ============================== */
+const kb=$('kb');
+function focusKb(){try{kb.focus({preventScroll:true});}catch(e){}}
+function setBuf(v){
+  if(!G||G.state!=='play'){kb.value='';return;}
+  v=norm(v);
+  if(v.length>G.cap){v=v.slice(0,G.cap);fail(`Max ${G.cap} letters`);}
+  else if(v.length>G.buf.length)sfx.key();
+  G.buf=v;kb.value=v;renderTiles();
+}
+kb.addEventListener('input',()=>setBuf(kb.value));
+addEventListener('keydown',e=>{
+  if(e.metaKey||e.ctrlKey||e.altKey)return;
+  if(!$('scrTitle').hidden&&e.key==='Enter'){e.preventDefault();startRun('daily');return;}
+  if(!G||G.state!=='play')return;
+  if(e.key==='Enter'){e.preventDefault();submit();return;}
+  if(e.key==='Escape'){skip();return;}
+  if(e.target===kb)return; // the input event handles letters and backspace
+  if(e.key==='Backspace'){e.preventDefault();setBuf(G.buf.slice(0,-1));focusKb();}
+  else if(/^[a-zA-Z]$/.test(e.key)){e.preventDefault();setBuf(G.buf+e.key);focusKb();}
+});
+$('hud').addEventListener('pointerup',e=>{if(G&&G.state==='play'&&!e.target.closest('button'))focusKb();});
+$('btnDaily').onclick=()=>startRun('daily');
+$('btnPractice').onclick=()=>startRun('practice');
+$('btnAgain').onclick=()=>startRun('practice');
+$('btnSkip').onclick=e=>{e.currentTarget.blur();skip();focusKb();};
+$('btnCopy').onclick=()=>{const txt=$('share').textContent;const ok=()=>$('btnCopy').textContent='Copied!';
+  const sel=()=>{const r=document.createRange();r.selectNodeContents($('share'));const s=getSelection();s.removeAllRanges();s.addRange(r);$('btnCopy').textContent='Press Ctrl/⌘+C';};
+  try{navigator.clipboard.writeText(txt).then(ok,sel);}catch(e){sel();}};
+addEventListener('resize',()=>{if(G&&G.state!=='done')renderTiles();});
+
+/* ============================== BOOT ============================== */
+(function boot(){
+  const logo=$('logo');'SHRINKLE'.split('').forEach((ch,i)=>{const s=document.createElement('span');s.textContent=ch;s.style.fontSize=(64-i*5)+'px';logo.appendChild(s);});
+  $('dailyLbl').textContent=`Daily #${dailyNum()} · ${new Date().toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'})}`;
+  const best=store('shrinkle-best-'+todayKey());
+  $('catCount').textContent=`${CATS.length.toLocaleString()} categories from ${LISTS.length} reference lists`+(best?` · Today's best: ${(+best).toLocaleString()}`:'');
+  init3D(); zoomTo(0);
+  let last=performance.now();
+  function loop(now){
+    const dt=Math.min(0.05,(now-last)/1000);last=now;
+    if(G&&G.state==='play'){G.t=Math.max(0,TIME-(now-G.t0)/1000);renderTimer();const c=Math.ceil(G.t);if(c<=5&&c!==G.lastTick){G.lastTick=c;sfx.tick();}if(G.t<=0)timeout();}
+    step3D(dt);requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

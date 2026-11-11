@@ -1,0 +1,171 @@
+<title>Shrinkle Spike</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Spike: single dark arcade look, one column, tiles center stage */
+:root{--bg:#0e1a26;--panel:#152536;--fg:#e9f1f7;--dim:#7f95a8;--tile:#1f3650;--accent:#5fe3c5;--rare:#c48dff;--bad:#ff6b6b;color-scheme:dark;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;--sans:system-ui,-apple-system,"Segoe UI",sans-serif}
+html,body{height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);display:flex;justify-content:center;padding-block:20px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));box-sizing:border-box}
+#app{width:100%;max-width:640px;display:flex;flex-direction:column;gap:14px;position:relative}
+h1{font-family:var(--mono);letter-spacing:.2em;font-size:22px;margin:0;text-align:center}
+#hud{display:grid;grid-template-columns:1fr auto 1fr;align-items:end;font-variant-numeric:tabular-nums}
+#hud .lbl{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+#cat{font-size:20px;font-weight:700}
+#timer{font-family:var(--mono);font-size:34px;text-align:center}
+#timer.low{color:var(--bad)}
+#scoreBox{text-align:right}#score{font-family:var(--mono);font-size:22px}
+#rule{text-align:center;color:var(--dim);font-size:14px;min-height:20px}
+#rule b{color:var(--fg)}
+#tiles{display:flex;justify-content:center;gap:4px;min-height:64px;align-items:center}
+.t{width:var(--ts,44px);height:calc(var(--ts,44px)*1.15);background:var(--tile);border-radius:6px;display:grid;place-items:center;
+  font-family:var(--mono);font-weight:700;font-size:calc(var(--ts,44px)*.55);text-transform:uppercase;transition:width .25s,height .25s,font-size .25s}
+.t.f{background:#2c4e72}
+.t.floor{outline:2px solid var(--accent);outline-offset:-2px}
+#tiles.shake{animation:sh .3s}
+@keyframes sh{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+#msg{text-align:center;min-height:22px;font-weight:600}
+#msg.bad{color:var(--bad)}#msg.good{color:var(--accent)}#msg.rare{color:var(--rare)}
+#chain{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;font-family:var(--mono);font-size:14px}
+#chain li{display:flex;justify-content:space-between;background:var(--panel);padding:6px 10px;border-radius:6px}
+#chain li.rare span:first-child{color:var(--rare)}
+.ov{position:absolute;inset:0;background:color-mix(in srgb,var(--bg) 94%,transparent);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:20px;border-radius:12px}
+.ov h2{margin:0;font-size:28px}
+.ov p{margin:0;color:var(--dim);max-width:44ch;line-height:1.5}
+button{font:inherit;font-weight:700;background:var(--accent);color:#06231c;border:0;border-radius:8px;padding:12px 22px;cursor:pointer}
+button:focus-visible{outline:3px solid var(--fg);outline-offset:2px}
+pre{font-family:var(--mono);background:var(--panel);padding:12px;border-radius:8px;text-align:left;user-select:all;margin:0;white-space:pre-wrap}
+</style>
+
+<div id="app">
+  <h1>SHRINKLE</h1>
+  <div id="hud">
+    <div><div class="lbl" id="roundLbl">Round 1/3</div><div id="cat">–</div></div>
+    <div id="timer">60</div>
+    <div id="scoreBox"><div class="lbl">Score</div><div id="score">0</div></div>
+  </div>
+  <div id="rule"></div>
+  <div id="tiles"></div>
+  <div id="msg"></div>
+  <ol id="chain"></ol>
+
+  <div class="ov" id="ovStart">
+    <h2>Every answer must be shorter.</h2>
+    <p>Name things in the category. Each answer needs <b>fewer letters</b> than your last one. Shrink down to the outlined tiles to clear the round. Drop exactly 1 letter for combo points. Obscure answers score double.</p>
+    <p>Type and press <b>Enter</b>. Spaces don't count.</p>
+    <button id="btnStart">Start</button>
+  </div>
+  <div class="ov" id="ovEnd" hidden>
+    <h2 id="endTitle"></h2><p id="endText"></p><button id="btnNext"></button>
+  </div>
+  <div class="ov" id="ovWin" hidden>
+    <h2>You shrank it all.</h2>
+    <p id="winRank"></p>
+    <pre id="share"></pre>
+    <div style="display:flex;gap:10px"><button id="btnCopy">Copy result</button><button id="btnAgain">Play again</button></div>
+  </div>
+</div>
+
+<script>
+const CATS = [
+ {name:'Countries', one:'country', floor:4,
+  list:`afghanistan,albania,algeria,andorra,angola,antigua and barbuda,argentina,armenia,australia,austria,azerbaijan,bahamas|the bahamas,bahrain,bangladesh,barbados,belarus,belgium,belize,benin,bhutan,bolivia,bosnia and herzegovina|bosnia,botswana,brazil,brunei,bulgaria,burkina faso,burundi,cabo verde|cape verde,cambodia,cameroon,canada,central african republic,chad,chile,china,colombia,comoros,congo|republic of the congo,democratic republic of the congo|dr congo|drc,costa rica,croatia,cuba,cyprus,czechia|czech republic,denmark,djibouti,dominica,dominican republic,ecuador,egypt,el salvador,equatorial guinea,eritrea,estonia,eswatini|swaziland,ethiopia,fiji,finland,france,gabon,gambia|the gambia,georgia,germany,ghana,greece,grenada,guatemala,guinea,guinea bissau,guyana,haiti,honduras,hungary,iceland,india,indonesia,iran,iraq,ireland,israel,italy,ivory coast|cote divoire,jamaica,japan,jordan,kazakhstan,kenya,kiribati,kosovo,kuwait,kyrgyzstan,laos,latvia,lebanon,lesotho,liberia,libya,liechtenstein,lithuania,luxembourg,madagascar,malawi,malaysia,maldives,mali,malta,marshall islands,mauritania,mauritius,mexico,micronesia,moldova,monaco,mongolia,montenegro,morocco,mozambique,myanmar|burma,namibia,nauru,nepal,netherlands|holland,new zealand,nicaragua,niger,nigeria,north korea,north macedonia|macedonia,norway,oman,pakistan,palau,palestine,panama,papua new guinea,paraguay,peru,philippines,poland,portugal,qatar,romania,russia,rwanda,saint kitts and nevis,saint lucia,saint vincent and the grenadines,samoa,san marino,sao tome and principe,saudi arabia,senegal,serbia,seychelles,sierra leone,singapore,slovakia,slovenia,solomon islands,somalia,south africa,south korea|korea,south sudan,spain,sri lanka,sudan,suriname,sweden,switzerland,syria,taiwan,tajikistan,tanzania,thailand,timor leste|east timor,togo,tonga,trinidad and tobago,tunisia,turkey|turkiye,turkmenistan,tuvalu,uganda,ukraine,united arab emirates,united kingdom|great britain|britain,united states|united states of america|america,uruguay,uzbekistan,vanuatu,vatican city|vatican,venezuela,vietnam,yemen,zambia,zimbabwe`,
+  common:`united states,canada,mexico,brazil,argentina,chile,peru,colombia,cuba,jamaica,united kingdom,france,germany,spain,italy,portugal,ireland,netherlands,switzerland,sweden,norway,poland,greece,russia,ukraine,turkey,china,japan,india,pakistan,iran,iraq,israel,egypt,south africa,nigeria,kenya,morocco,australia,new zealand,south korea,north korea,vietnam,thailand,philippines,indonesia,saudi arabia,afghanistan`},
+ {name:'U.S. States', one:'U.S. state', floor:4,
+  list:`alabama,alaska,arizona,arkansas,california,colorado,connecticut,delaware,florida,georgia,hawaii,idaho,illinois,indiana,iowa,kansas,kentucky,louisiana,maine,maryland,massachusetts,michigan,minnesota,mississippi,missouri,montana,nebraska,nevada,new hampshire,new jersey,new mexico,new york,north carolina,north dakota,ohio,oklahoma,oregon,pennsylvania,rhode island,south carolina,south dakota,tennessee,texas,utah,vermont,virginia,washington,west virginia,wisconsin,wyoming`,
+  common:`california,texas,florida,new york,alaska,hawaii,washington,ohio,georgia,north carolina,virginia,michigan,illinois,arizona,nevada,colorado,new jersey,pennsylvania,massachusetts,louisiana`},
+ {name:'Chemical Elements', one:'element', floor:4,
+  list:`hydrogen,helium,lithium,beryllium,boron,carbon,nitrogen,oxygen,fluorine,neon,sodium,magnesium,aluminum|aluminium,silicon,phosphorus,sulfur|sulphur,chlorine,argon,potassium,calcium,scandium,titanium,vanadium,chromium,manganese,iron,cobalt,nickel,copper,zinc,gallium,germanium,arsenic,selenium,bromine,krypton,rubidium,strontium,yttrium,zirconium,niobium,molybdenum,technetium,ruthenium,rhodium,palladium,silver,cadmium,indium,tin,antimony,tellurium,iodine,xenon,cesium|caesium,barium,lanthanum,cerium,praseodymium,neodymium,promethium,samarium,europium,gadolinium,terbium,dysprosium,holmium,erbium,thulium,ytterbium,lutetium,hafnium,tantalum,tungsten,rhenium,osmium,iridium,platinum,gold,mercury,thallium,lead,bismuth,polonium,astatine,radon,francium,radium,actinium,thorium,protactinium,uranium,neptunium,plutonium,americium,curium,berkelium,californium,einsteinium,fermium,mendelevium,nobelium,lawrencium,rutherfordium,dubnium,seaborgium,bohrium,hassium,meitnerium,darmstadtium,roentgenium,copernicium,nihonium,flerovium,moscovium,livermorium,tennessine,oganesson`,
+  common:`hydrogen,helium,lithium,carbon,nitrogen,oxygen,neon,sodium,magnesium,aluminum,silicon,chlorine,potassium,calcium,iron,copper,zinc,silver,gold,mercury,lead,uranium,plutonium,tin,nickel,titanium,iodine,platinum,sulfur,fluorine,argon`}
+];
+const norm = s => s.normalize('NFD').toLowerCase().replace(/[^a-z]/g,'');
+for (const c of CATS){
+  c.map = {};
+  c.list.split(',').forEach(e=>{const names=e.split('|');const id=norm(names[0]);names.forEach(n=>c.map[norm(n)]=id);});
+  c.common = new Set(c.common.split(',').map(norm));
+}
+const ROUND_TIME = 60;
+const $ = id => document.getElementById(id);
+let S;
+
+function newGame(){ S = {round:0, total:0, results:[]}; startRound(); }
+function startRound(){
+  Object.assign(S,{prev:Infinity, buf:'', used:new Set(), chain:[], combo:0, rScore:0, time:ROUND_TIME, running:true});
+  const c = CATS[S.round];
+  $('roundLbl').textContent = `Round ${S.round+1}/${CATS.length}`;
+  $('cat').textContent = c.name;
+  $('chain').innerHTML=''; say('');
+  ['ovStart','ovEnd','ovWin'].forEach(id=>$(id).hidden=true);
+  render();
+  clearInterval(S.tick); let last=performance.now();
+  S.tick = setInterval(()=>{const now=performance.now();S.time-=(now-last)/1000;last=now;
+    if(S.time<=0){S.time=0;endRound(false);} renderTimer();},100);
+}
+function cap(){ return S.prev===Infinity ? 30 : S.prev-1; }
+function render(){
+  const c = CATS[S.round];
+  const n = S.prev===Infinity ? Math.max(S.buf.length+1, 10) : S.prev-1;
+  const avail = Math.min(640, document.body.clientWidth-32);
+  const ts = Math.max(14, Math.min(48, Math.floor((avail-4*(n-1))/n)));
+  const el=$('tiles'); el.style.setProperty('--ts',ts+'px'); el.innerHTML='';
+  for(let i=0;i<n;i++){const d=document.createElement('div');d.className='t'+(i<S.buf.length?' f':'')+(i<c.floor&&S.prev!==Infinity?' floor':'');d.textContent=S.buf[i]||'';el.appendChild(d);}
+  $('rule').innerHTML = S.prev===Infinity
+    ? `Start with any ${c.one}. Longer start = more room to shrink.`
+    : `Next: <b>${S.prev-1} letters or fewer</b>. Clear at <b>${c.floor}</b> or fewer.`;
+  $('score').textContent = S.total + S.rScore;
+  renderTimer();
+}
+function renderTimer(){ $('timer').textContent=Math.ceil(S.time); $('timer').classList.toggle('low',S.time<10); }
+function say(t,cls=''){ const m=$('msg'); m.textContent=t; m.className=cls; }
+function shake(){ const t=$('tiles'); t.classList.remove('shake'); void t.offsetWidth; t.classList.add('shake'); }
+
+function submit(){
+  const c=CATS[S.round], w=S.buf; if(!w) return;
+  const id=c.map[w];
+  if(!id){ say(`"${w.toUpperCase()}" isn't a ${c.one} we know.`,'bad'); shake(); return; }
+  if(S.used.has(id)){ say(`Already used.`,'bad'); shake(); return; }
+  const rare=!c.common.has(id), perfect=S.prev!==Infinity && w.length===S.prev-1;
+  S.combo = perfect ? S.combo+1 : 0;
+  const pts=Math.round(w.length*10*(rare?2:1)*(1+S.combo*0.5));
+  S.used.add(id); S.rScore+=pts; S.prev=w.length; S.buf='';
+  S.chain.push({w,pts,rare,perfect});
+  const li=document.createElement('li'); li.className=rare?'rare':'';
+  li.innerHTML=`<span>${w.toUpperCase()} (${w.length})${rare?' · RARE':''}${perfect?' · -1 combo x'+S.combo:''}</span><span>+${pts}</span>`;
+  $('chain').prepend(li);
+  say(rare?`Rare! +${pts}`:`+${pts}`, rare?'rare':'good');
+  if(w.length<=c.floor) return endRound(true);
+  render();
+}
+function endRound(won){
+  S.running=false; clearInterval(S.tick); render();
+  if(won){
+    S.total+=S.rScore;
+    S.results.push(S.chain.map(x=>x.rare?'🟪':'🟩').join('')+'  '+S.rScore);
+    $('endTitle').textContent=`${CATS[S.round].name} cleared!`;
+    $('endText').textContent=`${S.chain.length} answers, +${S.rScore} points.`;
+    $('btnNext').textContent = S.round+1<CATS.length ? 'Next round' : 'See results';
+    $('btnNext').onclick = ()=>{ S.round++; S.round<CATS.length ? startRound() : win(); };
+  } else {
+    $('endTitle').textContent='Time!';
+    $('endText').textContent=`You needed to shrink to ${CATS[S.round].floor} letters. Try the round again.`;
+    $('btnNext').textContent='Retry round';
+    $('btnNext').onclick = startRound;
+  }
+  $('ovEnd').hidden=false; $('btnNext').focus();
+}
+function win(){
+  const t=S.total, rank = t<400?'Still Huge':t<900?'Shrinking':t<1600?'Tiny':'Microscopic';
+  $('winRank').textContent=`${t} points · Rank: ${rank}`;
+  $('share').textContent=`SHRINKLE ${t} · ${rank}\n`+S.results.join('\n');
+  $('ovWin').hidden=false;
+}
+document.addEventListener('keydown',e=>{
+  if(!S||!S.running) return;
+  if(e.key==='Enter'){e.preventDefault();submit();}
+  else if(e.key==='Backspace'){e.preventDefault();S.buf=S.buf.slice(0,-1);render();}
+  else if(/^[a-zA-Z]$/.test(e.key)){ if(S.buf.length<cap()){S.buf+=e.key.toLowerCase();render();} else shake(); }
+});
+$('btnStart').onclick=newGame;
+$('btnAgain').onclick=newGame;
+$('btnCopy').onclick=()=>{navigator.clipboard.writeText($('share').textContent).then(()=>$('btnCopy').textContent='Copied',()=>{const r=document.createRange();r.selectNodeContents($('share'));getSelection().removeAllRanges();getSelection().addRange(r);});};
+</script>
