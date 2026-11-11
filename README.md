@@ -67,7 +67,7 @@ Each round's category is picked from the date, the round number and your current
 ## Tech
 
 - One self-contained file: [`shrinkle.html`](shrinkle.html) (vanilla JS, no build step)
-- [Three.js r128](https://threejs.org/) from cdnjs for the low-poly scenes. If it can't load, the game still plays on a plain gradient
+- [Three.js r128](https://threejs.org/) (MIT) is inlined in the file for the low-poly scenes, so nothing needs to download
 - Fonts: Manrope, JetBrains Mono and Space Mono (Google Fonts)
 - Sound effects are generated with the Web Audio API
 - [`index.html`](index.html) redirects to the game for GitHub Pages
