@@ -675,7 +675,7 @@ function finish(){
     :`<div><span class="l">ROUND ${i+1}</span><span class="x">${h.why==='time'?'time ran out':'skipped'}</span><span class="p">0 ${LEVELS[h.layer].em}</span></div>`).join('');
   const rows=G.hist.map(h=>h.ok?'🟩'.repeat(h.len)+'⬜'.repeat(Math.max(0,h.box-h.len))+` ${h.len} ${LEVELS[h.layer].em}`:`🟥 0 ${LEVELS[h.layer].em}`);
   const head=G.mode==='daily'?`SHRINKLE #${dailyNum()}`:'SHRINKLE practice';
-  $('share').textContent=`${head} · ${l.em} ${l.name} · ${G.score} pts\n${words}/${ROUNDS} words · layer ${G.layer+1} of ${LEVELS.length}\n`+rows.join('\n');
+  $('share').textContent=`${head} · ${l.em} ${l.name} · ${G.score} pts\n${words}/${ROUNDS} words · layer ${G.layer+1} of ${LEVELS.length}\n`+rows.join('\n')+'\nrickeyjohnson.github.io/shrinkle';
   let foot='🟩 letters · ⬜ unused box · 🟥 skipped';
   if(G.mode==='daily'){const k='shrinkle3-best-'+todayKey(),b=+(store(k)||0);if(G.score>b)store(k,String(G.score));foot=`Today's best: ${Math.max(b,G.score)} pts · `+foot;}
   $('endFoot').textContent=foot;
