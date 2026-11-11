@@ -2,7 +2,7 @@
 
 **Play:** [rickeyjohnson.github.io/shrinkle](https://rickeyjohnson.github.io/shrinkle/)
 
-A daily word-trivia dive. Name things to shrink: every word you type sets the next letter box one letter shorter, and your points zoom you down through 11 layers of scale, from the Cosmic Web to an atomic nucleus.
+A daily word-trivia dive. Name things to shrink: every word you type sets the next letter box one letter shorter, and your points zoom you down through 12 layers of scale, from the Cosmic Web to an atomic nucleus.
 
 Built in one class period for a Class Jam (theme: **shrinking**, constraint: winnable in **under 5 minutes**).
 
@@ -33,12 +33,13 @@ Everyone gets the same daily dive (seeded by date), so scores can be compared. Y
 | 🕸️ Cosmic Web | 10²⁴ m | 0 |
 | 🌌 Milky Way | 10²¹ m | 6 |
 | ☀️ Solar System | 10¹³ m | 12 |
-| 🌍 Earth | 10⁷ m | 19 |
-| 🗺️ Continent | 10⁶ m | 26 |
-| 🏙️ City | 10⁴ m | 34 |
-| 🐜 Ant | 10⁻³ m | 42 |
-| 🧫 Cell | 10⁻⁵ m | 51 |
-| 🦠 Virus | 10⁻⁷ m | 60 |
+| 🌍 Earth | 10⁷ m | 18 |
+| 🗺️ Continent | 10⁶ m | 24 |
+| 🏙️ City | 10⁴ m | 31 |
+| 🧍 Human | 10⁰ m | 38 |
+| 🐜 Ant | 10⁻³ m | 45 |
+| 🧫 Cell | 10⁻⁵ m | 53 |
+| 🦠 Virus | 10⁻⁷ m | 61 |
 | ⚛️ Atom | 10⁻¹⁰ m | 70 |
 | 💥 Nucleus | 10⁻¹⁵ m | 82 |
 
@@ -48,7 +49,7 @@ The end screen copies a result like this:
 
 ```
 SHRINKLE #1 · 🐜 Ant · 50 pts
-6/7 words · layer 7 of 11
+6/7 words · layer 8 of 12
 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩⬜ 11 ☀️
 🟩🟩🟩⬜⬜⬜⬜⬜⬜⬜ 3 🌍
 🟥 0 🗺️

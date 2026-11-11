@@ -1,6 +1,6 @@
 **Thread title:** Shrinkle
 
-**Theme:** Your answers literally shrink. Each word sets the next letter box at one letter shorter than what you typed, and your points pull you down through 11 layers of scale, from the Cosmic Web to an atomic nucleus.
+**Theme:** Your answers literally shrink. Each word sets the next letter box at one letter shorter than what you typed, and your points pull you down through 12 layers of scale, from the Cosmic Web to an atomic nucleus.
 
 **Controls:**
 - Click **Start shrinking** (or press Enter).

@@ -147,6 +147,7 @@ pre#share{text-align:left}
 <div class="sky" style="background:radial-gradient(ellipse at 50% 35%,#0e2c55 0%,#061229 50%,#01040b 100%)"></div>
 <div class="sky" style="background:linear-gradient(#123a5c 0%,#0d2a44 55%,#06121f 100%)"></div>
 <div class="sky" style="background:linear-gradient(#141a46 0%,#0c0f2c 55%,#05060f 100%)"></div>
+<div class="sky" style="background:radial-gradient(ellipse at 50% 30%,#2b3140 0%,#14171f 50%,#07080b 100%)"></div>
 <div class="sky" style="background:radial-gradient(ellipse at 50% 35%,#1d3b22 0%,#0b1a0e 50%,#030704 100%)"></div>
 <div class="sky" style="background:radial-gradient(ellipse at 50% 35%,#3a1036 0%,#170619 50%,#060107 100%)"></div>
 <div class="sky" style="background:radial-gradient(ellipse at 50% 35%,#0d3326 0%,#051a12 50%,#010604 100%)"></div>
@@ -178,7 +179,7 @@ pre#share{text-align:left}
 <div class="screen" id="scrTitle">
   <div class="panel">
     <div class="word" id="logo"></div>
-    <div class="tag">Name it to shrink it. <b>7 rounds.</b> Your points pull you down through <b>11 layers of scale</b>, from the Cosmic Web to an atomic nucleus.</div>
+    <div class="tag">Name it to shrink it. <b>7 rounds.</b> Your points pull you down through <b>12 layers of scale</b>, from the Cosmic Web to an atomic nucleus.</div>
     <ul class="steps">
       <li><span class="k">01</span><span>Each round gives you a <b>category</b> and a <b>letter box</b>. Type any answer that fits the box.</span></li>
       <li><span class="k">02</span><span><b>Your word sets the next box</b>: it's one letter shorter than what you typed. Long answers leave room. Short ones box you in.</span></li>
@@ -369,12 +370,13 @@ const LEVELS=[
   {name:'Cosmic Web',sc:'10²⁴ m',say:'a billion light-years of galaxies',em:'🕸️',at:0},
   {name:'Milky Way',sc:'10²¹ m',say:'100,000 light-years across',em:'🌌',at:6},
   {name:'Solar System',sc:'10¹³ m',say:'about 60 AU wide',em:'☀️',at:12},
-  {name:'Earth',sc:'10⁷ m',say:'12,742 km across',em:'🌍',at:19},
-  {name:'Continent',sc:'10⁶ m',say:'a thousand kilometers',em:'🗺️',at:26},
-  {name:'City',sc:'10⁴ m',say:'ten kilometers',em:'🏙️',at:34},
-  {name:'Ant',sc:'10⁻³ m',say:'3 millimeters',em:'🐜',at:42},
-  {name:'Cell',sc:'10⁻⁵ m',say:'10 micrometers',em:'🧫',at:51},
-  {name:'Virus',sc:'10⁻⁷ m',say:'100 nanometers',em:'🦠',at:60},
+  {name:'Earth',sc:'10⁷ m',say:'12,742 km across',em:'🌍',at:18},
+  {name:'Continent',sc:'10⁶ m',say:'a thousand kilometers',em:'🗺️',at:24},
+  {name:'City',sc:'10⁴ m',say:'ten kilometers',em:'🏙️',at:31},
+  {name:'Human',sc:'10⁰ m',say:'1.7 meters',em:'🧍',at:38},
+  {name:'Ant',sc:'10⁻³ m',say:'3 millimeters',em:'🐜',at:45},
+  {name:'Cell',sc:'10⁻⁵ m',say:'10 micrometers',em:'🧫',at:53},
+  {name:'Virus',sc:'10⁻⁷ m',say:'100 nanometers',em:'🦠',at:61},
   {name:'Atom',sc:'10⁻¹⁰ m',say:'0.1 nanometers',em:'⚛️',at:70},
   {name:'Nucleus',sc:'10⁻¹⁵ m',say:'one femtometer, the deepest layer',em:'💥',at:82},
 ];
@@ -519,6 +521,21 @@ function init3D(){
      const mn=glow(0xdfe8ff,3,0.6);mn.position.set(-4,5,-6);g.add(mn);
      g.rotation.x=0.5;g.rotation.y=0.6;g.position.y=-0.7;
      lv(g,(t,dt)=>{g.rotation.y+=dt*0.08;},{stars:true});}
+    // Human
+    {const g=new T.Group(),body=phong(0xe6e9f0,{shininess:30}),dark=phong(0x2a2f3d),acc=phong(0x7ce7ff);
+     const add=(geo,m,x,y,z,parent=g)=>{const o=new T.Mesh(geo,m);o.position.set(x,y,z);parent.add(o);return o;};
+     add(new T.CylinderGeometry(0.5,0.38,1.25,8),acc,0,0.45,0);
+     add(new T.IcosahedronGeometry(0.42,1),body,0,1.48,0);
+     add(new T.CylinderGeometry(0.13,0.15,0.22,6),body,0,1.13,0);
+     add(new T.CylinderGeometry(0.18,0.14,1.25,6),dark,-0.22,-0.82,0);add(new T.CylinderGeometry(0.18,0.14,1.25,6),dark,0.22,-0.82,0);
+     add(new T.BoxGeometry(0.3,0.14,0.48),dark,-0.22,-1.48,0.08);add(new T.BoxGeometry(0.3,0.14,0.48),dark,0.22,-1.48,0.08);
+     const la=new T.Object3D();la.position.set(-0.6,0.98,0);g.add(la);add(new T.CylinderGeometry(0.12,0.1,1.1,6),body,0,-0.55,0,la);la.rotation.z=-0.12;
+     const ra=new T.Object3D();ra.position.set(0.6,0.98,0);g.add(ra);add(new T.CylinderGeometry(0.12,0.1,1.1,6),body,0,-0.55,0,ra);
+     const disc=new T.Mesh(new T.CylinderGeometry(1.5,1.5,0.06,40),basic(0x7ce7ff,{transparent:true,opacity:0.18}));disc.position.y=-1.57;g.add(disc);
+     const ring=new T.Mesh(new T.TorusGeometry(1.5,0.02,6,64),basic(0x7ce7ff));ring.rotation.x=Math.PI/2;ring.position.y=-1.54;g.add(ring);
+     const sp=glow(0xffffff,6,0.18);sp.position.set(0,0.2,-1);g.add(sp);
+     g.position.y=-0.15;
+     lv(g,(t,dt)=>{ra.rotation.z=2.5+Math.sin(t*5)*0.35;g.rotation.y=Math.sin(t*0.6)*0.6;});}
     // 6 Ant on a leaf
     {const g=new T.Group(),shell=phong(0x5a2418,{shininess:80,specular:0x553322}),leg=phong(0x2a120c);
      const ls=new T.Shape();ls.moveTo(-3.6,0);ls.quadraticCurveTo(-1,2.3,3.6,0);ls.quadraticCurveTo(-1,-2.3,-3.6,0);
