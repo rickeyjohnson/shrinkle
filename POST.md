@@ -1,11 +1,11 @@
 **Thread title:** Shrinkle
 
-**Theme:** You only shrink by answering. Every right answer takes you one scale smaller (Milky Way → Solar System → Earth → … → Ant → Cell → DNA → Atom), and the letter box loses a letter each time, so your answers have to keep shrinking too.
+**Theme:** Your answers literally shrink. Each word sets the next letter box at one letter shorter than what you typed, and your points pull you down through 11 layers of scale, from the Cosmic Web to an atomic nucleus.
 
 **Controls:**
 - Click **Start today's dive** (or press Enter).
-- Type your answer (spaces don't count), press **Enter** to submit, and **Backspace** to delete.
-- **Esc** or the **pass** button skips a category, but it costs one of your 3 lives and you don't shrink.
-- Get 9 right answers to reach the atom (the win screen). That usually takes 1–3 minutes.
+- Type your answer (spaces don't count), press **Enter** to submit, and **Backspace** to delete. On a phone, tap the box to type.
+- **Esc** or the **skip** button skips a round: 0 points, and you stay on your layer.
+- 7 rounds × 20 seconds, then the "Dive complete" screen (under 3 minutes).
 
-**How it plays:** Each scale gives you a category (5,200 possible, like "Dog breeds", "Fast food chains ending in S", "North American countries") and 20 seconds. Points = letters × (10 + seconds left). Everyone gets the same daily dive, so copy your result and compare block funnels.
+**How it plays:** Each round gives you a category (5,200 possible, like "Vegetables", "Fast food chains", "Animals starting with L"). Points = letters + up to 4 for speed, and every point threshold is a deeper layer, so a big round can skip layers. Long answers score more but short ones box you in. Everyone gets the same daily dive, so copy your result and compare.

@@ -26,7 +26,7 @@ html,body{height:100%;margin:0;overflow:hidden;background:#05060b;color:var(--fg
 #flash.go{animation:flash .9s ease-out}
 @keyframes flash{0%{opacity:0}25%{opacity:1}100%{opacity:0}}
 
-#hud{position:fixed;inset:0;padding-block:max(18px,env(safe-area-inset-top,0px)) max(18px,env(safe-area-inset-bottom,0px));
+#hud{position:fixed;left:0;right:0;top:0;height:var(--vvh,100%);padding-block:max(18px,env(safe-area-inset-top,0px)) max(18px,env(safe-area-inset-bottom,0px));
   padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px));display:flex;flex-direction:column}
 #top{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px}
 #stats{justify-self:end}
@@ -39,7 +39,7 @@ html,body{height:100%;margin:0;overflow:hidden;background:#05060b;color:var(--fg
 #lives i.gone{background:transparent;box-shadow:none;outline:1.5px solid var(--faint)}
 
 #meter{position:fixed;left:max(22px,env(safe-area-inset-left,0px));top:50%;transform:translateY(-50%);list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:0}
-#meter li{position:relative;display:flex;align-items:center;gap:12px;height:clamp(28px,5.2vh,46px);font-size:12px;color:var(--mute)}
+#meter li{position:relative;display:flex;align-items:center;gap:12px;height:clamp(24px,4.4vh,40px);font-size:12px;color:var(--mute)}
 #meter li::before{content:"";position:absolute;left:4.5px;top:50%;height:100%;width:1px;background:var(--faint)}
 #meter li:last-child::before{display:none}
 #meter .dot{position:relative;width:10px;height:10px;border-radius:50%;border:1.5px solid rgba(243,245,250,.35);background:#05060b;flex:none;transition:all .4s}
@@ -111,6 +111,22 @@ html,body{height:100%;margin:0;overflow:hidden;background:#05060b;color:var(--fg
 .recap .x{color:var(--red)}
 pre#share{margin:0;font-family:var(--mono);font-size:13.5px;line-height:1.6;color:var(--fg);background:rgba(255,255,255,.06);border:1px solid var(--faint);border-radius:12px;padding:10px 16px;white-space:pre-wrap;user-select:all;width:100%;max-width:440px}
 #kb{position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;border:0;padding:0;font-size:16px}
+#scaleRead .nx{font-family:var(--mono);font-size:11px;color:var(--cyan);margin-top:3px;letter-spacing:.04em}
+#stats .rd b{font-size:15px}
+pre#share{text-align:left}
+.screen{align-items:flex-start}.panel{margin:auto}
+@media (max-width:820px){
+  #meter{left:50%;top:calc(max(18px,env(safe-area-inset-top,0px)) + 64px);transform:translateX(-50%);flex-direction:row;gap:9px}
+  #meter li{height:auto}#meter li::before{display:none}#meter .lab,#meter li.cur .lab{display:none!important}
+  #meter .dot{width:8px;height:8px}#meter li.cur .dot{width:12px;height:12px;margin:0}
+}
+@media (max-width:560px){
+  .mark{font-size:12px;letter-spacing:.16em}#stats{gap:12px;font-size:11px}#stats .rd{display:none}
+  #scaleRead .v{font-size:15px}#scaleRead .n{font-size:10px}#scaleRead .nx{display:none}
+  #play{padding-bottom:8px;gap:9px}#prompt{font-size:23px}#info{font-size:11px;gap:10px}#toast{font-size:15px}
+  .panel{padding:22px 18px;gap:12px}.steps li{font-size:13.5px;grid-template-columns:22px 1fr;gap:8px}.tag{font-size:15px}
+  .recap div{grid-template-columns:70px 1fr auto}.big{font-size:34px}pre#share{font-size:12px}
+}
 [hidden]{display:none!important}
 @media (max-width:820px){#meter .lab{display:none}#meter li.cur .lab{display:none}.mark small{display:none}}
 @media (max-height:780px){#meter li{height:clamp(22px,4vh,34px)}#prompt{font-size:clamp(22px,3vw,34px)}.panel{gap:11px;padding:22px 24px}.steps li{font-size:14px}.word span{transform:scale(.85)}.tag{font-size:15.5px}#play{gap:10px}}
@@ -118,16 +134,17 @@ pre#share{margin:0;font-family:var(--mono);font-size:13.5px;line-height:1.6;colo
 </style>
 </head>
 <body>
+<div class="sky" style="background:radial-gradient(ellipse at 50% 35%,#1d0f36 0%,#08041a 50%,#010104 100%)"></div>
 <div class="sky" style="background:radial-gradient(ellipse at 50% 35%,#24124a 0%,#0b0620 45%,#020107 100%)"></div>
 <div class="sky" style="background:radial-gradient(ellipse at 50% 35%,#1a1840 0%,#080a1e 45%,#010206 100%)"></div>
 <div class="sky" style="background:radial-gradient(ellipse at 50% 35%,#0e2c55 0%,#061229 50%,#01040b 100%)"></div>
 <div class="sky" style="background:linear-gradient(#123a5c 0%,#0d2a44 55%,#06121f 100%)"></div>
 <div class="sky" style="background:linear-gradient(#141a46 0%,#0c0f2c 55%,#05060f 100%)"></div>
-<div class="sky" style="background:radial-gradient(ellipse at 50% 30%,#2b3140 0%,#14171f 50%,#07080b 100%)"></div>
 <div class="sky" style="background:radial-gradient(ellipse at 50% 35%,#1d3b22 0%,#0b1a0e 50%,#030704 100%)"></div>
 <div class="sky" style="background:radial-gradient(ellipse at 50% 35%,#3a1036 0%,#170619 50%,#060107 100%)"></div>
-<div class="sky" style="background:radial-gradient(ellipse at 50% 35%,#0c2d4a 0%,#06142a 50%,#01040a 100%)"></div>
+<div class="sky" style="background:radial-gradient(ellipse at 50% 35%,#0d3326 0%,#051a12 50%,#010604 100%)"></div>
 <div class="sky" style="background:radial-gradient(ellipse at 50% 35%,#0b3a40 0%,#03161a 50%,#000405 100%)"></div>
+<div class="sky" style="background:radial-gradient(ellipse at 50% 35%,#3a1d06 0%,#160a02 50%,#030100 100%)"></div>
 <canvas id="bg"></canvas>
 <div id="vig"></div>
 <div id="flash"></div>
@@ -135,15 +152,15 @@ pre#share{margin:0;font-family:var(--mono);font-size:13.5px;line-height:1.6;colo
 <div id="hud" hidden>
   <div id="top">
     <div class="mark">SHRINKLE<small id="modeLbl">DAILY #1</small></div>
-    <div id="scaleRead"><div class="n" id="lvlName">Milky Way</div><div class="v" id="lvlScale">10²¹ m</div></div>
-    <div id="stats"><div id="lives"><i></i><i></i><i></i></div><div>SCORE <b id="score">0</b></div></div>
+    <div id="scaleRead"><div class="n" id="lvlName">Cosmic Web</div><div class="v" id="lvlScale">10²⁴ m</div><div class="nx" id="next"></div></div>
+    <div id="stats"><div class="rd">ROUND <b id="roundLbl">1/7</b></div><div>SCORE <b id="score">0</b></div></div>
   </div>
   <div id="play">
     <div id="ask">Name one of these</div>
     <div id="prompt">Countries</div>
     <div id="tiles"></div>
     <div id="bar"><div id="barFill"></div></div>
-    <div id="info"><span id="fit"></span><span>↵ submit</span><button class="ghost" id="btnPass" type="button">pass · costs a life</button></div>
+    <div id="info"><span id="fit"></span><span>↵ submit</span><button class="ghost" id="btnPass" type="button">skip · 0 pts</button></div>
     <div id="toast"></div>
   </div>
 </div>
@@ -154,12 +171,12 @@ pre#share{margin:0;font-family:var(--mono);font-size:13.5px;line-height:1.6;colo
 <div class="screen" id="scrTitle">
   <div class="panel">
     <div class="word" id="logo"></div>
-    <div class="tag">Name it to shrink it. Every right answer takes you <b>one scale smaller</b>, from the Milky Way down to an atom.</div>
+    <div class="tag">Name it to shrink it. <b>7 rounds.</b> Your points pull you down through <b>11 layers of scale</b>, from the Cosmic Web to an atomic nucleus.</div>
     <ul class="steps">
-      <li><span class="k">01</span><span>Each scale gives you a <b>category</b> and a <b>letter box</b>. Type any answer that fits the box.</span></li>
-      <li><span class="k">02</span><span><b>The box shrinks by one letter</b> every scale, so the answers have to keep getting shorter.</span></li>
-      <li><span class="k">03</span><span>You get <b>20 seconds</b> per category. Running out of time or passing costs one of your <b>3 lives</b>, and you don't shrink.</span></li>
-      <li><span class="k">04</span><span>Points = letters × (10 + seconds left). Fill the whole box and answer fast for the best score.</span></li>
+      <li><span class="k">01</span><span>Each round gives you a <b>category</b> and a <b>letter box</b>. Type any answer that fits the box.</span></li>
+      <li><span class="k">02</span><span><b>Your word sets the next box</b>: it's one letter shorter than what you typed. Long answers leave room. Short ones box you in.</span></li>
+      <li><span class="k">03</span><span>Points = <b>letters + up to 4 for speed</b>. Every point threshold is a deeper layer, and a big round can skip layers.</span></li>
+      <li><span class="k">04</span><span><b>20 seconds</b> per round. If you skip or run out of time, you score 0 and stay on your layer.</span></li>
     </ul>
     <div class="btns"><button class="btn" id="btnDaily" type="button">Start today's dive</button><button class="btn sec" id="btnPractice" type="button">Practice</button></div>
     <div class="foot" id="catCount"></div>
@@ -331,45 +348,42 @@ POOLS.forEach(genPool);
 
 /* ============================== DIVE ============================== */
 const LEVELS=[
-  {name:'Milky Way',sc:'10²¹ m',say:'100,000 light-years across'},
-  {name:'Solar System',sc:'10¹³ m',say:'about 60 AU wide'},
-  {name:'Earth',sc:'10⁷ m',say:'12,742 km across'},
-  {name:'Continent',sc:'10⁶ m',say:'a thousand kilometers'},
-  {name:'City',sc:'10⁴ m',say:'ten kilometers'},
-  {name:'Human',sc:'10⁰ m',say:'1.7 meters'},
-  {name:'Ant',sc:'10⁻³ m',say:'3 millimeters'},
-  {name:'Cell',sc:'10⁻⁵ m',say:'10 micrometers'},
-  {name:'DNA',sc:'10⁻⁹ m',say:'2 nanometers wide'},
-  {name:'Atom',sc:'10⁻¹⁰ m',say:'0.1 nanometers'},
+  {name:'Cosmic Web',sc:'10²⁴ m',say:'a billion light-years of galaxies',em:'🕸️',at:0},
+  {name:'Milky Way',sc:'10²¹ m',say:'100,000 light-years across',em:'🌌',at:6},
+  {name:'Solar System',sc:'10¹³ m',say:'about 60 AU wide',em:'☀️',at:12},
+  {name:'Earth',sc:'10⁷ m',say:'12,742 km across',em:'🌍',at:19},
+  {name:'Continent',sc:'10⁶ m',say:'a thousand kilometers',em:'🗺️',at:26},
+  {name:'City',sc:'10⁴ m',say:'ten kilometers',em:'🏙️',at:34},
+  {name:'Ant',sc:'10⁻³ m',say:'3 millimeters',em:'🐜',at:42},
+  {name:'Cell',sc:'10⁻⁵ m',say:'10 micrometers',em:'🧫',at:51},
+  {name:'Virus',sc:'10⁻⁷ m',say:'100 nanometers',em:'🦠',at:60},
+  {name:'Atom',sc:'10⁻¹⁰ m',say:'0.1 nanometers',em:'⚛️',at:70},
+  {name:'Nucleus',sc:'10⁻¹⁵ m',say:'one femtometer, the deepest layer',em:'💥',at:82},
 ];
-const STEPS=LEVELS.length-1;              // 9 right answers reach the atom
-const CAP=i=>12-i;                         // letter box: 12, 11, ... 4
-const TIME=20, LIVES=3, PICKS=6;
+const ROUNDS=7, TIME=20, BOX0=12, MINBOX=3;
+const layerFor=sc=>{let i=0;LEVELS.forEach((l,k)=>{if(sc>=l.at)i=k;});return i;};
 function hashStr(s){let h=2166136261>>>0;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
 function rng32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
 function todayKey(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function dailyNum(){const d=new Date();return Math.floor((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())-Date.UTC(2026,10,11))/864e5)+1;}
-function makeDive(seed){
-  const rng=rng32(seed), out=[]; let recent=new Set();
-  for(let i=0;i<STEPS;i++){
-    const cap=CAP(i), picks=[], here=new Set(), need=cap>=9?10:7;
-    for(let k=0;k<PICKS;k++){
-      const byList=new Map();
-      for(const c of CATS){
-        if(here.has(c.list.id)||recent.has(c.list.id)||c.cum[cap]<need||!c.byLen[cap]) continue;
-        if(c.w<1) continue;
-        if(!byList.has(c.list.id)) byList.set(c.list.id,[]);
-        byList.get(c.list.id).push(c);
-      }
-      if(!byList.size) break;
-      const keys=[...byList.keys()], cand=byList.get(keys[Math.floor(rng()*keys.length)]);
-      let tw=0; cand.forEach(c=>tw+=c.w); let r=rng()*tw, pick=cand[cand.length-1];
-      for(const c of cand){r-=c.w;if(r<=0){pick=c;break;}}
-      picks.push(pick); here.add(pick.list.id);
+// Same date + round + box size => same category for everyone (lists already used this game are skipped)
+function pickCat(base,round,box,usedLists){
+  const rng=rng32(hashStr(base+'|'+round+'|'+box));
+  for(const need of [box>=8?10:box>=5?6:4,3]){
+    const byList=new Map();
+    for(const c of CATS){
+      if(usedLists.has(c.list.id)||c.cum[box]<need||c.w<1) continue;
+      if(round===0&&!c.whole) continue;
+      if(!byList.has(c.list.id)) byList.set(c.list.id,[]);
+      byList.get(c.list.id).push(c);
     }
-    out.push(picks); recent=new Set([picks[0]&&picks[0].list.id]);
+    if(!byList.size) continue;
+    const keys=[...byList.keys()].sort(), cand=byList.get(keys[Math.floor(rng()*keys.length)]);
+    let tw=0; cand.forEach(c=>tw+=c.w); let r=rng()*tw;
+    for(const c of cand){r-=c.w;if(r<=0)return c;}
+    return cand[cand.length-1];
   }
-  return out;
+  return CATS.find(c=>c.whole&&c.cum[box]>=3)||CATS[0];
 }
 const catSet=c=>c._set||(c._set=new Set(c.words));
 const fitCount=(c,cap)=>c.cum[Math.max(0,Math.min(40,cap))];
@@ -418,6 +432,12 @@ function init3D(){
     const holder=new T.Group(); holder.position.y=1.15; scene.add(holder);
     const L=[];
     const lv=(g,up,o={})=>{L.push(Object.assign({g,up},o));};
+    // Cosmic Web
+    {const g=new T.Group(),nodes=[],arr=[];for(let i=0;i<26;i++)nodes.push(new T.Vector3((Math.random()-0.5)*10,(Math.random()-0.5)*5,(Math.random()-0.5)*7));
+     nodes.forEach((a,i)=>{nodes.map((b,j)=>[a.distanceTo(b),j]).filter(x=>x[1]!==i).sort((p,q)=>p[0]-q[0]).slice(0,2).forEach(([d,j])=>{const b=nodes[j];for(let k=0;k<90;k++){const t=Math.random(),j2=0.28;arr.push([a.x+(b.x-a.x)*t+(Math.random()-0.5)*j2,a.y+(b.y-a.y)*t+(Math.random()-0.5)*j2,a.z+(b.z-a.z)*t+(Math.random()-0.5)*j2]);}});});
+     g.add(pts(arr.length,(i,c)=>{c.setHSL(0.62+Math.random()*0.2,0.7,0.62);return arr[i];},0.08,0.75));
+     nodes.forEach(n=>{const sp=glow(Math.random()<0.5?0xffc6f0:0xbfd8ff,0.8+Math.random()*0.9,0.85);sp.position.copy(n);g.add(sp);});
+     lv(g,(t,dt)=>{g.rotation.y+=dt*0.05;g.rotation.x=Math.sin(t*0.1)*0.12;},{stars:true});}
     // 0 Milky Way
     {const g=new T.Group();
      g.add(pts(9000,(i,c)=>{const arm=i%2,r=Math.pow(Math.random(),0.6)*5.4,a=r*1.05+arm*Math.PI+(Math.random()-0.5)*(0.9-r*0.08),sp=0.32*(1-r/6);
@@ -481,21 +501,6 @@ function init3D(){
      const mn=glow(0xdfe8ff,3,0.6);mn.position.set(-4,5,-6);g.add(mn);
      g.rotation.x=0.5;g.rotation.y=0.6;g.position.y=-0.7;
      lv(g,(t,dt)=>{g.rotation.y+=dt*0.08;},{stars:true});}
-    // 5 Human
-    {const g=new T.Group(),body=phong(0xe6e9f0,{shininess:30}),dark=phong(0x2a2f3d),acc=phong(0x7ce7ff);
-     const add=(geo,m,x,y,z,parent=g)=>{const o=new T.Mesh(geo,m);o.position.set(x,y,z);parent.add(o);return o;};
-     add(new T.CylinderGeometry(0.5,0.38,1.25,8),acc,0,0.45,0);
-     add(new T.IcosahedronGeometry(0.42,1),body,0,1.48,0);
-     add(new T.CylinderGeometry(0.13,0.15,0.22,6),body,0,1.13,0);
-     add(new T.CylinderGeometry(0.18,0.14,1.25,6),dark,-0.22,-0.82,0);add(new T.CylinderGeometry(0.18,0.14,1.25,6),dark,0.22,-0.82,0);
-     add(new T.BoxGeometry(0.3,0.14,0.48),dark,-0.22,-1.48,0.08);add(new T.BoxGeometry(0.3,0.14,0.48),dark,0.22,-1.48,0.08);
-     const la=new T.Object3D();la.position.set(-0.6,0.98,0);g.add(la);add(new T.CylinderGeometry(0.12,0.1,1.1,6),body,0,-0.55,0,la);la.rotation.z=-0.12;
-     const ra=new T.Object3D();ra.position.set(0.6,0.98,0);g.add(ra);add(new T.CylinderGeometry(0.12,0.1,1.1,6),body,0,-0.55,0,ra);
-     const disc=new T.Mesh(new T.CylinderGeometry(1.5,1.5,0.06,40),basic(0x7ce7ff,{transparent:true,opacity:0.18}));disc.position.y=-1.57;g.add(disc);
-     const ring=new T.Mesh(new T.TorusGeometry(1.5,0.02,6,64),basic(0x7ce7ff));ring.rotation.x=Math.PI/2;ring.position.y=-1.54;g.add(ring);
-     const sp=glow(0xffffff,6,0.18);sp.position.set(0,0.2,-1);g.add(sp);
-     g.position.y=-0.15;
-     lv(g,(t,dt)=>{ra.rotation.z=2.5+Math.sin(t*5)*0.35;g.rotation.y=Math.sin(t*0.6)*0.6;});}
     // 6 Ant on a leaf
     {const g=new T.Group(),shell=phong(0x5a2418,{shininess:80,specular:0x553322}),leg=phong(0x2a120c);
      const ls=new T.Shape();ls.moveTo(-3.6,0);ls.quadraticCurveTo(-1,2.3,3.6,0);ls.quadraticCurveTo(-1,-2.3,-3.6,0);
@@ -522,14 +527,14 @@ function init3D(){
      orgs.add(pts(160,(i,c)=>{c.set(0xfff1c2);const v=new T.Vector3(Math.random()-0.5,Math.random()-0.5,Math.random()-0.5).normalize().multiplyScalar(1+Math.random()*1.2);return[v.x,v.y,v.z];},0.09,0.9));
      g.add(glow(0xff6fb5,7,0.3));
      lv(g,(t,dt)=>{g.rotation.y+=dt*0.15;g.rotation.x=Math.sin(t*0.3)*0.2;orgs.rotation.y-=dt*0.1;nuc.scale.setScalar(1+Math.sin(t*1.5)*0.02);});}
-    // 8 DNA
-    {const g=new T.Group(),up=new T.Vector3(0,1,0),baseC=[0xff7a7a,0xffd27a,0x7cf3a5,0x7ca6ff];const sA=phong(0x7ce7ff,{shininess:80}),sB=phong(0xc7a6ff,{shininess:80});
-     for(let i=0;i<44;i++){const t=i*0.34,y=(i-22)*0.15,a=new T.Vector3(Math.cos(t)*1.05,y,Math.sin(t)*1.05),b=new T.Vector3(Math.cos(t+Math.PI)*1.05,y,Math.sin(t+Math.PI)*1.05);
-       const ma=ico(0.12,1,sA);ma.position.copy(a);g.add(ma);const mb=ico(0.12,1,sB);mb.position.copy(b);g.add(mb);
-       if(i%2===0){const ci=(i*7)%4;[[a,baseC[ci]],[b,baseC[3-ci]]].forEach(([p,col])=>{const mid=new T.Vector3().addVectors(p,new T.Vector3(0,y,0)).multiplyScalar(0.5);const dir=new T.Vector3(0,y,0).sub(p);
-         const cy=new T.Mesh(new T.CylinderGeometry(0.045,0.045,dir.length(),6),phong(col));cy.position.copy(mid);cy.quaternion.setFromUnitVectors(up,dir.clone().normalize());g.add(cy);});}}
-     g.add(glow(0x5fa8ff,6,0.25));g.rotation.z=0.5;
-     lv(g,(t,dt)=>{g.rotation.y+=dt*0.45;});}
+    // Virus
+    {const g=new T.Group(),up=new T.Vector3(0,1,0);g.add(ico(1.3,1,phong(0x3fc79a,{shininess:60})));
+     const geo=new T.IcosahedronGeometry(1.3,1),pos=geo.attributes.position,seen=new Set();
+     for(let i=0;i<pos.count;i++){const v=new T.Vector3(pos.getX(i),pos.getY(i),pos.getZ(i)),k=v.toArray().map(x=>x.toFixed(2)).join();if(seen.has(k))continue;seen.add(k);
+       const dir=v.clone().normalize(),st=new T.Mesh(new T.CylinderGeometry(0.035,0.05,0.7,5),phong(0xc7f9e8));st.position.copy(dir.clone().multiplyScalar(1.6));st.quaternion.setFromUnitVectors(up,dir);g.add(st);
+       const tip=ico(0.12,1,phong(0xff7a9a,{shininess:90}));tip.position.copy(dir.clone().multiplyScalar(1.98));g.add(tip);}
+     g.add(glow(0x4fd1a5,6.5,0.3));
+     lv(g,(t,dt)=>{g.rotation.y+=dt*0.3;g.rotation.x+=dt*0.12;});}
     // 9 Atom
     {const g=new T.Group(),nuc=new T.Group();for(let i=0;i<16;i++){const m=ico(0.27,1,phong(i%2?0xff6b6b:0x6bb8ff,{shininess:90}));m.position.copy(new T.Vector3(Math.random()-0.5,Math.random()-0.5,Math.random()-0.5).normalize().multiplyScalar(Math.random()*0.4));nuc.add(m);}
      g.add(nuc);g.add(glow(0xffe0b0,2.6,0.55));
@@ -538,6 +543,13 @@ function init3D(){
        const e=new T.Group();e.add(ico(0.1,1,basic(0xffffff)));e.add(glow(0x7ce7ff,0.9,1));p.add(e);g.add(p);rs.push([e,i*2.1,1.5+i*0.45]);}
      g.add(pts(500,(i,c)=>{c.setHSL(0.52,0.8,0.7);const v=new T.Vector3(Math.random()-0.5,Math.random()-0.5,Math.random()-0.5).normalize().multiplyScalar(1.2+Math.random()*1.6);return[v.x,v.y,v.z];},0.05,0.35));
      lv(g,(t,dt)=>{nuc.rotation.y+=dt*0.5;nuc.rotation.x+=dt*0.25;rs.forEach(([e,o,s])=>{const a=t*s+o;e.position.set(Math.cos(a)*2.4,Math.sin(a)*2.4,0);});g.rotation.y+=dt*0.12;},{stars:true});}
+    // Nucleus
+    {const g=new T.Group();g.add(new T.Mesh(new T.IcosahedronGeometry(2,2),phong(0xffd9a8,{transparent:true,opacity:0.07,depthWrite:false,side:T.DoubleSide})));
+     const qs=[[0xff4d6d,0],[0x4dff9a,2.094],[0x4d8bff,4.188]].map(([c,a])=>{const q=new T.Group();q.add(ico(0.3,2,basic(c)));q.add(glow(c,2.3,0.9));q.userData.a=a;g.add(q);return q;});
+     const line=new T.Line(new T.BufferGeometry(),new T.LineBasicMaterial({color:0xffe08a,transparent:true,opacity:0.85}));g.add(line);g.add(glow(0xffb070,6,0.22));
+     lv(g,(t,dt)=>{qs.forEach(q=>{const a=q.userData.a+t*0.8;q.position.set(Math.cos(a)*0.95,Math.sin(t*1.3+q.userData.a)*0.45,Math.sin(a)*0.95);});
+       const P=[];for(let k=0;k<3;k++){const A=qs[k].position,B=qs[(k+1)%3].position;for(let m=0;m<=28;m++){const u=m/28,w=Math.sin(u*Math.PI*8+t*10)*0.09*Math.sin(u*Math.PI);P.push(new T.Vector3(A.x+(B.x-A.x)*u+w,A.y+(B.y-A.y)*u+w,A.z+(B.z-A.z)*u-w));}}
+       line.geometry.setFromPoints(P);g.rotation.y+=dt*0.2;});}
     L.forEach((l,i)=>{l.g.visible=i===0;holder.add(l.g);});
     R={renderer,scene,cam,L,stars,cur:0,trans:null,t:0};
     const resize=()=>{const w=innerWidth,h=innerHeight;renderer.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();R.baseZ=w/h<1?14:10;};
@@ -569,109 +581,113 @@ let G=null;
 function store(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v);}catch(e){return null;}}
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const kb=$('kb');
+const touch=matchMedia('(pointer:coarse)').matches;
 function focusKb(){try{kb.focus({preventScroll:true});}catch(e){}}
 
 function renderMeter(){
-  let h='';LEVELS.forEach((l,i)=>{const cls=!G?'':i<G.lvl?'done':i===G.lvl?'cur':'';h+=`<li class="${cls}"><span class="dot"></span><span class="lab"><b>${l.name}</b><span>${l.sc}</span></span></li>`;});
+  const cur=G?G.layer:0;let h='';
+  LEVELS.forEach((l,i)=>{const cls=i<cur?'done':i===cur?'cur':'';h+=`<li class="${cls}" title="${l.name}"><span class="dot"></span><span class="lab"><b>${l.name}</b><span>${l.sc} · ${l.at} pts</span></span></li>`;});
   $('meter').innerHTML=h;
 }
-function renderLives(){$('lives').innerHTML=Array.from({length:LIVES},(_,i)=>`<i class="${i<G.lives?'':'gone'}"></i>`).join('');}
+function renderTop(){
+  const l=LEVELS[G.layer],nx=LEVELS[G.layer+1];
+  $('lvlName').textContent=l.name;$('lvlScale').textContent=l.sc;
+  $('next').textContent=nx?`${nx.at-G.score} pts to ${nx.name}`:'deepest layer';
+  $('score').textContent=G.score;$('roundLbl').textContent=`${Math.min(G.round+1,ROUNDS)}/${ROUNDS}`;
+  renderMeter();
+}
 function startRun(mode){
   ac();
-  const seed=mode==='daily'?hashStr('shrinkle2:'+todayKey()):(Math.random()*4294967296)>>>0;
-  G={mode,dive:makeDive(seed),lvl:0,tries:0,lives:LIVES,score:0,hist:[],buf:'',state:'intro',t:TIME,t0:0,lastTick:99};
+  const base=mode==='daily'?'shrinkle3:'+todayKey():'practice:'+Math.random();
+  G={mode,base,round:0,box:BOX0,score:0,layer:0,hist:[],used:new Set(),usedLists:new Set(),buf:'',state:'intro',t:TIME,t0:0,lastTick:99,cat:null};
   $('scrTitle').hidden=true;$('scrEnd').hidden=true;$('hud').hidden=false;$('meter').hidden=false;
   $('modeLbl').textContent=mode==='daily'?`DAILY #${dailyNum()}`:'PRACTICE';
-  $('score').textContent='0';renderLives();
-  zoomTo(0);enterLevel(true);
+  zoomTo(0);renderTop();
+  banner('DIVE START',LEVELS[0].name,`${LEVELS[0].sc} · ${LEVELS[0].say}`);
+  if(touch)focusKb();
+  ask(1450);
 }
-function enterLevel(first){
-  const l=LEVELS[G.lvl];
-  $('lvlName').textContent=l.name;$('lvlScale').textContent=l.sc;renderMeter();
-  banner(first?'START':'SHRANK TO',l.name,`${l.sc} · ${l.say}`);
-  ask(first?1450:1600);
-}
-function cat(){const p=G.dive[G.lvl];return p[G.tries%p.length];}
-function cap(){return CAP(G.lvl);}
 function ask(delay){
-  const c=cat();G.buf='';G.state='intro';G.t=TIME;kb.value='';
-  $('play').classList.add('intro');
-  $('prompt').textContent=c.label;
-  renderTiles();renderInfo();renderTimer();
-  setTimeout(()=>{if(!G||G.state!=='intro')return;$('play').classList.remove('intro');G.state='play';G.t0=performance.now();G.lastTick=99;focusKb();renderTiles();toast('');},delay);
+  G.cat=pickCat(G.base,G.round,G.box,G.usedLists);
+  G.buf='';G.state='intro';G.t=TIME;kb.value='';
+  $('play').classList.add('intro');$('prompt').textContent=G.cat.label;
+  renderTiles();renderInfo();renderTimer();renderTop();toast('');
+  setTimeout(()=>{if(!G||G.state!=='intro')return;$('play').classList.remove('intro');G.state='play';G.t0=performance.now();G.lastTick=99;focusKb();renderTiles();
+    if(touch&&document.activeElement!==kb)toast('Tap the box to type');},delay);
 }
 function submit(){
   if(!G||G.state!=='play')return;
-  const c=cat(),w=G.buf,list=c.list;if(!w)return;
+  const c=G.cat,w=G.buf,list=c.list;if(!w)return;
   const idx=list.map[w];
   if(idx===undefined)return fail(`${w.toUpperCase()} isn't on our ${list.one} list`);
   const it=list.items[idx];
   if(!catSet(c).has(w))return fail(`${it.d} doesn't fit this category`);
-  const secs=Math.ceil(G.t),perfect=w.length===cap();
-  const pts=w.length*(10+secs);
-  G.score+=pts;G.state='gap';kb.value='';
-  G.hist.push({lvl:G.lvl,ok:true,word:it.d,len:w.length,pts,perfect,cat:c.label});
-  $('score').textContent=G.score.toLocaleString();
-  toast(perfect?`Perfect fit · ${it.d}`:it.d,'good');
-  sfx.good();fly(`+${pts}`,'#7ce7ff');
+  if(G.used.has(list.id+':'+idx))return fail('Already used this game');
+  const secs=Math.ceil(G.t),bonus=Math.min(4,Math.floor(secs/5)),pts=w.length+bonus,before=G.layer;
+  G.score+=pts;G.layer=layerFor(G.score);G.used.add(list.id+':'+idx);G.usedLists.add(list.id);G.state='gap';kb.value='';
+  G.hist.push({ok:true,word:it.d,len:w.length,box:G.box,pts,bonus,layer:G.layer});
+  G.box=Math.max(MINBOX,w.length-1);
+  $('score').textContent=G.score;
+  toast(`${it.d} · ${w.length} letters${bonus?` + ${bonus} speed`:''}`,'good');sfx.good();fly(`+${pts}`,'#7ce7ff');
   document.querySelectorAll('#tiles .t').forEach(t=>t.classList.add('full'));
-  setTimeout(()=>{
-    G.lvl++;G.tries=0;
-    if(G.lvl>=STEPS){zoomTo(STEPS);sfx.zoom();G.state='done';renderMeter();$('lvlName').textContent=LEVELS[STEPS].name;$('lvlScale').textContent=LEVELS[STEPS].sc;$('play').classList.add('intro');
-      banner('YOU REACHED','The atom',`${LEVELS[STEPS].sc} · ${LEVELS[STEPS].say}`);setTimeout(()=>finish(true),2100);return;}
-    zoomTo(G.lvl);sfx.zoom();enterLevel(false);
-  },800);
+  setTimeout(()=>advance(before),850);
 }
-function fail(msg){toast(msg,'bad');sfx.bad();const t=$('tiles');t.classList.remove('shake');void t.offsetWidth;t.classList.add('shake');}
 function miss(why){
   if(!G||G.state!=='play')return;
-  G.state='gap';G.lives--;renderLives();sfx.lose();
-  G.hist.push({lvl:G.lvl,ok:false,why,cat:cat().label});
-  if(G.lives<=0){toast(why==='time'?"Time's up. Out of lives.":'Out of lives.','bad');setTimeout(()=>finish(false),1300);return;}
-  toast(`${why==='time'?"Time's up":'Passed'} · no shrink · new category`,'bad');
-  G.tries++;setTimeout(()=>ask(500),1100);
+  G.state='gap';sfx.bad();G.usedLists.add(G.cat.list.id);
+  G.hist.push({ok:false,why,box:G.box,pts:0,layer:G.layer});
+  toast(`${why==='time'?"Time's up":'Skipped'} · 0 points · you stay at ${LEVELS[G.layer].name}`,'bad');
+  setTimeout(()=>advance(G.layer),1100);
 }
+function advance(before){
+  G.round++;
+  const d=G.layer-before;
+  if(d>0){zoomTo(G.layer);sfx.zoom();banner(d>1?`SKIPPED ${d-1} LAYER${d>2?'S':''} · SHRANK TO`:'SHRANK TO',LEVELS[G.layer].name,`${LEVELS[G.layer].sc} · ${LEVELS[G.layer].say}`);}
+  if(G.round>=ROUNDS){G.state='done';renderTop();$('play').classList.add('intro');setTimeout(finish,d>0?1800:500);return;}
+  ask(d>0?1600:650);
+}
+function fail(msg){toast(msg,'bad');sfx.bad();const t=$('tiles');t.classList.remove('shake');void t.offsetWidth;t.classList.add('shake');}
 function renderTiles(){
-  const n=Math.max(1,cap()),el=$('tiles');
-  const avail=Math.min(720,innerWidth-40);
-  const ts=Math.max(20,Math.min(58,Math.floor((avail-6*(n-1))/n)));
-  el.style.setProperty('--ts',ts+'px');$('bar').style.setProperty('--bw',(n*ts+6*(n-1))+'px');
+  const n=Math.max(1,G.box),el=$('tiles'),gap=innerWidth<520?4:6;
+  const avail=Math.min(720,innerWidth-32);
+  const ts=Math.max(18,Math.min(58,Math.floor((avail-gap*(n-1))/n)));
+  el.style.gap=gap+'px';el.style.setProperty('--ts',ts+'px');$('bar').style.setProperty('--bw',(n*ts+gap*(n-1))+'px');
   const full=G.buf.length===n;let h='';
   for(let i=0;i<n;i++){const ch=G.buf[i];h+=`<div class="t${ch?' f':''}${ch&&full?' full':''}${!ch&&i===G.buf.length&&G.state==='play'?' cur':''}">${ch||''}</div>`;}
   el.innerHTML=h;
 }
-function renderInfo(){const f=fitCount(cat(),cap());$('fit').innerHTML=`BOX <b>${cap()}</b> LETTERS · <b>${f}</b> ANSWERS FIT`;}
+function renderInfo(){const f=fitCount(G.cat,G.box);$('fit').innerHTML=`BOX <b>${G.box}</b> LETTERS · <b>${f}</b> FIT`;}
 function renderTimer(){const frac=G?Math.max(0,G.t/TIME):1,b=$('barFill');b.style.width=(frac*100).toFixed(2)+'%';b.style.background=frac>0.5?'#f3f5fa':frac>0.25?'#ffd27a':'#ff7a7a';}
 function toast(m,cls=''){const t=$('toast');t.textContent=m;t.className=cls;}
 function banner(a,b,c){$('banA').textContent=a;$('banB').textContent=b;$('banC').textContent=c;const el=$('banner');el.classList.remove('show');void el.offsetWidth;el.classList.add('show');}
 function fly(text,color){const d=document.createElement('div');d.className='fly';d.textContent=text;d.style.color=color;const r=$('tiles').getBoundingClientRect();d.style.left=(r.left+r.width/2)+'px';d.style.top=(r.top-36)+'px';document.body.appendChild(d);setTimeout(()=>d.remove(),1100);}
 
-function finish(won){
-  G.state='done';
-  const reached=won?STEPS:G.lvl, l=LEVELS[reached];
-  $('endKicker').textContent=won?'YOU REACHED':'YOU STOPPED AT';
-  $('endTitle').textContent=won?'The atom':`${l.name} scale`;
-  $('endSub').innerHTML=won?`From the Milky Way down to <b>${l.say}</b>. Shrunk by a factor of 10³¹.`:`<b>${l.sc}</b> · ${l.say}. ${STEPS-G.lvl} more right answer${STEPS-G.lvl===1?'':'s'} to reach the atom.`;
-  $('endScore').textContent=G.score.toLocaleString()+' pts';
-  $('recap').innerHTML=G.hist.map(h=>h.ok?`<div><span class="l">${LEVELS[h.lvl].name.toUpperCase()}</span><span>${esc(h.word)} <span style="color:var(--mute)">(${h.len}/${CAP(h.lvl)})</span></span><span class="p">+${h.pts}</span></div>`
-    :`<div><span class="l">${LEVELS[h.lvl].name.toUpperCase()}</span><span class="x">${h.why==='time'?'time ran out':'passed'}</span><span class="p x">×</span></div>`).join('');
-  const rows=G.hist.map(h=>h.ok?'🟩'.repeat(h.len)+'⬜'.repeat(CAP(h.lvl)-h.len)+` ${h.len}`:'🟥');
+function finish(){
+  G.state='done';kb.blur();
+  const l=LEVELS[G.layer],nx=LEVELS[G.layer+1],words=G.hist.filter(h=>h.ok).length;
+  $('endKicker').textContent='DIVE COMPLETE · YOU REACHED';
+  $('endTitle').textContent=`${l.em} ${l.name}`;
+  $('endSub').innerHTML=`<b>${l.sc}</b> · ${l.say}.`+(nx?` ${nx.at-G.score} more point${nx.at-G.score===1?'':'s'} would have reached the ${nx.name}.`:' The deepest layer there is.');
+  $('endScore').textContent=`${G.score} pts`;
+  $('recap').innerHTML=G.hist.map((h,i)=>h.ok
+    ?`<div><span class="l">ROUND ${i+1}</span><span>${esc(h.word)} <span style="color:var(--mute)">(${h.len}/${h.box})</span></span><span class="p">+${h.pts} ${LEVELS[h.layer].em}</span></div>`
+    :`<div><span class="l">ROUND ${i+1}</span><span class="x">${h.why==='time'?'time ran out':'skipped'}</span><span class="p">0 ${LEVELS[h.layer].em}</span></div>`).join('');
+  const rows=G.hist.map(h=>h.ok?'🟩'.repeat(h.len)+'⬜'.repeat(Math.max(0,h.box-h.len))+` ${h.len} ${LEVELS[h.layer].em}`:`🟥 0 ${LEVELS[h.layer].em}`);
   const head=G.mode==='daily'?`SHRINKLE #${dailyNum()}`:'SHRINKLE practice';
-  $('share').textContent=`${head} · ${won?'⚛️ reached the atom':'stopped at '+l.name} · ${G.score.toLocaleString()} pts\n`+rows.join('\n');
-  let foot='🟩 letters used · ⬜ empty box · 🟥 lost a life';
-  if(G.mode==='daily'){const k='shrinkle2-best-'+todayKey(),b=+(store(k)||0);if(won&&G.score>b)store(k,String(G.score));if(won||b)foot=`Today's best: ${Math.max(b,won?G.score:0).toLocaleString()} · `+foot;}
+  $('share').textContent=`${head} · ${l.em} ${l.name} · ${G.score} pts\n${words}/${ROUNDS} words · layer ${G.layer+1} of ${LEVELS.length}\n`+rows.join('\n');
+  let foot='🟩 letters · ⬜ unused box · 🟥 skipped';
+  if(G.mode==='daily'){const k='shrinkle3-best-'+todayKey(),b=+(store(k)||0);if(G.score>b)store(k,String(G.score));foot=`Today's best: ${Math.max(b,G.score)} pts · `+foot;}
   $('endFoot').textContent=foot;
-  $('btnCopy').textContent='Copy result';$('btnAgain').textContent=won?'Practice dive':'Try again';
-  $('btnAgain').onclick=()=>startRun(won?'practice':G.mode);
+  $('btnCopy').textContent='Copy result';$('btnAgain').textContent='Practice dive';$('btnAgain').onclick=()=>startRun('practice');
   $('hud').hidden=true;$('meter').hidden=true;$('scrEnd').hidden=false;
-  if(won)sfx.rare();
+  sfx.rare();
 }
 
 /* ============================== INPUT ============================== */
 function setBuf(v){
   if(!G||G.state!=='play'){kb.value='';return;}
   v=norm(v);
-  if(v.length>cap()){v=v.slice(0,cap());fail(`The box only holds ${cap()} letters`);}
+  if(v.length>G.box){v=v.slice(0,G.box);fail(`The box only holds ${G.box} letters`);}
   else if(v.length>G.buf.length)sfx.key();
   G.buf=v;kb.value=v;renderTiles();
 }
@@ -681,26 +697,29 @@ addEventListener('keydown',e=>{
   if(!$('scrTitle').hidden&&e.key==='Enter'){e.preventDefault();startRun('daily');return;}
   if(!G||G.state!=='play')return;
   if(e.key==='Enter'){e.preventDefault();submit();return;}
-  if(e.key==='Escape'){miss('pass');return;}
+  if(e.key==='Escape'){miss('skip');return;}
   if(e.target===kb)return;
   if(e.key==='Backspace'){e.preventDefault();setBuf(G.buf.slice(0,-1));focusKb();}
   else if(/^[a-zA-Z]$/.test(e.key)){e.preventDefault();setBuf(G.buf+e.key);focusKb();}
 });
-$('hud').addEventListener('pointerup',e=>{if(G&&G.state==='play'&&!e.target.closest('button'))focusKb();});
+$('hud').addEventListener('pointerup',e=>{if(G&&G.state==='play'&&!e.target.closest('button')){focusKb();if($('toast').textContent==='Tap the box to type')toast('');}});
 $('btnDaily').onclick=()=>startRun('daily');
 $('btnPractice').onclick=()=>startRun('practice');
-$('btnPass').onclick=e=>{e.currentTarget.blur();miss('pass');focusKb();};
+$('btnPass').onclick=e=>{e.currentTarget.blur();miss('skip');focusKb();};
 $('btnCopy').onclick=()=>{const txt=$('share').textContent,ok=()=>$('btnCopy').textContent='Copied';
   const sel=()=>{const r=document.createRange();r.selectNodeContents($('share'));const s=getSelection();s.removeAllRanges();s.addRange(r);$('btnCopy').textContent='Press Ctrl/⌘+C';};
   try{navigator.clipboard.writeText(txt).then(ok,sel);}catch(e){sel();}};
-addEventListener('resize',()=>{if(G&&G.state!=='done')renderTiles();});
+function fitVV(){const vv=window.visualViewport;document.documentElement.style.setProperty('--vvh',(vv?vv.height:innerHeight)+'px');if(vv&&vv.offsetTop)window.scrollTo(0,0);}
+if(window.visualViewport){visualViewport.addEventListener('resize',fitVV);visualViewport.addEventListener('scroll',fitVV);}
+addEventListener('resize',()=>{fitVV();if(G&&G.state!=='done')renderTiles();});
 
 /* ============================== BOOT ============================== */
 (function boot(){
-  const logo=$('logo');'SHRINKLE'.split('').forEach((ch,i)=>{const s=document.createElement('span');s.textContent=ch;s.style.fontSize=(76-i*7)+'px';s.style.opacity=(1-i*0.06).toFixed(2);logo.appendChild(s);});
-  const best=store('shrinkle2-best-'+todayKey());
-  $('catCount').textContent=`DAILY #${dailyNum()} · ${CATS.length.toLocaleString()} CATEGORIES · 10 SCALES`+(best?` · TODAY'S BEST ${(+best).toLocaleString()}`:'');
-  renderMeter();init3D();zoomTo(0);
+  const logo=$('logo'),base=Math.min(76,Math.floor((innerWidth-60)/6.2));
+  'SHRINKLE'.split('').forEach((ch,i)=>{const s=document.createElement('span');s.textContent=ch;s.style.fontSize=Math.round(base*(1-i*0.09))+'px';s.style.opacity=(1-i*0.06).toFixed(2);logo.appendChild(s);});
+  const best=store('shrinkle3-best-'+todayKey());
+  $('catCount').textContent=`DAILY #${dailyNum()} · ${CATS.length.toLocaleString()} CATEGORIES · ${LEVELS.length} LAYERS · ${ROUNDS} ROUNDS`+(best?` · TODAY'S BEST ${best}`:'');
+  fitVV();renderMeter();init3D();zoomTo(0);
   let last=performance.now();
   function loop(now){
     const dt=Math.min(0.05,(now-last)/1000);last=now;
