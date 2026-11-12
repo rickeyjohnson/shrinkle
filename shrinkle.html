@@ -4,6 +4,21 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Shrinkle</title>
+<meta name="description" content="A daily dive from the Cosmic Web to the atom. Name it to shrink it.">
+<meta name="theme-color" content="#05060b">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Shrinkle">
+<meta property="og:description" content="A daily dive from the Cosmic Web to the atom. Name it to shrink it.">
+<meta property="og:url" content="https://shrinkle.vercel.app/">
+<meta property="og:image" content="https://shrinkle.vercel.app/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="SHRINKLE in shrinking letter tiles on a starry background: Name it to shrink it">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Shrinkle">
+<meta name="twitter:description" content="A daily dive from the Cosmic Web to the atom. Name it to shrink it.">
+<meta name="twitter:image" content="https://shrinkle.vercel.app/og.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='1' y='6' width='14' height='20' rx='3' fill='%23f3f5fa'/%3E%3Crect x='17' y='12' width='9' height='14' rx='2' fill='%23b8eefc'/%3E%3Crect x='27' y='18' width='4' height='8' rx='1' fill='%237ce7ff'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -659,6 +674,8 @@ function step3D(dt){
 
 /* ============================== GAME ============================== */
 const $=id=>document.getElementById(id);
+// The live address lives only in the <head> og:url tag (vercel.app now, shrinkle.io later)
+const SITE_URL=((document.querySelector('meta[property="og:url"]')||{}).content||'https://shrinkle.vercel.app/').replace(/\/$/,'');
 let G=null;
 function store(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v);}catch(e){return null;}}
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -763,7 +780,7 @@ function finish(){
     :`<div><span class="l">ROUND ${i+1}</span><span class="x">${h.why==='time'?'time ran out':'skipped'}</span><span class="p">0 ${LEVELS[h.layer].em}</span></div>`).join('');
   const rows=G.hist.map(h=>h.ok?'🟩'.repeat(h.len)+'⬜'.repeat(Math.max(0,h.box-h.len))+` ${h.len} · ${h.pts} ${LEVELS[h.layer].em}`:`🟥 0 ${LEVELS[h.layer].em}`);
   const head=G.mode==='daily'?`SHRINKLE #${dailyNum()}`:'SHRINKLE practice';
-  $('share').textContent=`${head} · ${l.em} ${l.name} · ${G.score} pts\n${words}/${ROUNDS} words · layer ${G.layer+1} of ${LEVELS.length}\n`+rows.join('\n')+'\nrickeyjohnson.github.io/shrinkle';
+  $('share').textContent=`${head} · ${l.em} ${l.name} · ${G.score} pts\n${words}/${ROUNDS} words · layer ${G.layer+1} of ${LEVELS.length}\n`+rows.join('\n')+'\n'+SITE_URL.replace(/^https?:\/\//,'');
   if(G.mode==='daily'&&!loadJSON(DKEY())){
     saveJSON(DKEY(),{kicker:$('endKicker').textContent,title:$('endTitle').textContent,sub:$('endSub').innerHTML,score:$('endScore').textContent,recap:$('recap').innerHTML,share:$('share').textContent});
     const st=stats(),t=todayKey();st.streak=st.last===yesterdayKey()?st.streak+1:(st.last===t?st.streak:1);st.played++;st.total+=G.score;st.best=Math.max(st.best,G.score);st.deepest=Math.max(st.deepest,G.layer);st.last=t;saveJSON('shrinkle1k-stats',st);
