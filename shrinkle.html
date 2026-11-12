@@ -4,6 +4,22 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Shrinkle</title>
+<meta name="description" content="A daily dive from the Cosmic Web to the atom. Name it to shrink it.">
+<meta name="theme-color" content="#05060b">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Shrinkle">
+<meta property="og:description" content="A daily dive from the Cosmic Web to the atom. Name it to shrink it.">
+<meta property="og:url" content="https://shrinkle.lol/">
+<meta property="og:image" content="https://shrinkle.lol/og.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="SHRINKLE in shrinking letter tiles on a starry background: Name it to shrink it">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Shrinkle">
+<meta name="twitter:description" content="A daily dive from the Cosmic Web to the atom. Name it to shrink it.">
+<meta name="twitter:image" content="https://shrinkle.lol/og.jpg">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='1' y='6' width='14' height='20' rx='3' fill='%23f3f5fa'/%3E%3Crect x='17' y='12' width='9' height='14' rx='2' fill='%23b8eefc'/%3E%3Crect x='27' y='18' width='4' height='8' rx='1' fill='%237ce7ff'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -102,6 +118,10 @@ html,body{height:100%;margin:0;overflow:hidden;background:#05060b;color:var(--fg
 .btn{font-family:var(--sans);font-weight:800;font-size:16px;letter-spacing:.02em;color:var(--ink);background:var(--fg);border:0;border-radius:999px;padding:13px 28px;cursor:pointer;transition:transform .12s,box-shadow .2s;box-shadow:0 0 0 0 rgba(255,255,255,.0)}
 .btn:hover{transform:translateY(-1px);box-shadow:0 0 30px rgba(255,255,255,.25)}
 .btn.sec{background:transparent;color:var(--fg);outline:1.5px solid rgba(243,245,250,.4)}
+.btns.stack{flex-direction:column;align-items:center;gap:10px}
+.btns.stack #btnDaily{min-width:min(280px,100%);font-size:17px;padding:15px 30px}
+.btn.quiet{font-size:14px;font-weight:700;padding:8px 22px;color:var(--mute);outline-color:rgba(243,245,250,.22)}
+.btn.quiet:hover{color:var(--fg);box-shadow:none}
 .btn:focus-visible,.ghost:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
 .foot{font-family:var(--mono);font-size:11.5px;color:var(--mute);letter-spacing:.05em}
 .big{font-family:var(--mono);font-size:44px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1}
@@ -113,18 +133,26 @@ html,body{height:100%;margin:0;overflow:hidden;background:#05060b;color:var(--fg
 .recap .x{color:var(--red)}
 pre#share{margin:0;font-family:var(--mono);font-size:13.5px;line-height:1.6;color:var(--fg);background:rgba(255,255,255,.06);border:1px solid var(--faint);border-radius:12px;padding:10px 16px;white-space:pre-wrap;user-select:all;width:100%;max-width:440px}
 #kb{position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;border:0;padding:0;font-size:16px}
+#scaleRead .cd{font-family:var(--type);font-size:34px;font-weight:700;line-height:1;margin-top:6px;font-variant-numeric:tabular-nums;transition:color .2s}
+#scaleRead .cd.warn{color:#ffe14d}
+#scaleRead .cd.danger{color:#ff7a7a;animation:cdp .5s ease-in-out infinite alternate}
+@keyframes cdp{to{transform:scale(1.14)}}
+.mute{display:inline-flex;align-items:center;gap:6px;color:var(--mute)}
+.mute svg{display:block}
+#btnMute{padding:5px 8px}#btnMute span{display:none}
+#btnMuteTitle{margin-top:2px}
 #scaleRead .nx{font-family:var(--mono);font-size:11px;color:var(--cyan);margin-top:3px;letter-spacing:.04em}
 #stats .rd b{font-size:15px}
 pre#share{text-align:left}
 .screen{align-items:flex-start}.panel{margin:auto}
 @media (max-width:820px){
-  #meter{left:50%;top:calc(max(18px,env(safe-area-inset-top,0px)) + 64px);transform:translateX(-50%);flex-direction:row;gap:9px}
+  #meter{left:50%;top:calc(max(18px,env(safe-area-inset-top,0px)) + 104px);transform:translateX(-50%);flex-direction:row;gap:9px}
   #meter li{height:auto}#meter li::before{display:none}#meter .lab,#meter li.cur .lab{display:none!important}
   #meter .dot{width:8px;height:8px}#meter li.cur .dot{width:12px;height:12px;margin:0}
 }
 @media (max-width:560px){
   .mark{font-size:12px;letter-spacing:.16em}#stats{gap:12px;font-size:11px}#stats .rd{display:none}
-  #scaleRead .v{font-size:15px}#scaleRead .n{font-size:10px}#scaleRead .nx{display:none}
+  #scaleRead .v{font-size:15px}#scaleRead .n{font-size:10px}#scaleRead .nx{display:none}#scaleRead .cd{font-size:28px}
   #play{padding-bottom:8px;gap:9px}#prompt{font-size:23px}#info{font-size:11px;gap:10px}#toast{font-size:15px}
   .panel{padding:22px 18px;gap:12px}.steps li{font-size:13.5px;grid-template-columns:22px 1fr;gap:8px}.tag{font-size:15px}
   .recap div{grid-template-columns:70px 1fr auto}.big{font-size:34px}pre#share{font-size:12px}
@@ -134,6 +162,8 @@ pre#share{text-align:left}
 #banner .b{letter-spacing:-.03em}
 #logo{align-items:flex-end;gap:6px;margin-bottom:4px}
 #logo .lt{display:grid;place-items:center;border-radius:24%;color:#0b0c12;font-family:var(--type);font-weight:700;line-height:1;letter-spacing:0;box-shadow:0 6px 30px rgba(124,231,255,.22);transform:none!important}
+.recap .p{white-space:nowrap}.recap .split{font-style:normal;color:var(--mute)}
+@media (max-width:560px){.recap .split{display:none}.recap div{grid-template-columns:64px 1fr auto}}
 [hidden]{display:none!important}
 @media (max-width:820px){#meter .lab{display:none}#meter li.cur .lab{display:none}.mark small{display:none}}
 @media (max-height:780px){#meter li{height:clamp(22px,4vh,34px)}#prompt{font-size:clamp(22px,3vw,34px)}.panel{gap:11px;padding:22px 24px}.steps li{font-size:14px}.word span{transform:scale(.85)}.tag{font-size:15.5px}#play{gap:10px}}
@@ -160,15 +190,15 @@ pre#share{text-align:left}
 <div id="hud" hidden>
   <div id="top">
     <div class="mark">SHRINKLE<small id="modeLbl">DAILY #1</small></div>
-    <div id="scaleRead"><div class="n" id="lvlName">Cosmic Web</div><div class="v" id="lvlScale">10²⁴ m</div><div class="nx" id="next"></div></div>
-    <div id="stats"><div class="rd">ROUND <b id="roundLbl">1/7</b></div><div>SCORE <b id="score">0</b></div></div>
+    <div id="scaleRead"><div class="n" id="lvlName">Cosmic Web</div><div class="v" id="lvlScale">10²⁴ m</div><div class="nx" id="next"></div><div class="cd" id="cd">20</div></div>
+    <div id="stats"><div class="rd">ROUND <b id="roundLbl">1/7</b></div><div>SCORE <b id="score">0</b></div><button class="ghost mute" id="btnMute" type="button" aria-pressed="false" aria-label="Sound"></button></div>
   </div>
   <div id="play">
     <div id="ask">Name one of these</div>
     <div id="prompt">Countries</div>
     <div id="tiles"></div>
     <div id="bar"><div id="barFill"></div></div>
-    <div id="info"><span id="fit"></span><span>↵ submit</span><button class="ghost" id="btnPass" type="button">skip · 0 pts</button></div>
+    <div id="info"><span id="fit"></span><span>↵ submit</span></div>
     <div id="toast"></div>
   </div>
 </div>
@@ -184,9 +214,10 @@ pre#share{text-align:left}
       <li><span class="k">01</span><span>Each round gives you a <b>category</b> and a <b>letter box</b>. Type any answer that fits the box.</span></li>
       <li><span class="k">02</span><span><b>Your word sets the next box</b>: it's one letter shorter than what you typed. Long answers leave room. Short ones box you in.</span></li>
       <li><span class="k">03</span><span>Points = <b>10 per letter + 3 per second left</b>. Every point threshold is a deeper layer, and a big round can skip layers.</span></li>
-      <li><span class="k">04</span><span><b>20 seconds</b> per round. If you skip or run out of time, you score 0 and stay on your layer.</span></li>
+      <li><span class="k">04</span><span><b>20 seconds</b> per round. If time runs out, you score 0 and stay on your layer.</span></li>
     </ul>
-    <div class="btns"><button class="btn" id="btnDaily" type="button">Start shrinking</button><button class="btn sec" id="btnPractice" type="button">Practice</button></div>
+    <div class="btns stack"><button class="btn" id="btnDaily" type="button">Start shrinking</button><button class="btn sec quiet" id="btnPractice" type="button">Practice</button></div>
+    <button class="ghost mute" id="btnMuteTitle" type="button" aria-pressed="false" aria-label="Sound"></button>
     <div class="foot" id="catCount"></div>
     <div class="foot" id="statsLine"></div>
     <div class="foot" id="nextDive" style="color:var(--cyan)"></div>
@@ -199,9 +230,9 @@ pre#share{text-align:left}
     <div class="endT" id="endTitle">The atom</div>
     <div class="tag" id="endSub"></div>
     <div class="big" id="endScore">0</div>
-    <div class="recap" id="recap"></div>
-    <pre id="share"></pre>
     <div class="btns"><button class="btn" id="btnCopy" type="button">Copy result</button><button class="btn sec" id="btnAgain" type="button">Practice dive</button></div>
+    <pre id="share"></pre>
+    <div class="recap" id="recap"></div>
     <div class="foot" id="endFoot"></div>
     <div class="foot" id="endNext" style="color:var(--cyan)"></div>
   </div>
@@ -378,7 +409,7 @@ const LEVELS=[
   {name:'Cell',sc:'10⁻⁵ m',say:'10 micrometers',em:'🧫',at:590},
   {name:'Virus',sc:'10⁻⁷ m',say:'100 nanometers',em:'🦠',at:680},
   {name:'Atom',sc:'10⁻¹⁰ m',say:'0.1 nanometers',em:'⚛️',at:780},
-  {name:'Nucleus',sc:'10⁻¹⁵ m',say:'one femtometer, the deepest layer',em:'💥',at:900},
+  {name:'Nucleus',sc:'10⁻¹⁵ m',say:'one femtometer',em:'💥',at:900},
 ];
 const ROUNDS=7, TIME=20, BOX0=12, MINBOX=3;
 const layerFor=sc=>{let i=0;LEVELS.forEach((l,k)=>{if(sc>=l.at)i=k;});return i;};
@@ -407,11 +438,48 @@ function pickCat(base,round,box,usedLists){
 }
 const catSet=c=>c._set||(c._set=new Set(c.words));
 const fitCount=(c,cap)=>c.cum[Math.max(0,Math.min(40,cap))];
+// Optimal-string-alignment distance (substitute / insert / delete / swap neighbours); stops early past `max`
+function typoDist(a,b,max=2){
+  const m=a.length,n=b.length;if(Math.abs(m-n)>max)return max+1;
+  let pp=null,p=Array.from({length:n+1},(_,j)=>j);
+  for(let i=1;i<=m;i++){
+    const c=[i];let rowMin=i;
+    for(let j=1;j<=n;j++){
+      let v=Math.min(p[j]+1,c[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));
+      if(i>1&&j>1&&a[i-1]===b[j-2]&&a[i-2]===b[j-1])v=Math.min(v,pp[j-2]+1);
+      c[j]=v;if(v<rowMin)rowMin=v;
+    }
+    if(rowMin>max)return max+1;pp=p;p=c;
+  }
+  return p[n];
+}
+// Exact answers win; otherwise one typo is forgiven for answers of 4+ letters in this category
+function matchAnswer(c,typed,used,box){
+  const list=c.list,key=i=>list.id+':'+i,fit=(n,idx,kind)=>n.length>box?{kind:'toolong',n,idx}:{kind,n,idx};
+  if(catSet(c).has(typed)){const idx=list.map[typed];return used.has(key(idx))?{kind:'used',idx}:fit(typed,idx,'exact');}
+  if(list.map[typed]!==undefined)return {kind:'notcat',idx:list.map[typed]};
+  if(typed.length<3)return {kind:'unknown'};
+  // Look across the whole list so a misspelled out-of-category answer is never accepted as an in-category one
+  const inCat=new Map(),outCat=new Map(),words=catSet(c);let usedHit=false;
+  for(const w in list.map){
+    if(w.length<4||Math.abs(w.length-typed.length)>1||typoDist(typed,w,1)!==1)continue;
+    const idx=list.map[w];
+    if(words.has(w)){if(used.has(key(idx))){usedHit=true;continue;}if(!inCat.has(idx))inCat.set(idx,w);}
+    else if(!outCat.has(idx))outCat.set(idx,w);
+  }
+  for(const idx of inCat.keys())outCat.delete(idx);
+  if(inCat.size===1&&outCat.size===0){const [idx,n]=[...inCat][0];return fit(n,idx,'typo');}
+  if(inCat.size>=1)return {kind:'ambiguous',options:[...inCat.keys(),...outCat.keys()].map(i=>list.items[i].d)};
+  if(outCat.size>=1)return {kind:'notcat',idx:[...outCat.keys()][0]};
+  return usedHit?{kind:'used'}:{kind:'unknown'};
+}
 
 /* ============================== SOUND ============================== */
 let AC=null;
+let muted=false;try{muted=localStorage.getItem('shrinkle-muted')==='1';}catch(e){}
+function buzz(p){if(muted)return;try{if(navigator.vibrate)navigator.vibrate(p);}catch(e){}}
 function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();}catch(e){AC=null;}}
-function tone(f,d,type='sine',v=0.06,slide=0,delay=0){const a=AC;if(!a)return;const o=a.createOscillator(),g=a.createGain(),t=a.currentTime+delay;o.type=type;o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(f*slide,t+d);g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(v,t+0.01);g.gain.exponentialRampToValueAtTime(0.0001,t+d);o.connect(g).connect(a.destination);o.start(t);o.stop(t+d+0.03);}
+function tone(f,d,type='sine',v=0.06,slide=0,delay=0){const a=AC;if(muted||!a)return;const o=a.createOscillator(),g=a.createGain(),t=a.currentTime+delay;o.type=type;o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(f*slide,t+d);g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(v,t+0.01);g.gain.exponentialRampToValueAtTime(0.0001,t+d);o.connect(g).connect(a.destination);o.start(t);o.stop(t+d+0.03);}
 const sfx={
   key:()=>tone(880,0.04,'sine',0.025),
   good:()=>{[587,880,1175].forEach((f,i)=>tone(f,0.35,'sine',0.05,0,i*0.06));},
@@ -612,6 +680,8 @@ function step3D(dt){
 
 /* ============================== GAME ============================== */
 const $=id=>document.getElementById(id);
+// The live address lives only in the <head> og:url tag (shrinkle.lol)
+const SITE_URL=((document.querySelector('meta[property="og:url"]')||{}).content||'https://shrinkle.lol/').replace(/\/$/,'');
 let G=null;
 function store(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v);}catch(e){return null;}}
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -624,12 +694,13 @@ function renderMeter(){
   LEVELS.forEach((l,i)=>{const cls=i<cur?'done':i===cur?'cur':'';h+=`<li class="${cls}" title="${l.name}"><span class="dot"></span><span class="lab"><b>${l.name}</b><span>${l.sc} · ${l.at} pts</span></span></li>`;});
   $('meter').innerHTML=h;
 }
+function placeMeter(){const m=$('meter');if(innerWidth<=820)m.style.top=Math.round($('top').getBoundingClientRect().bottom+12)+'px';else m.style.top='';}
 function renderTop(){
   const l=LEVELS[G.layer],nx=LEVELS[G.layer+1];
   $('lvlName').textContent=l.name;$('lvlScale').textContent=l.sc;
   $('next').textContent=nx?`${nx.at-G.score} pts to ${nx.name}`:'deepest layer';
   $('score').textContent=G.score;$('roundLbl').textContent=`${Math.min(G.round+1,ROUNDS)}/${ROUNDS}`;
-  renderMeter();
+  renderMeter();placeMeter();
 }
 function startRun(mode){
   ac();
@@ -652,18 +723,20 @@ function ask(delay){
 }
 function submit(){
   if(!G||G.state!=='play')return;
-  const c=G.cat,w=G.buf,list=c.list;if(!w)return;
-  const idx=list.map[w];
-  if(idx===undefined)return fail(`${w.toUpperCase()} isn't on our ${list.one} list`);
-  const it=list.items[idx];
-  if(!catSet(c).has(w))return fail(`${it.d} doesn't fit this category`);
-  if(G.used.has(list.id+':'+idx))return fail('Already used this game');
+  const c=G.cat,typed=G.buf,list=c.list;if(!typed)return;
+  const m=matchAnswer(c,typed,G.used,G.box),it=m.idx!==undefined?list.items[m.idx]:null;
+  if(m.kind==='unknown')return fail(`${typed.toUpperCase()} isn't on our ${list.one} list`);
+  if(m.kind==='notcat')return fail(`${it.d} doesn't fit this category`);
+  if(m.kind==='used')return fail('Already used this game');
+  if(m.kind==='ambiguous')return fail(`Did you mean ${m.options.slice(0,-1).join(', ')} or ${m.options[m.options.length-1]}?`);
+  if(m.kind==='toolong')return fail(`${it.d} has ${m.n.length} letters — too big for this box`);
+  const w=m.n,idx=m.idx;
   const secs=Math.ceil(G.t),lenPts=w.length*10,timePts=secs*3,pts=lenPts+timePts,before=G.layer;
   G.score+=pts;G.layer=layerFor(G.score);G.used.add(list.id+':'+idx);G.usedLists.add(list.id);G.state='gap';kb.value='';
   G.hist.push({ok:true,word:it.d,len:w.length,box:G.box,pts,lenPts,timePts,layer:G.layer});
   G.box=Math.max(MINBOX,w.length-1);
   $('score').textContent=G.score;
-  toast(`${it.d} · +${lenPts} length · +${timePts} time`,'good');sfx.good();fly(`+${pts}`,'#7ce7ff');
+  toast(m.kind==='typo'?`Close enough · ${typed.toUpperCase()} → ${it.d} · +${pts}`:`${it.d} · +${lenPts} length · +${timePts} time`,'good');sfx.good();buzz(30);fly(`+${pts}`,'#7ce7ff');
   document.querySelectorAll('#tiles .t').forEach(t=>t.classList.add('full'));
   setTimeout(()=>advance(before),850);
 }
@@ -677,11 +750,11 @@ function miss(why){
 function advance(before){
   G.round++;
   const d=G.layer-before;
-  if(d>0){zoomTo(G.layer);sfx.zoom();banner(d>1?`SKIPPED ${d-1} LAYER${d>2?'S':''} · SHRANK TO`:'SHRANK TO',LEVELS[G.layer].name,`${LEVELS[G.layer].sc} · ${LEVELS[G.layer].say}`);}
+  if(d>0){zoomTo(G.layer);sfx.zoom();buzz(80);banner(d>1?`SKIPPED ${d-1} LAYER${d>2?'S':''} · SHRANK TO`:'SHRANK TO',LEVELS[G.layer].name,`${LEVELS[G.layer].sc} · ${LEVELS[G.layer].say}`);}
   if(G.round>=ROUNDS){G.state='done';renderTop();$('play').classList.add('intro');setTimeout(finish,d>0?1800:500);return;}
   ask(d>0?1600:650);
 }
-function fail(msg){toast(msg,'bad');sfx.bad();const t=$('tiles');t.classList.remove('shake');void t.offsetWidth;t.classList.add('shake');}
+function fail(msg){toast(msg,'bad');sfx.bad();buzz([20,40,20]);const t=$('tiles');t.classList.remove('shake');void t.offsetWidth;t.classList.add('shake');}
 function renderTiles(){
   const n=Math.max(1,G.box),el=$('tiles'),gap=innerWidth<520?4:6;
   const avail=Math.min(720,innerWidth-32);
@@ -692,7 +765,12 @@ function renderTiles(){
   el.innerHTML=h;
 }
 function renderInfo(){const f=fitCount(G.cat,G.box);$('fit').innerHTML=`BOX <b>${G.box}</b> LETTERS · <b>${f}</b> FIT`;}
-function renderTimer(){const frac=G?Math.max(0,G.t/TIME):1,b=$('barFill');b.style.width=(frac*100).toFixed(2)+'%';b.style.background=frac>0.5?'#f3f5fa':frac>0.25?'#ffd27a':'#ff7a7a';}
+function renderTimer(){
+  const t=G?Math.max(0,G.t):TIME,frac=t/TIME,secs=Math.ceil(t),col=secs>10?'#f3f5fa':secs>5?'#ffe14d':'#ff7a7a',b=$('barFill'),cd=$('cd');
+  b.style.width=(frac*100).toFixed(2)+'%';b.style.background=col;
+  if(cd.textContent!==String(secs))cd.textContent=secs;
+  cd.className=secs>10?'cd':secs>5?'cd warn':'cd danger';
+}
 function toast(m,cls=''){const t=$('toast');t.textContent=m;t.className=cls;}
 function banner(a,b,c){$('banA').textContent=a;$('banB').textContent=b;$('banC').textContent=c;const el=$('banner');el.classList.remove('show');void el.offsetWidth;el.classList.add('show');}
 function fly(text,color){const d=document.createElement('div');d.className='fly';d.textContent=text;d.style.color=color;const r=$('tiles').getBoundingClientRect();d.style.left=(r.left+r.width/2)+'px';d.style.top=(r.top-36)+'px';document.body.appendChild(d);setTimeout(()=>d.remove(),1100);}
@@ -705,11 +783,11 @@ function finish(){
   $('endSub').innerHTML=`<b>${l.sc}</b> · ${l.say}.`+(nx?` ${nx.at-G.score} more point${nx.at-G.score===1?'':'s'} would have reached the ${nx.name}.`:' The deepest layer there is.');
   $('endScore').textContent=`${G.score} pts`;
   $('recap').innerHTML=G.hist.map((h,i)=>h.ok
-    ?`<div><span class="l">ROUND ${i+1}</span><span>${esc(h.word)} <span style="color:var(--mute)">(${h.len}/${h.box})</span></span><span class="p">${h.lenPts} + ${h.timePts} = ${h.pts} ${LEVELS[h.layer].em}</span></div>`
+    ?`<div><span class="l">ROUND ${i+1}</span><span>${esc(h.word)} <span style="color:var(--mute)">(${h.len}/${h.box})</span></span><span class="p"><i class="split">${h.lenPts} + ${h.timePts} = </i>${h.pts} ${LEVELS[h.layer].em}</span></div>`
     :`<div><span class="l">ROUND ${i+1}</span><span class="x">${h.why==='time'?'time ran out':'skipped'}</span><span class="p">0 ${LEVELS[h.layer].em}</span></div>`).join('');
   const rows=G.hist.map(h=>h.ok?'🟩'.repeat(h.len)+'⬜'.repeat(Math.max(0,h.box-h.len))+` ${h.len} · ${h.pts} ${LEVELS[h.layer].em}`:`🟥 0 ${LEVELS[h.layer].em}`);
   const head=G.mode==='daily'?`SHRINKLE #${dailyNum()}`:'SHRINKLE practice';
-  $('share').textContent=`${head} · ${l.em} ${l.name} · ${G.score} pts\n${words}/${ROUNDS} words · layer ${G.layer+1} of ${LEVELS.length}\n`+rows.join('\n')+'\nrickeyjohnson.github.io/shrinkle';
+  $('share').textContent=`${head} · ${l.em} ${l.name} · ${G.score} pts\n${words}/${ROUNDS} words · layer ${G.layer+1} of ${LEVELS.length}\n`+rows.join('\n')+'\n'+SITE_URL.replace(/^https?:\/\//,'');
   if(G.mode==='daily'&&!loadJSON(DKEY())){
     saveJSON(DKEY(),{kicker:$('endKicker').textContent,title:$('endTitle').textContent,sub:$('endSub').innerHTML,score:$('endScore').textContent,recap:$('recap').innerHTML,share:$('share').textContent});
     const st=stats(),t=todayKey();st.streak=st.last===yesterdayKey()?st.streak+1:(st.last===t?st.streak:1);st.played++;st.total+=G.score;st.best=Math.max(st.best,G.score);st.deepest=Math.max(st.deepest,G.layer);st.last=t;saveJSON('shrinkle1k-stats',st);
@@ -740,6 +818,15 @@ function showSaved(d){
 }
 function openDaily(){const d=loadJSON(DKEY());if(d)showSaved(d);else startRun('daily');}
 
+/* ============================== MUTE ============================== */
+const ICON_ON='<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
+const ICON_OFF='<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16 9.5l5 5M21 9.5l-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
+function setMuted(on){
+  muted=!!on;store('shrinkle-muted',muted?'1':'0');
+  document.querySelectorAll('.mute').forEach(b=>{b.innerHTML=(muted?ICON_OFF:ICON_ON)+`<span>${muted?'Sound off':'Sound on'}</span>`;b.setAttribute('aria-pressed',String(muted));b.title=muted?'Turn sound on':'Turn sound off';});
+}
+document.querySelectorAll('.mute').forEach(b=>b.addEventListener('click',e=>{e.currentTarget.blur();setMuted(!muted);if(!muted){ac();sfx.key();}if(G&&G.state==='play')focusKb();}));
+
 /* ============================== INPUT ============================== */
 function setBuf(v){
   if(!G||G.state!=='play'){kb.value='';return;}
@@ -754,7 +841,6 @@ addEventListener('keydown',e=>{
   if(!$('scrTitle').hidden&&e.key==='Enter'){e.preventDefault();openDaily();return;}
   if(!G||G.state!=='play')return;
   if(e.key==='Enter'){e.preventDefault();submit();return;}
-  if(e.key==='Escape'){miss('skip');return;}
   if(e.target===kb)return;
   if(e.key==='Backspace'){e.preventDefault();setBuf(G.buf.slice(0,-1));focusKb();}
   else if(/^[a-zA-Z]$/.test(e.key)){e.preventDefault();setBuf(G.buf+e.key);focusKb();}
@@ -762,13 +848,12 @@ addEventListener('keydown',e=>{
 $('hud').addEventListener('pointerup',e=>{if(G&&G.state==='play'&&!e.target.closest('button')){focusKb();if($('toast').textContent==='Tap the box to type')toast('');}});
 $('btnDaily').onclick=openDaily;
 $('btnPractice').onclick=()=>startRun('practice');
-$('btnPass').onclick=e=>{e.currentTarget.blur();miss('skip');focusKb();};
 $('btnCopy').onclick=()=>{const txt=$('share').textContent,ok=()=>$('btnCopy').textContent='Copied';
   const sel=()=>{const r=document.createRange();r.selectNodeContents($('share'));const s=getSelection();s.removeAllRanges();s.addRange(r);$('btnCopy').textContent='Press Ctrl/⌘+C';};
   try{navigator.clipboard.writeText(txt).then(ok,sel);}catch(e){sel();}};
 function fitVV(){const vv=window.visualViewport;document.documentElement.style.setProperty('--vvh',(vv?vv.height:innerHeight)+'px');if(vv&&vv.offsetTop)window.scrollTo(0,0);}
 if(window.visualViewport){visualViewport.addEventListener('resize',fitVV);visualViewport.addEventListener('scroll',fitVV);}
-addEventListener('resize',()=>{fitVV();if(G&&G.state!=='done')renderTiles();});
+addEventListener('resize',()=>{fitVV();placeMeter();if(G&&G.state!=='done')renderTiles();});
 
 /* ============================== BOOT ============================== */
 (function boot(){
@@ -776,7 +861,7 @@ addEventListener('resize',()=>{fitVV();if(G&&G.state!=='done')renderTiles();});
   'SHRINKLE'.split('').forEach((ch,i)=>{const s=document.createElement('span'),z=Math.round(base*0.95*(1-i*0.085));s.className='lt';s.textContent=ch;s.style.width=s.style.height=z+'px';s.style.fontSize=Math.round(z*0.6)+'px';s.style.background=`color-mix(in srgb,#7ce7ff ${i*13}%,#f3f5fa)`;logo.appendChild(s);});
   const best=store('shrinkle3-best-'+todayKey());
   $('catCount').textContent=`DAILY #${dailyNum()} · ${CATS.length.toLocaleString()} CATEGORIES · ${LEVELS.length} LAYERS · ${ROUNDS} ROUNDS`; renderTitle(); setInterval(tickNext,1000);
-  fitVV();renderMeter();init3D();zoomTo(0);
+  fitVV();setMuted(muted);renderMeter();init3D();zoomTo(0);
   let last=performance.now();
   function loop(now){
     const dt=Math.min(0.05,(now-last)/1000);last=now;

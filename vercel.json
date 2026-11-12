@@ -1,0 +1,4 @@
+{
+  "redirects": [{ "source": "/shrinkle.html", "destination": "/", "permanent": false }],
+  "rewrites": [{ "source": "/", "destination": "/shrinkle.html" }]
+}

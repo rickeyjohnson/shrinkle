@@ -1,6 +1,6 @@
 # Shrinkle
 
-**Play:** [rickeyjohnson.github.io/shrinkle](https://rickeyjohnson.github.io/shrinkle/)
+**Play:** [shrinkle.lol](https://shrinkle.lol/) (backup: [rickeyjohnson.github.io/shrinkle](https://rickeyjohnson.github.io/shrinkle/))
 
 A daily word-trivia dive. Name things to shrink: every word you type sets the next letter box one letter shorter, and your points zoom you down through 12 layers of scale, from the Cosmic Web to an atomic nucleus.
 
@@ -12,7 +12,8 @@ Built in one class period for a Class Jam (theme: **shrinking**, constraint: win
 2. **Your word sets the next box**: it's one letter shorter than what you typed (minimum 3). Long answers leave room. Short ones box you in.
 3. Points = **length + time**: **10 per letter** plus **3 per second left**. That's up to 180 a round, and about 1,000 for a near-perfect dive.
 4. Your total score decides your **layer**. A big round can skip layers.
-5. **7 rounds × 20 seconds**. If you skip or run out of time, you score 0 and stay on your layer.
+5. **7 rounds × 20 seconds**, with a countdown under the layer readout. If time runs out, you score 0 and stay on your layer.
+6. **Typos are forgiven:** answers of 4+ letters count with one wrong, missing, extra or swapped letter (BROCOLI → Broccoli). Short answers must be exact.
 
 Everyone gets the same daily dive (seeded by date), so scores can be compared. You get **one daily attempt per browser**: after that, the title screen shows your saved result, a countdown to the next dive, and your stats (played, average, best, deepest layer, streak), all kept in this browser's local storage. **Practice** deals a random dive any time.
 
@@ -24,7 +25,7 @@ Everyone gets the same daily dive (seeded by date), so scores can be compared. Y
 | Type | Letters (spaces don't count). On a phone, tap the box first |
 | Submit | **Enter** |
 | Delete | **Backspace** |
-| Skip round (0 pts) | **Esc** or the **skip** button |
+| Sound on/off | Speaker button (top right, or under Practice) |
 
 ## Layers
 
