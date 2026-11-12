@@ -18,6 +18,10 @@ This pass makes all three feel finished on any phone or laptop. It isn't a big l
 - Deploy the existing static site to **Vercel**. For now it uses the free `*.vercel.app` address (ideally `shrinkle.vercel.app`).
 - **Custom domain: `shrinkle.io`.** You chose it, and it was available on 2026-11-12. **You'll buy it later.** The site has to work on the `vercel.app` address first. Switching to `shrinkle.io` later must only take connecting the domain in Vercel and changing **one constant** (`SITE_URL`) that drives the share link and the absolute preview-image URL.
 - A shared link must open the game directly. Crawlers don't follow `index.html`'s meta-refresh, so the address people share must serve the page that carries the preview tags. Planned approach: a `vercel.json` rewrite of `/` → `/shrinkle.html`. The GitHub Pages copy can stay as a backup.
+- **How it connects (you answered):** you already have a Vercel account linked to GitHub. You import `rickeyjohnson/shrinkle` in the Vercel dashboard as a static project (no build command, output is the repo root). From then on:
+  - Every push to `polish/world` gets a **preview URL** for review.
+  - **Production follows `main`**, so the public link only changes when you merge this branch.
+  - The Vercel CLI isn't installed on this machine. Deploys run through the GitHub link, not the CLI.
 
 ### 2. Remove skip (your request)
 - Remove the skip button and the **Esc** shortcut.
