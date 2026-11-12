@@ -24,6 +24,9 @@ test('one typo', () => { const r=T.matchAnswer(cat('Vegetables'),'brocoli',new S
 test('two typos rejected', () => assert.equal(T.matchAnswer(cat('Vegetables'),'brcoli',new Set(),12).kind,'unknown'));
 test('3-letter must be exact', () => assert.equal(T.matchAnswer(cat('Animals'),'cta',new Set(),12).kind,'unknown'));
 test('ambiguous', () => { const r=T.matchAnswer(cat('Countries'),'irak',new Set(),12); assert.equal(r.kind,'ambiguous'); assert.deepEqual(r.options.sort(),['Iran','Iraq']); });
-test('used typo not accepted', () => { const L=cat('Vegetables').list; assert.notEqual(T.matchAnswer(cat('Vegetables'),'brocoli',new Set([L.id+':'+L.map.broccoli]),12).kind,'typo'); });
+test('used typo not accepted', () => { const L=cat('Vegetables').list; assert.equal(T.matchAnswer(cat('Vegetables'),'brocoli',new Set([L.id+':'+L.map.broccoli]),12).kind,'used'); });
+test('typo closer to an out-of-category answer is not accepted (IRAK in Countries ending in N)', () => assert.notEqual(T.matchAnswer(cat('Countries ending in N'),'irak',new Set(),12).kind,'typo'));
+test('typo of an out-of-category answer is not accepted (DEAR in Animals starting with B)', () => assert.notEqual(T.matchAnswer(cat('Animals starting with B'),'dear',new Set(),12).kind,'typo'));
+test('typo whose only match is outside the category says it does not fit', () => { const r=T.matchAnswer(cat('African countries'),'pery',new Set(),12); assert.equal(r.kind,'notcat'); });
 test('too long for box', () => assert.equal(T.matchAnswer(cat('Vegetables'),'brocoli',new Set(),7).kind,'toolong'));
 test('not in category', () => assert.equal(T.matchAnswer(cat('African countries'),'peru',new Set(),12).kind,'notcat'));

@@ -10,14 +10,15 @@
 <meta property="og:title" content="Shrinkle">
 <meta property="og:description" content="A daily dive from the Cosmic Web to the atom. Name it to shrink it.">
 <meta property="og:url" content="https://shrinkle.vercel.app/">
-<meta property="og:image" content="https://shrinkle.vercel.app/og.png">
+<meta property="og:image" content="https://shrinkle.vercel.app/og.jpg">
+<meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="SHRINKLE in shrinking letter tiles on a starry background: Name it to shrink it">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Shrinkle">
 <meta name="twitter:description" content="A daily dive from the Cosmic Web to the atom. Name it to shrink it.">
-<meta name="twitter:image" content="https://shrinkle.vercel.app/og.png">
+<meta name="twitter:image" content="https://shrinkle.vercel.app/og.jpg">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='1' y='6' width='14' height='20' rx='3' fill='%23f3f5fa'/%3E%3Crect x='17' y='12' width='9' height='14' rx='2' fill='%23b8eefc'/%3E%3Crect x='27' y='18' width='4' height='8' rx='1' fill='%237ce7ff'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -458,15 +459,18 @@ function matchAnswer(c,typed,used,box){
   if(catSet(c).has(typed)){const idx=list.map[typed];return used.has(key(idx))?{kind:'used',idx}:fit(typed,idx,'exact');}
   if(list.map[typed]!==undefined)return {kind:'notcat',idx:list.map[typed]};
   if(typed.length<3)return {kind:'unknown'};
-  const hits=new Map();let usedHit=false;
-  for(const w of c.words){
+  // Look across the whole list so a misspelled out-of-category answer is never accepted as an in-category one
+  const inCat=new Map(),outCat=new Map(),words=catSet(c);let usedHit=false;
+  for(const w in list.map){
     if(w.length<4||Math.abs(w.length-typed.length)>1||typoDist(typed,w,1)!==1)continue;
     const idx=list.map[w];
-    if(used.has(key(idx))){usedHit=true;continue;}
-    if(!hits.has(idx))hits.set(idx,w);
+    if(words.has(w)){if(used.has(key(idx))){usedHit=true;continue;}if(!inCat.has(idx))inCat.set(idx,w);}
+    else if(!outCat.has(idx))outCat.set(idx,w);
   }
-  if(hits.size>1)return {kind:'ambiguous',options:[...hits.keys()].map(i=>list.items[i].d)};
-  if(hits.size===1){const [idx,n]=[...hits][0];return fit(n,idx,'typo');}
+  for(const idx of inCat.keys())outCat.delete(idx);
+  if(inCat.size===1&&outCat.size===0){const [idx,n]=[...inCat][0];return fit(n,idx,'typo');}
+  if(inCat.size>=1)return {kind:'ambiguous',options:[...inCat.keys(),...outCat.keys()].map(i=>list.items[i].d)};
+  if(outCat.size>=1)return {kind:'notcat',idx:[...outCat.keys()][0]};
   return usedHit?{kind:'used'}:{kind:'unknown'};
 }
 
