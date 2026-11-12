@@ -16,7 +16,7 @@ This pass makes all three feel finished on any phone or laptop. It isn't a big l
 
 ### 1. Hosting on Vercel
 - Deploy the existing static site to **Vercel**. For now it uses the free `*.vercel.app` address (ideally `shrinkle.vercel.app`).
-- **Custom domain: `shrinkle.io`.** You chose it, and it was available on 2026-11-12. **You'll buy it later.** The site has to work on the `vercel.app` address first. Switching to `shrinkle.io` later must only take connecting the domain in Vercel and changing **one constant** (`SITE_URL`) that drives the share link and the absolute preview-image URL.
+- **Custom domain: not bought yet.** `shrinkle.io` (~$45/yr) waits until Shrinkle is popular; cheaper options like `shrinkle.lol` are being weighed. **Launch on the free `vercel.app` address.** The site has to work on the `vercel.app` address first. Switching to `shrinkle.io` later must only take connecting the domain in Vercel and changing **one constant** (`SITE_URL`) that drives the share link and the absolute preview-image URL.
 - A shared link must open the game directly. Crawlers don't follow `index.html`'s meta-refresh, so the address people share must serve the page that carries the preview tags. Planned approach: a `vercel.json` rewrite of `/` → `/shrinkle.html`. The GitHub Pages copy can stay as a backup.
 - **How it connects (you answered):** you already have a Vercel account linked to GitHub. You import `rickeyjohnson/shrinkle` in the Vercel dashboard as a static project (no build command, output is the repo root). From then on:
   - Every push to `polish/world` gets a **preview URL** for review.
@@ -29,24 +29,17 @@ This pass makes all three feel finished on any phone or laptop. It isn't a big l
 
 ### 3. Countdown number (your request)
 - Show a large countdown number from 20 to 0, in Space Mono, in the top-center readout, **directly under the "N pts to <next layer>" line**.
-- It's white above 10 seconds, amber from 10 to 6, and red with a slight pulse from 5 to 0 *(my call)*. The existing last-5-seconds tick sound stays.
+- It's white above 10 seconds, **yellow** from 10 to 6 (your change), and red with a slight pulse from 5 to 0. The existing last-5-seconds tick sound stays.
 - The thin bar under the tiles stays as well *(my call)*.
 
-### 4. Forgiving spelling (your request)
-Close misspellings count. *(The rule is my proposal; you didn't object.)*
+### 4. Forgiving spelling: typos only (your rule)
 - **Exact matches always win**, including aliases.
-- Otherwise, find the closest answer *in this round's category*, using an edit distance that also counts swapped neighbouring letters as one edit. Allowed distance:
-  - **3 letters or fewer:** exact only.
-  - **4 to 6 letters:** 1.
-  - **7 or more letters:** 2.
-
-  Distance is measured against the length of the answer being compared.
-- **Ties** between two different answers (IRAK could be Iran or Iraq) are rejected with "Did you mean Iran or Iraq?".
-- Answers already used this game are never fuzzy-matched.
-- The **real** answer's length is what counts for points, the next box size and the share funnel.
-- If the real answer doesn't fit the current box, reject it with a clear message: "Broccoli has 8 letters — too big for this box".
-- Feedback: "Close enough · BROCOLI → Broccoli".
-- No point penalty for a typo *(my call)*.
+- Otherwise, accept an answer from *this round's category* that is **exactly one typo** away. A typo is one wrong letter, one missing letter, one extra letter, or two neighbouring letters swapped.
+- Applies to answers of **4 or more letters**. Answers of 3 letters or fewer must be exact.
+- If one typo could mean two different answers (IRAK could be Iran or Iraq), it's rejected with "Did you mean Iran or Iraq?".
+- Answers already used this game are never typo-matched.
+- The **real** answer's length counts for points, the next box size and the share funnel. If the real answer doesn't fit the box, it's rejected with a clear message.
+- Feedback: "Close enough · BROCOLI → Broccoli". No point penalty.
 
 ### 5. Start screen (your decision)
 - **Keep today's layout, logo and four instructions as they are.**
@@ -70,11 +63,11 @@ Close misspellings count. *(The rule is my proposal; you didn't object.)*
 - The last line becomes `SITE_URL` without `https://`. That's the `vercel.app` address now and `shrinkle.io` later. Today it's the GitHub Pages address.
 
 ### 8. General polish (my calls, within the current visual style)
-- **Type and spacing:** a consistent type scale across the HUD, banner and end screen. Nothing overlaps at 375×667 (small phone), 390×844, 768×1024 or 1280×720–1440×900.
-- **End screen on a phone:** score and Copy visible without scrolling at 390×844. The round-by-round recap can sit lower.
+- **Size checks (you confirmed):** a consistent type scale across the HUD, banner and end screen. Nothing overlaps or gets cut off at 375×667 (small phone), 390×844, 768×1024, 1280×720 and 1440×900. Each size gets checked with a screenshot.
+- **End screen (you confirmed):** at 390×844 the layer reached, score and Copy button are visible without scrolling. The round-by-round recap sits below.
 - **Phone input:** tapping anywhere on the play area opens the keyboard, and the play area stays above it, as today. There's no page zoom on input focus, and safe areas are respected.
-- **Sound toggle:** a small mute toggle in the top bar, remembered per browser.
-- **Haptics:** a short vibration on correct and wrong answers where the device supports it (Android).
+- **Sound with a mute toggle (you confirmed):** keep the sound effects, plus a mute toggle in the top bar and on the title screen, remembered per browser.
+- **Vibration (you confirmed):** a short buzz on correct and wrong answers, and a longer one on a layer drop, where the device supports it (Android Chrome; iPhones ignore it). It's silenced along with mute.
 - **Accessibility:** visible focus states. Reduced-motion settings soften the zoom and banner animations.
 - **Speed:** fonts load without blocking. The game stays one self-contained HTML file; Three.js stays inlined.
 
