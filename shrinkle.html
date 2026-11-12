@@ -407,6 +407,38 @@ function pickCat(base,round,box,usedLists){
 }
 const catSet=c=>c._set||(c._set=new Set(c.words));
 const fitCount=(c,cap)=>c.cum[Math.max(0,Math.min(40,cap))];
+// Optimal-string-alignment distance (substitute / insert / delete / swap neighbours); stops early past `max`
+function typoDist(a,b,max=2){
+  const m=a.length,n=b.length;if(Math.abs(m-n)>max)return max+1;
+  let pp=null,p=Array.from({length:n+1},(_,j)=>j);
+  for(let i=1;i<=m;i++){
+    const c=[i];let rowMin=i;
+    for(let j=1;j<=n;j++){
+      let v=Math.min(p[j]+1,c[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));
+      if(i>1&&j>1&&a[i-1]===b[j-2]&&a[i-2]===b[j-1])v=Math.min(v,pp[j-2]+1);
+      c[j]=v;if(v<rowMin)rowMin=v;
+    }
+    if(rowMin>max)return max+1;pp=p;p=c;
+  }
+  return p[n];
+}
+// Exact answers win; otherwise one typo is forgiven for answers of 4+ letters in this category
+function matchAnswer(c,typed,used,box){
+  const list=c.list,key=i=>list.id+':'+i,fit=(n,idx,kind)=>n.length>box?{kind:'toolong',n,idx}:{kind,n,idx};
+  if(catSet(c).has(typed)){const idx=list.map[typed];return used.has(key(idx))?{kind:'used',idx}:fit(typed,idx,'exact');}
+  if(list.map[typed]!==undefined)return {kind:'notcat',idx:list.map[typed]};
+  if(typed.length<3)return {kind:'unknown'};
+  const hits=new Map();let usedHit=false;
+  for(const w of c.words){
+    if(w.length<4||Math.abs(w.length-typed.length)>1||typoDist(typed,w,1)!==1)continue;
+    const idx=list.map[w];
+    if(used.has(key(idx))){usedHit=true;continue;}
+    if(!hits.has(idx))hits.set(idx,w);
+  }
+  if(hits.size>1)return {kind:'ambiguous',options:[...hits.keys()].map(i=>list.items[i].d)};
+  if(hits.size===1){const [idx,n]=[...hits][0];return fit(n,idx,'typo');}
+  return usedHit?{kind:'used'}:{kind:'unknown'};
+}
 
 /* ============================== SOUND ============================== */
 let AC=null;
@@ -652,18 +684,20 @@ function ask(delay){
 }
 function submit(){
   if(!G||G.state!=='play')return;
-  const c=G.cat,w=G.buf,list=c.list;if(!w)return;
-  const idx=list.map[w];
-  if(idx===undefined)return fail(`${w.toUpperCase()} isn't on our ${list.one} list`);
-  const it=list.items[idx];
-  if(!catSet(c).has(w))return fail(`${it.d} doesn't fit this category`);
-  if(G.used.has(list.id+':'+idx))return fail('Already used this game');
+  const c=G.cat,typed=G.buf,list=c.list;if(!typed)return;
+  const m=matchAnswer(c,typed,G.used,G.box),it=m.idx!==undefined?list.items[m.idx]:null;
+  if(m.kind==='unknown')return fail(`${typed.toUpperCase()} isn't on our ${list.one} list`);
+  if(m.kind==='notcat')return fail(`${it.d} doesn't fit this category`);
+  if(m.kind==='used')return fail('Already used this game');
+  if(m.kind==='ambiguous')return fail(`Did you mean ${m.options.slice(0,-1).join(', ')} or ${m.options[m.options.length-1]}?`);
+  if(m.kind==='toolong')return fail(`${it.d} has ${m.n.length} letters — too big for this box`);
+  const w=m.n,idx=m.idx;
   const secs=Math.ceil(G.t),lenPts=w.length*10,timePts=secs*3,pts=lenPts+timePts,before=G.layer;
   G.score+=pts;G.layer=layerFor(G.score);G.used.add(list.id+':'+idx);G.usedLists.add(list.id);G.state='gap';kb.value='';
   G.hist.push({ok:true,word:it.d,len:w.length,box:G.box,pts,lenPts,timePts,layer:G.layer});
   G.box=Math.max(MINBOX,w.length-1);
   $('score').textContent=G.score;
-  toast(`${it.d} · +${lenPts} length · +${timePts} time`,'good');sfx.good();fly(`+${pts}`,'#7ce7ff');
+  toast(m.kind==='typo'?`Close enough · ${typed.toUpperCase()} → ${it.d} · +${pts}`:`${it.d} · +${lenPts} length · +${timePts} time`,'good');sfx.good();fly(`+${pts}`,'#7ce7ff');
   document.querySelectorAll('#tiles .t').forEach(t=>t.classList.add('full'));
   setTimeout(()=>advance(before),850);
 }
