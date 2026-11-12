@@ -1,6 +1,6 @@
 # Shrinkle
 
-**Play:** [shrinkle.vercel.app](https://shrinkle.vercel.app/) (backup: [rickeyjohnson.github.io/shrinkle](https://rickeyjohnson.github.io/shrinkle/))
+**Play:** [shrinkle.lol](https://shrinkle.lol/) (backup: [rickeyjohnson.github.io/shrinkle](https://rickeyjohnson.github.io/shrinkle/))
 
 A daily word-trivia dive. Name things to shrink: every word you type sets the next letter box one letter shorter, and your points zoom you down through 12 layers of scale, from the Cosmic Web to an atomic nucleus.
 

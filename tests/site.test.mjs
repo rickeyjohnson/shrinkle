@@ -16,6 +16,25 @@ test('Vercel serves the game (not the GitHub Pages redirect) at /', () => {
   assert.deepEqual(v.rewrites, [{ source: '/', destination: '/shrinkle.html' }]);
 });
 
+test('the address bar never shows /shrinkle.html on Vercel (it redirects to /)', () => {
+  const v = JSON.parse(readFileSync(root('vercel.json'), 'utf8'));
+  assert.deepEqual(v.redirects, [{ source: '/shrinkle.html', destination: '/', permanent: false }]);
+});
+
+// shrinkle.vercel.app belongs to an unrelated game; previews and share text must point at our own domain.
+const SITE = 'https://shrinkle.lol/';
+test('link tags in both pages point at shrinkle.lol, never shrinkle.vercel.app', () => {
+  for (const page of ['shrinkle.html', 'index.html']) {
+    const src = readFileSync(root(page), 'utf8');
+    const get = (attr, name) => (src.match(new RegExp(`<meta ${attr}="${name}" content="([^"]+)"`)) || [])[1];
+    assert.equal(get('property', 'og:url'), SITE, `${page} og:url`);
+    assert.equal(get('property', 'og:image'), SITE + 'og.jpg', `${page} og:image`);
+    assert.equal(get('name', 'twitter:image'), SITE + 'og.jpg', `${page} twitter:image`);
+    assert.ok(!src.includes('shrinkle.vercel.app'), `${page} still mentions shrinkle.vercel.app`);
+  }
+  assert.ok(!readFileSync(root('README.md'), 'utf8').includes('shrinkle.vercel.app'), 'README still links shrinkle.vercel.app');
+});
+
 test('link-preview image exists, matches twitter:image and is under 300 KB', () => {
   const og = meta('property', 'og:image'), tw = meta('name', 'twitter:image');
   assert.ok(og, 'og:image tag missing');

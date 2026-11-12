@@ -9,8 +9,8 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Shrinkle">
 <meta property="og:description" content="A daily dive from the Cosmic Web to the atom. Name it to shrink it.">
-<meta property="og:url" content="https://shrinkle.vercel.app/">
-<meta property="og:image" content="https://shrinkle.vercel.app/og.jpg">
+<meta property="og:url" content="https://shrinkle.lol/">
+<meta property="og:image" content="https://shrinkle.lol/og.jpg">
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -18,7 +18,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Shrinkle">
 <meta name="twitter:description" content="A daily dive from the Cosmic Web to the atom. Name it to shrink it.">
-<meta name="twitter:image" content="https://shrinkle.vercel.app/og.jpg">
+<meta name="twitter:image" content="https://shrinkle.lol/og.jpg">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='1' y='6' width='14' height='20' rx='3' fill='%23f3f5fa'/%3E%3Crect x='17' y='12' width='9' height='14' rx='2' fill='%23b8eefc'/%3E%3Crect x='27' y='18' width='4' height='8' rx='1' fill='%237ce7ff'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -680,8 +680,8 @@ function step3D(dt){
 
 /* ============================== GAME ============================== */
 const $=id=>document.getElementById(id);
-// The live address lives only in the <head> og:url tag (vercel.app now, shrinkle.io later)
-const SITE_URL=((document.querySelector('meta[property="og:url"]')||{}).content||'https://shrinkle.vercel.app/').replace(/\/$/,'');
+// The live address lives only in the <head> og:url tag (shrinkle.lol)
+const SITE_URL=((document.querySelector('meta[property="og:url"]')||{}).content||'https://shrinkle.lol/').replace(/\/$/,'');
 let G=null;
 function store(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v);}catch(e){return null;}}
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
