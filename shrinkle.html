@@ -113,18 +113,22 @@ html,body{height:100%;margin:0;overflow:hidden;background:#05060b;color:var(--fg
 .recap .x{color:var(--red)}
 pre#share{margin:0;font-family:var(--mono);font-size:13.5px;line-height:1.6;color:var(--fg);background:rgba(255,255,255,.06);border:1px solid var(--faint);border-radius:12px;padding:10px 16px;white-space:pre-wrap;user-select:all;width:100%;max-width:440px}
 #kb{position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;border:0;padding:0;font-size:16px}
+#scaleRead .cd{font-family:var(--type);font-size:34px;font-weight:700;line-height:1;margin-top:6px;font-variant-numeric:tabular-nums;transition:color .2s}
+#scaleRead .cd.warn{color:#ffe14d}
+#scaleRead .cd.danger{color:#ff7a7a;animation:cdp .5s ease-in-out infinite alternate}
+@keyframes cdp{to{transform:scale(1.14)}}
 #scaleRead .nx{font-family:var(--mono);font-size:11px;color:var(--cyan);margin-top:3px;letter-spacing:.04em}
 #stats .rd b{font-size:15px}
 pre#share{text-align:left}
 .screen{align-items:flex-start}.panel{margin:auto}
 @media (max-width:820px){
-  #meter{left:50%;top:calc(max(18px,env(safe-area-inset-top,0px)) + 64px);transform:translateX(-50%);flex-direction:row;gap:9px}
+  #meter{left:50%;top:calc(max(18px,env(safe-area-inset-top,0px)) + 104px);transform:translateX(-50%);flex-direction:row;gap:9px}
   #meter li{height:auto}#meter li::before{display:none}#meter .lab,#meter li.cur .lab{display:none!important}
   #meter .dot{width:8px;height:8px}#meter li.cur .dot{width:12px;height:12px;margin:0}
 }
 @media (max-width:560px){
   .mark{font-size:12px;letter-spacing:.16em}#stats{gap:12px;font-size:11px}#stats .rd{display:none}
-  #scaleRead .v{font-size:15px}#scaleRead .n{font-size:10px}#scaleRead .nx{display:none}
+  #scaleRead .v{font-size:15px}#scaleRead .n{font-size:10px}#scaleRead .nx{display:none}#scaleRead .cd{font-size:28px}
   #play{padding-bottom:8px;gap:9px}#prompt{font-size:23px}#info{font-size:11px;gap:10px}#toast{font-size:15px}
   .panel{padding:22px 18px;gap:12px}.steps li{font-size:13.5px;grid-template-columns:22px 1fr;gap:8px}.tag{font-size:15px}
   .recap div{grid-template-columns:70px 1fr auto}.big{font-size:34px}pre#share{font-size:12px}
@@ -160,7 +164,7 @@ pre#share{text-align:left}
 <div id="hud" hidden>
   <div id="top">
     <div class="mark">SHRINKLE<small id="modeLbl">DAILY #1</small></div>
-    <div id="scaleRead"><div class="n" id="lvlName">Cosmic Web</div><div class="v" id="lvlScale">10²⁴ m</div><div class="nx" id="next"></div></div>
+    <div id="scaleRead"><div class="n" id="lvlName">Cosmic Web</div><div class="v" id="lvlScale">10²⁴ m</div><div class="nx" id="next"></div><div class="cd" id="cd">20</div></div>
     <div id="stats"><div class="rd">ROUND <b id="roundLbl">1/7</b></div><div>SCORE <b id="score">0</b></div></div>
   </div>
   <div id="play">
@@ -168,7 +172,7 @@ pre#share{text-align:left}
     <div id="prompt">Countries</div>
     <div id="tiles"></div>
     <div id="bar"><div id="barFill"></div></div>
-    <div id="info"><span id="fit"></span><span>↵ submit</span><button class="ghost" id="btnPass" type="button">skip · 0 pts</button></div>
+    <div id="info"><span id="fit"></span><span>↵ submit</span></div>
     <div id="toast"></div>
   </div>
 </div>
@@ -726,7 +730,12 @@ function renderTiles(){
   el.innerHTML=h;
 }
 function renderInfo(){const f=fitCount(G.cat,G.box);$('fit').innerHTML=`BOX <b>${G.box}</b> LETTERS · <b>${f}</b> FIT`;}
-function renderTimer(){const frac=G?Math.max(0,G.t/TIME):1,b=$('barFill');b.style.width=(frac*100).toFixed(2)+'%';b.style.background=frac>0.5?'#f3f5fa':frac>0.25?'#ffd27a':'#ff7a7a';}
+function renderTimer(){
+  const t=G?Math.max(0,G.t):TIME,frac=t/TIME,secs=Math.ceil(t),col=secs>10?'#f3f5fa':secs>5?'#ffe14d':'#ff7a7a',b=$('barFill'),cd=$('cd');
+  b.style.width=(frac*100).toFixed(2)+'%';b.style.background=col;
+  if(cd.textContent!==String(secs))cd.textContent=secs;
+  cd.className=secs>10?'cd':secs>5?'cd warn':'cd danger';
+}
 function toast(m,cls=''){const t=$('toast');t.textContent=m;t.className=cls;}
 function banner(a,b,c){$('banA').textContent=a;$('banB').textContent=b;$('banC').textContent=c;const el=$('banner');el.classList.remove('show');void el.offsetWidth;el.classList.add('show');}
 function fly(text,color){const d=document.createElement('div');d.className='fly';d.textContent=text;d.style.color=color;const r=$('tiles').getBoundingClientRect();d.style.left=(r.left+r.width/2)+'px';d.style.top=(r.top-36)+'px';document.body.appendChild(d);setTimeout(()=>d.remove(),1100);}
@@ -788,7 +797,6 @@ addEventListener('keydown',e=>{
   if(!$('scrTitle').hidden&&e.key==='Enter'){e.preventDefault();openDaily();return;}
   if(!G||G.state!=='play')return;
   if(e.key==='Enter'){e.preventDefault();submit();return;}
-  if(e.key==='Escape'){miss('skip');return;}
   if(e.target===kb)return;
   if(e.key==='Backspace'){e.preventDefault();setBuf(G.buf.slice(0,-1));focusKb();}
   else if(/^[a-zA-Z]$/.test(e.key)){e.preventDefault();setBuf(G.buf+e.key);focusKb();}
@@ -796,7 +804,6 @@ addEventListener('keydown',e=>{
 $('hud').addEventListener('pointerup',e=>{if(G&&G.state==='play'&&!e.target.closest('button')){focusKb();if($('toast').textContent==='Tap the box to type')toast('');}});
 $('btnDaily').onclick=openDaily;
 $('btnPractice').onclick=()=>startRun('practice');
-$('btnPass').onclick=e=>{e.currentTarget.blur();miss('skip');focusKb();};
 $('btnCopy').onclick=()=>{const txt=$('share').textContent,ok=()=>$('btnCopy').textContent='Copied';
   const sel=()=>{const r=document.createRange();r.selectNodeContents($('share'));const s=getSelection();s.removeAllRanges();s.addRange(r);$('btnCopy').textContent='Press Ctrl/⌘+C';};
   try{navigator.clipboard.writeText(txt).then(ok,sel);}catch(e){sel();}};
