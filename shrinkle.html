@@ -136,10 +136,8 @@ html,body{height:100%;margin:0;overflow:hidden;background:#05060b;color:var(--fg
 .btns.stack #btnDaily{min-width:min(280px,100%);font-size:17px;padding:15px 30px}
 .btn:focus-visible{outline:none}
 .ghost:focus-visible,.lnk:focus-visible{outline:2px solid var(--cyan);outline-offset:3px;border-radius:3px}
-.links{display:flex;gap:22px;flex-wrap:wrap;justify-content:center;align-items:center}
 .lnk{font-family:var(--sans);font-weight:600;font-size:14.5px;color:var(--fg);background:none;border:0;padding:4px 0;cursor:pointer;text-decoration:underline;text-decoration-color:rgba(243,245,250,.32);text-underline-offset:5px;text-decoration-thickness:1px}
 .lnk:hover{text-decoration-color:var(--fg)}
-.lnk.mute{color:var(--mute);text-decoration:none}.lnk.mute:hover{color:var(--fg)}
 .foot{font-family:var(--sans);font-size:13px;color:var(--mute);line-height:1.5;max-width:44ch}
 .big{font-family:var(--mono);font-size:44px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1}
 .endT{font-size:clamp(30px,5vw,46px);font-weight:800;letter-spacing:-.02em;line-height:1.05}
@@ -159,7 +157,6 @@ pre#share{margin:0;font-family:var(--mono);font-size:13.5px;line-height:1.6;colo
 .mute{display:inline-flex;align-items:center;gap:6px;color:var(--mute)}
 .mute svg{display:block}
 #btnMute{padding:5px 8px}#btnMute span{display:none}
-#btnMuteTitle{margin-top:2px}
 #scaleRead .nx{font-family:var(--mono);font-size:11px;color:var(--cyan);margin-top:3px;letter-spacing:.04em}
 #stats .rd b{font-size:15px}
 pre#share{text-align:left}
@@ -210,6 +207,42 @@ pre#share{text-align:left}
 #starInfo .btn{grid-column:2;grid-row:1/3;font-size:15px;padding:11px 22px}
 .recap .p{white-space:nowrap}.recap .split{font-style:normal;color:var(--mute)}
 @media (max-width:560px){.recap .split{display:none}.recap div{grid-template-columns:64px 1fr auto}}
+/* ---- Site bar: wordmark, modes, feedback, sound. Hidden during a run so the zoom keeps the whole screen ---- */
+:root{--barh:calc(56px + env(safe-area-inset-top,0px))}
+#site{position:fixed;left:0;right:0;top:0;z-index:20;height:var(--barh);display:flex;align-items:stretch;gap:30px;
+  padding:env(safe-area-inset-top,0px) max(24px,env(safe-area-inset-right,0px)) 0 max(24px,env(safe-area-inset-left,0px));background:rgba(3,4,9,.88);border-bottom:1px solid var(--faint)}
+#site button,#site a{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-decoration:none}
+#site .brand{display:flex;align-self:center;font-size:23px}
+/* the wordmark shrinks letter by letter, like the logo */
+#wm{display:flex;align-items:flex-end;gap:.1em;font-family:var(--type);font-weight:700;line-height:.8}
+#wm b{display:block}
+/* phones: the app icon's three shrinking blocks stand in for the wordmark */
+#site .bm{display:none;align-items:flex-end;gap:2px}
+#site .bm i{display:block;border-radius:2px}
+#site .bm i:nth-child(1){width:11px;height:16px;background:var(--fg)}
+#site .bm i:nth-child(2){width:7px;height:11px;background:#b8eefc}
+#site .bm i:nth-child(3){width:3px;height:6px;background:var(--cyan)}
+#site nav{display:flex;gap:28px;margin-left:auto}
+#site .nav{position:relative;display:flex;align-items:center;white-space:nowrap;font-family:var(--sans);font-weight:600;font-size:15px;color:var(--mute)}
+#site .nav:hover,#site .nav[aria-current="page"]{color:var(--fg)}
+#site .nav[aria-current="page"]::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--cyan)}
+#site .tools{display:flex;align-items:center;gap:16px;padding-left:22px;border-left:1px solid var(--faint);margin-block:14px}
+#site .tool{display:inline-flex;align-items:center;gap:7px;font-family:var(--sans);font-weight:600;font-size:14px;color:var(--mute);padding:4px 2px}
+#site .tool:hover{color:var(--fg)}
+#site .mute span{display:none}
+#site :focus-visible{outline:2px solid var(--cyan);outline-offset:3px;border-radius:3px}
+.screen{top:var(--barh)}
+.btn.sec{background:transparent;color:var(--fg);box-shadow:inset 0 0 0 1.5px rgba(243,245,250,.45)}
+.btn.sec:hover{box-shadow:inset 0 0 0 1.5px var(--fg)}
+.btns.stack .btn.sec{min-width:min(280px,100%);font-size:15px;padding:12px 26px}
+@media (max-width:640px){
+  #site{gap:14px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));--barh:calc(50px + env(safe-area-inset-top,0px))}
+  :root{--barh:calc(50px + env(safe-area-inset-top,0px))}
+  #site .brand{font-size:18px}#site nav{gap:16px}#site .nav{font-size:14px}
+  #site .tools{gap:10px;padding-left:12px;margin-block:12px}#site .tool span{display:none}
+}
+@media (max-width:560px){#wm{display:none}#site .bm{display:flex}#site nav{gap:14px}#site .tools{padding-left:10px}}
+@media (max-width:350px){#site{gap:10px}#site nav{gap:11px}#site .nav{font-size:13px}#site .tools{gap:8px}}
 [hidden]{display:none!important}
 @media (max-width:820px){#meter .lab{display:none}#meter li.cur .lab{display:none}.mark small{display:none}}
 @media (max-height:780px){#meter li{height:clamp(22px,4vh,34px)}#prompt{font-size:clamp(22px,3vw,34px)}.panel{gap:11px;padding:22px 24px}.steps li{font-size:14px}.word span{transform:scale(.85)}.tag{font-size:15.5px}#play{gap:10px}}
@@ -252,6 +285,19 @@ pre#share{text-align:left}
 <input id="kb" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Type your answer">
 <div id="banner"><div class="a" id="banA"></div><div class="b" id="banB"></div><div class="c" id="banC"></div></div>
 
+<header id="site">
+  <button class="brand" id="navHome" type="button" aria-label="SHRINKLE, today's shrink"><span id="wm" aria-hidden="true"></span><span class="bm" aria-hidden="true"><i></i><i></i><i></i></span></button>
+  <nav aria-label="Game modes">
+    <button class="nav" id="navDaily" type="button" data-tab="daily">Daily</button>
+    <button class="nav" id="navUnl" type="button" data-tab="unlimited">Unlimited</button>
+    <button class="nav" id="navPast" type="button" data-tab="past">Past shrinks</button>
+  </nav>
+  <div class="tools">
+    <a class="tool fb" target="_blank" rel="noopener" aria-label="Send feedback" hidden><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M4 5h16v11H10l-6 4.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span>Feedback</span></a>
+    <button class="tool mute" id="btnMuteTitle" type="button" aria-pressed="false" aria-label="Sound"></button>
+  </div>
+</header>
+
 <div class="screen" id="scrTitle">
   <div class="panel">
     <div class="word" id="logo"></div>
@@ -263,8 +309,7 @@ pre#share{text-align:left}
       <li><i class="sq"></i><span>Points = <b>10 per letter + 3 per second left</b>. Every point threshold is a deeper layer, and a big round can skip layers.</span></li>
       <li><i class="sq"></i><span><b>20 seconds</b> per round. If time runs out, you score 0 and stay on your layer.</span></li>
     </ul>
-    <div class="btns stack"><button class="btn" id="btnDaily" type="button">Start shrinking</button></div>
-    <div class="links"><button class="lnk" id="btnArch" type="button">Past shrinks</button><a class="lnk fb" target="_blank" rel="noopener" hidden>Send feedback</a><button class="lnk mute" id="btnMuteTitle" type="button" aria-pressed="false" aria-label="Sound"></button></div>
+    <div class="btns stack"><button class="btn" id="btnDaily" type="button">Start shrinking</button><button class="btn sec" id="btnUnl" type="button">Play unlimited</button></div>
     <div class="foot" id="statsLine"></div>
     <div class="foot" id="nextDive"></div>
   </div>
@@ -276,8 +321,7 @@ pre#share{text-align:left}
     <div class="endT" id="endTitle">The atom</div>
     <div class="tag" id="endSub"></div>
     <div class="big" id="endScore">0</div>
-    <div class="btns"><button class="btn" id="btnCopy" type="button">Copy result</button></div>
-    <div class="links"><button class="lnk" id="btnArchEnd" type="button">Past shrinks</button><a class="lnk fb" target="_blank" rel="noopener" hidden>Send feedback</a></div>
+    <div class="btns"><button class="btn" id="btnCopy" type="button">Copy result</button><button class="btn sec" id="btnAgain" type="button">Play unlimited</button></div>
     <pre id="share"></pre>
     <div class="recap" id="recap"></div>
     <div class="foot" id="endFoot"></div>
@@ -480,16 +524,19 @@ function dayNum(key){const [y,m,d]=key.split('-').map(Number);return Math.round(
 function dayKey(n){const d=new Date(DAY1+(n-1)*864e5);return d.getUTCFullYear()+'-'+String(d.getUTCMonth()+1).padStart(2,'0')+'-'+String(d.getUTCDate()).padStart(2,'0');}
 function dailyNum(){return dayNum(todayKey());}
 const runBase=key=>'shrinkle3:'+key;
+// Unlimited: a fresh random set of categories every run (never a daily seed, so it can't spoil today's shrink)
+const unlimitedBase=()=>'unlimited:'+Math.random().toString(36).slice(2)+Date.now().toString(36);
 // Star chart: shrink #1 sits at the centre and each later day steps 20px further along one spiral arm (arms 26px apart)
 const ARM_GAP=26,STAR_STEP=20,ARM_B=ARM_GAP/(2*Math.PI),ARM_L0=ARM_B*2.4*2.4/2;
 function starPos(i){const th=Math.sqrt(2*(STAR_STEP*(i-1)+ARM_L0)/ARM_B),r=ARM_B*th;return {x:r*Math.cos(th),y:r*Math.sin(th)};}
 // The game is one file, shrinkle.html, but the address bar should only ever show the folder (shrinkle.lol/, …/shrinkle/)
 const cleanPath=p=>/\/shrinkle\.html$/.test(p)?p.replace(/shrinkle\.html$/,''):null;
 // The copied result. The last line is the full https link so chat apps turn it into a tappable preview card.
-function shareText({num,past,hist,score,layer,site}){
+function shareText({mode,num,hist,score,layer,site}){
   const l=LEVELS[layer],words=hist.filter(h=>h.ok).length;
   const rows=hist.map(h=>h.ok?'🟩'.repeat(h.len)+'⬜'.repeat(Math.max(0,h.box-h.len))+` ${h.len} · ${h.pts} ${LEVELS[h.layer].em}`:`🟥 0 ${LEVELS[h.layer].em}`);
-  return `SHRINKLE #${num}${past?' (past shrink)':''} · ${l.em} ${l.name} · ${score} pts\n${words}/${ROUNDS} words · layer ${layer+1} of ${LEVELS.length}\n`+rows.join('\n')+'\n'+site;
+  const head=mode==='unlimited'?'SHRINKLE Unlimited':`SHRINKLE #${num}${mode==='archive'?' (past shrink)':''}`;
+  return `${head} · ${l.em} ${l.name} · ${score} pts\n${words}/${ROUNDS} words · layer ${layer+1} of ${LEVELS.length}\n`+rows.join('\n')+'\n'+site;
 }
 // Fill a Google Form pre-filled link whose answers were typed as {num} {round} {category} {answer}
 function fillForm(tpl,vals){
@@ -769,7 +816,13 @@ const SITE_URL=((document.querySelector('meta[property="og:url"]')||{}).content|
 // Feedback goes to a Google Form. FEEDBACK_FORM: the form's share link (empty hides "Send feedback").
 // FEEDBACK_REPORT: the form's pre-filled link made by typing {num} {round} {category} {answer} as answers (empty hides per-round "Report").
 const FEEDBACK_FORM='', FEEDBACK_REPORT='';
-let G=null;
+let G=null,curTab='daily';
+// One screen at a time ('hud' = a run in progress). The site bar shows everywhere except during a run; tab underlines the matching mode.
+function view(id,tab=curTab){
+  for(const k of ['scrTitle','scrEnd','scrArch'])$(k).hidden=k!==id;
+  const run=id==='hud';$('hud').hidden=!run;$('meter').hidden=!run;$('site').hidden=run;
+  curTab=tab;document.querySelectorAll('#site .nav').forEach(b=>{if(b.dataset.tab===tab)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
+}
 function store(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v);}catch(e){return null;}}
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const kb=$('kb');
@@ -789,12 +842,14 @@ function renderTop(){
   $('score').textContent=G.score;$('roundLbl').textContent=`${Math.min(G.round+1,ROUNDS)}/${ROUNDS}`;
   renderMeter();placeMeter();
 }
-// mode 'daily' = today's dive (counts toward stats); 'archive' = a past day's dive, same categories that day had
+// mode 'daily' = today's shrink (counts toward stats); 'archive' = a past day's shrink, same categories that day had;
+// 'unlimited' = random categories, play as often as you like, never saved or counted
 function startRun(mode,key=todayKey()){
   ac();
-  G={mode,key,num:dayNum(key),base:runBase(key),round:0,box:BOX0,score:0,layer:0,hist:[],used:new Set(),usedLists:new Set(),buf:'',state:'intro',t:TIME,t0:0,lastTick:99,cat:null};
-  $('scrTitle').hidden=true;$('scrEnd').hidden=true;$('scrArch').hidden=true;$('hud').hidden=false;$('meter').hidden=false;
-  $('modeLbl').textContent=mode==='daily'?`#${G.num}`:`#${G.num} past shrink`;
+  const unl=mode==='unlimited';
+  G={mode,key:unl?null:key,num:unl?null:dayNum(key),base:unl?unlimitedBase():runBase(key),round:0,box:BOX0,score:0,layer:0,hist:[],used:new Set(),usedLists:new Set(),buf:'',state:'intro',t:TIME,t0:0,lastTick:99,cat:null};
+  view('hud');
+  $('modeLbl').textContent=unl?'Unlimited':mode==='daily'?`#${G.num}`:`#${G.num} past shrink`;
   zoomTo(0);renderTop();
   banner('START SHRINKING',LEVELS[0].name,`${LEVELS[0].sc} · ${LEVELS[0].say}`);
   if(touch)focusKb();
@@ -871,26 +926,26 @@ function fly(text,color){const d=document.createElement('div');d.className='fly'
 
 function finish(){
   G.state='done';kb.blur();
-  const l=LEVELS[G.layer],nx=LEVELS[G.layer+1],daily=G.mode==='daily';
-  $('endKicker').textContent=daily?`Shrink #${G.num} complete. You reached`:`Past shrink #${G.num} complete. You reached`;
+  const l=LEVELS[G.layer],nx=LEVELS[G.layer+1],daily=G.mode==='daily',unl=G.mode==='unlimited';
+  $('endKicker').textContent=unl?'Unlimited run complete. You reached':daily?`Shrink #${G.num} complete. You reached`:`Past shrink #${G.num} complete. You reached`;
   $('endTitle').textContent=`${l.em} ${l.name}`;
   $('endSub').innerHTML=`<b>${l.sc}</b> · ${l.say}.`+(nx?` ${nx.at-G.score} more point${nx.at-G.score===1?'':'s'} would have reached the ${nx.name}.`:' The deepest layer there is.');
   $('endScore').textContent=`${G.score} pts`;
   $('recap').innerHTML=G.hist.map((h,i)=>{
-    const rep=FEEDBACK_REPORT?`<a class="rep" target="_blank" rel="noopener" href="${esc(fillForm(FEEDBACK_REPORT,{num:G.num,round:i+1,category:h.cat,answer:h.typed||'(none)'}))}">Report</a>`:'';
+    const rep=FEEDBACK_REPORT?`<a class="rep" target="_blank" rel="noopener" href="${esc(fillForm(FEEDBACK_REPORT,{num:unl?'Unlimited':G.num,round:i+1,category:h.cat,answer:h.typed||'(none)'}))}">Report</a>`:'';
     return h.ok
       ?`<div><span class="l">Round ${i+1}</span><span>${esc(h.word)} <span style="color:var(--mute)">(${h.len}/${h.box})</span></span><span class="p"><i class="split">${h.lenPts} + ${h.timePts} = </i>${h.pts} ${LEVELS[h.layer].em}</span>${rep}</div>`
       :`<div><span class="l">Round ${i+1}</span><span class="x">time ran out</span><span class="p">0 ${LEVELS[h.layer].em}</span>${rep}</div>`;}).join('');
   $('recap').classList.toggle('reps',!!FEEDBACK_REPORT);
-  $('share').textContent=shareText({num:G.num,past:!daily,hist:G.hist,score:G.score,layer:G.layer,site:SITE_URL});
-  if(!loadJSON(DKEY(G.key))){
+  $('share').textContent=shareText({mode:G.mode,num:G.num,hist:G.hist,score:G.score,layer:G.layer,site:SITE_URL});
+  if(!unl&&!loadJSON(DKEY(G.key))){
     saveJSON(DKEY(G.key),{kicker:$('endKicker').textContent,title:$('endTitle').textContent,sub:$('endSub').innerHTML,score:$('endScore').textContent,recap:$('recap').innerHTML,share:$('share').textContent,layer:G.layer,points:G.score,archive:!daily});
     if(daily){const st=stats(),t=G.key;st.streak=st.last===yesterdayKey()?st.streak+1:(st.last===t?st.streak:1);st.played++;st.total+=G.score;st.best=Math.max(st.best,G.score);st.deepest=Math.max(st.deepest,G.layer);st.last=t;saveJSON('shrinkle1k-stats',st);}
   }
   $('endFoot').textContent=(daily&&statsLine()?statsLine()+' ':'')+LEGEND;
   $('endNext').textContent=daily?`Next shrink in ${untilMidnight()}`:'';
-  $('btnCopy').textContent='Copy result';
-  $('hud').hidden=true;$('meter').hidden=true;$('scrEnd').hidden=false;
+  $('btnCopy').textContent='Copy result';$('btnAgain').textContent=unl?'Play again':'Play unlimited';
+  view('scrEnd',unl?'unlimited':daily?'daily':'past');
   sfx.rare();
 }
 
@@ -915,22 +970,24 @@ function showSaved(d,k=todayKey()){
   $('endKicker').textContent=d.kicker;$('endTitle').textContent=d.title;$('endSub').innerHTML=d.sub;$('endScore').textContent=d.score;$('recap').innerHTML=d.recap;$('share').textContent=d.share;
   const today=k===todayKey();
   $('endFoot').textContent=(today&&statsLine()?statsLine()+' ':'')+LEGEND;$('endNext').textContent=today?`Next shrink in ${untilMidnight()}`:'';
-  $('btnCopy').textContent='Copy result';
-  $('scrTitle').hidden=true;$('scrArch').hidden=true;$('scrEnd').hidden=false;
+  $('btnCopy').textContent='Copy result';$('btnAgain').textContent='Play unlimited';
+  view('scrEnd',today?'daily':'past');
 }
+function goHome(){renderTitle();view('scrTitle','daily');}
 function openDaily(){const d=loadJSON(DKEY());if(d)showSaved(d);else startRun('daily');}
 
 /* ============================== PAST DIVES (star chart) ============================== */
 const SVGNS='http://www.w3.org/2000/svg';
-let archFrom='scrTitle',archSel=0;
+let archFrom='scrTitle',archTab='daily',archSel=0;
 function svgEl(tag,attrs,parent){const e=document.createElementNS(SVGNS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
 function openArch(){
-  archFrom=!$('scrEnd').hidden?'scrEnd':'scrTitle';
-  $('scrTitle').hidden=true;$('scrEnd').hidden=true;$('scrArch').hidden=false;
+  if(!$('scrArch').hidden)return;
+  archFrom=!$('scrEnd').hidden?'scrEnd':'scrTitle';archTab=curTab;
+  view('scrArch','past');
   archSel=Math.max(1,dailyNum());renderArch();
   const t=document.querySelector(`#chart .st[data-n="${archSel}"]`);if(t)t.focus({preventScroll:true});
 }
-function closeArch(){$('scrArch').hidden=true;if(archFrom==='scrTitle')renderTitle();$(archFrom).hidden=false;}
+function closeArch(){if(archFrom==='scrTitle')renderTitle();view(archFrom,archTab);}
 function renderArch(){
   const svg=$('chart'),today=Math.max(1,dailyNum()),ahead=24;
   const runs=[];for(let n=1;n<=today;n++){const d=loadJSON(DKEY(dayKey(n)));runs[n]=d?savedRun(d):null;}
@@ -984,7 +1041,10 @@ $('siGo').onclick=()=>{
   if(saved)showSaved(saved,k);else if(k===todayKey())startRun('daily');else startRun('archive',k);
 };
 $('archBack').onclick=closeArch;
-$('btnArch').onclick=openArch;$('btnArchEnd').onclick=openArch;
+$('navPast').onclick=openArch;
+$('navHome').onclick=goHome;$('navDaily').onclick=goHome;
+const playUnlimited=()=>startRun('unlimited');
+$('navUnl').onclick=playUnlimited;$('btnUnl').onclick=playUnlimited;$('btnAgain').onclick=playUnlimited;
 document.querySelectorAll('a.fb').forEach(a=>{if(FEEDBACK_FORM){a.href=FEEDBACK_FORM;a.hidden=false;}});
 
 /* ============================== MUTE ============================== */
@@ -1029,8 +1089,9 @@ addEventListener('resize',()=>{fitVV();placeMeter();if(G&&G.state!=='done')rende
   // http(s) only: opening the file straight from disk (file://) keeps its path
   try{const p=cleanPath(location.pathname);if(p&&/^https?:$/.test(location.protocol))history.replaceState(null,'',p+location.search+location.hash);}catch(e){}
   const logo=$('logo'),base=Math.min(72,Math.floor((innerWidth-110)/5.6));
+  'SHRINKLE'.split('').forEach((ch,i)=>{const b=document.createElement('b');b.textContent=ch;b.style.fontSize=(1-i*0.045).toFixed(3)+'em';b.style.color=`color-mix(in srgb,#7ce7ff ${i*13}%,#f3f5fa)`;$('wm').appendChild(b);});
   'SHRINKLE'.split('').forEach((ch,i)=>{const s=document.createElement('span'),z=Math.round(base*0.95*(1-i*0.085));s.className='lt';s.textContent=ch;s.style.width=s.style.height=z+'px';s.style.fontSize=Math.round(z*0.6)+'px';s.style.background=`color-mix(in srgb,#7ce7ff ${i*13}%,#f3f5fa)`;logo.appendChild(s);});
-  renderTitle(); setInterval(tickNext,1000);
+  renderTitle();view('scrTitle','daily');setInterval(tickNext,1000);
   fitVV();setMuted(muted);renderMeter();init3D();zoomTo(0);
   let last=performance.now();
   function loop(now){

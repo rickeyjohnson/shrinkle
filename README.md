@@ -19,6 +19,10 @@ Everyone gets the same daily shrink (seeded by date), so scores can be compared.
 
 **Past shrinks** is a star chart of every daily shrink since #1 (Nov 11, 2026), spiralling out from the centre. Lit stars are days you played (bigger = deeper layer); constellation lines join days played back to back. Tap any earlier star to play that day's shrink with the same categories everyone got. Past shrinks don't change your streak or stats, and their copied result says "(past shrink)".
 
+**Unlimited** gives you a fresh, random set of categories every run, as many runs as you like. It never touches your daily result, stats or streak, and its copied result says "SHRINKLE Unlimited".
+
+The **top bar** switches between **Daily**, **Unlimited** and **Past shrinks**, and holds **Feedback** and the sound switch. It hides during a run so the zoom has the whole screen.
+
 ## Controls
 
 | Action | Key |
@@ -27,8 +31,9 @@ Everyone gets the same daily shrink (seeded by date), so scores can be compared.
 | Type | Letters (spaces don't count). On a phone, tap the box first |
 | Submit | **Enter** |
 | Delete | **Backspace** |
-| Sound on/off | Speaker button (top right while playing, or under Start shrinking) |
-| Past shrinks | **Past shrinks** link on the title or end screen; **Esc** or **Back** closes it |
+| Unlimited | **Unlimited** in the top bar, or **Play unlimited** under Start shrinking and on the end screen |
+| Past shrinks | **Past shrinks** in the top bar; **Esc** or **Back** closes it |
+| Sound on/off | Speaker button in the top bar, or top right while playing |
 
 ## Layers
 
@@ -93,4 +98,4 @@ open -a "Google Chrome" shrinkle.html
 
 ## Feedback
 
-Feedback goes to a Google Form. In `shrinkle.html`, set `FEEDBACK_FORM` to the form's share link to show **Send feedback** on the title and end screens. To add a **Report** link to every round on the end screen, make the form's pre-filled link with the answers typed as `{num}`, `{round}`, `{category}` and `{answer}`, and paste it into `FEEDBACK_REPORT`.
+Feedback goes to a Google Form. In `shrinkle.html`, set `FEEDBACK_FORM` to the form's share link to show **Feedback** in the top bar. To add a **Report** link to every round on the end screen, make the form's pre-filled link with the answers typed as `{num}`, `{round}`, `{category}` and `{answer}`, and paste it into `FEEDBACK_REPORT`.
