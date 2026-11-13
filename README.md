@@ -2,7 +2,7 @@
 
 **Play:** [shrinkle.lol](https://shrinkle.lol/) (backup: [rickeyjohnson.github.io/shrinkle](https://rickeyjohnson.github.io/shrinkle/))
 
-A daily word-trivia dive. Name things to shrink: every word you type sets the next letter box one letter shorter, and your points zoom you down through 12 layers of scale, from the Cosmic Web to an atomic nucleus.
+A daily word-trivia shrink. Name things to shrink: every word you type sets the next letter box one letter shorter, and your points zoom you down through 12 layers of scale, from the Cosmic Web to an atomic nucleus.
 
 Built in one class period for a Class Jam (theme: **shrinking**, constraint: winnable in **under 5 minutes**).
 
@@ -10,12 +10,14 @@ Built in one class period for a Class Jam (theme: **shrinking**, constraint: win
 
 1. Each round gives you a **category** and a **letter box**. Type any answer that fits the box.
 2. **Your word sets the next box**: it's one letter shorter than what you typed (minimum 3). Long answers leave room. Short ones box you in.
-3. Points = **length + time**: **10 per letter** plus **3 per second left**. That's up to 180 a round, and about 1,000 for a near-perfect dive.
+3. Points = **length + time**: **10 per letter** plus **3 per second left**. That's up to 180 a round, and about 1,000 for a near-perfect run.
 4. Your total score decides your **layer**. A big round can skip layers.
 5. **7 rounds × 20 seconds**, with a countdown under the layer readout. If time runs out, you score 0 and stay on your layer.
 6. **Typos are forgiven:** answers of 4+ letters count with one wrong, missing, extra or swapped letter (BROCOLI → Broccoli). Short answers must be exact.
 
-Everyone gets the same daily dive (seeded by date), so scores can be compared. You get **one daily attempt per browser**: after that, the title screen shows your saved result, a countdown to the next dive, and your stats (played, average, best, deepest layer, streak), all kept in this browser's local storage. **Practice** deals a random dive any time.
+Everyone gets the same daily shrink (seeded by date), so scores can be compared. You get **one daily attempt per browser**: after that, the title screen shows your saved result, a countdown to the next shrink, and your stats (played, average, best, deepest layer, streak), all kept in this browser's local storage.
+
+**Past shrinks** is a star chart of every daily shrink since #1 (Nov 11, 2026), spiralling out from the centre. Lit stars are days you played (bigger = deeper layer); constellation lines join days played back to back. Tap any earlier star to play that day's shrink with the same categories everyone got. Past shrinks don't change your streak or stats, and their copied result says "(past shrink)".
 
 ## Controls
 
@@ -25,7 +27,8 @@ Everyone gets the same daily dive (seeded by date), so scores can be compared. Y
 | Type | Letters (spaces don't count). On a phone, tap the box first |
 | Submit | **Enter** |
 | Delete | **Backspace** |
-| Sound on/off | Speaker button (top right, or under Practice) |
+| Sound on/off | Speaker button (top right while playing, or under Start shrinking) |
+| Past shrinks | **Past shrinks** link on the title or end screen; **Esc** or **Back** closes it |
 
 ## Layers
 
@@ -55,10 +58,10 @@ SHRINKLE #1 · 🧫 Cell · 612 pts
 🟩🟩🟩🟩🟩🟩🟩🟩🟩⬜ 9 · 132 🌍
 🟥 0 🌍
 ...
-rickeyjohnson.github.io/shrinkle
+https://shrinkle.lol
 ```
 
-🟩 letters used · ⬜ unused box · 🟥 skipped · number = letters · points · emoji = layer reached after that round
+🟩 letters used · ⬜ unused box · 🟥 time ran out · number = letters · points · emoji = layer reached after that round
 
 ## Categories
 
@@ -87,3 +90,7 @@ open -a "Google Chrome" shrinkle.html
 - `shrinkle.html`: the game
 - `POST.md`: the Class Jam submission text
 - `SHRINKLE-NOTES.md`, `docs/superpowers/plans/`: design notes and the build plan
+
+## Feedback
+
+Feedback goes to a Google Form. In `shrinkle.html`, set `FEEDBACK_FORM` to the form's share link to show **Send feedback** on the title and end screens. To add a **Report** link to every round on the end screen, make the form's pre-filled link with the answers typed as `{num}`, `{round}`, `{category}` and `{answer}`, and paste it into `FEEDBACK_REPORT`.

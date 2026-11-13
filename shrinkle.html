@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Shrinkle</title>
-<meta name="description" content="A daily dive from the Cosmic Web to the atom. Name it to shrink it.">
+<meta name="description" content="A daily shrink from the Cosmic Web to the atom. Name it to shrink it.">
 <meta name="theme-color" content="#05060b">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Shrinkle">
-<meta property="og:description" content="A daily dive from the Cosmic Web to the atom. Name it to shrink it.">
+<meta property="og:description" content="A daily shrink from the Cosmic Web to the atom. Name it to shrink it.">
 <meta property="og:url" content="https://shrinkle.lol/">
 <meta property="og:image" content="https://shrinkle.lol/og.jpg">
 <meta property="og:image:type" content="image/jpeg">
@@ -17,7 +17,7 @@
 <meta property="og:image:alt" content="SHRINKLE in shrinking letter tiles on a starry background: Name it to shrink it">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Shrinkle">
-<meta name="twitter:description" content="A daily dive from the Cosmic Web to the atom. Name it to shrink it.">
+<meta name="twitter:description" content="A daily shrink from the Cosmic Web to the atom. Name it to shrink it.">
 <meta name="twitter:image" content="https://shrinkle.lol/og.jpg">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='1' y='6' width='14' height='20' rx='3' fill='%23f3f5fa'/%3E%3Crect x='17' y='12' width='9' height='14' rx='2' fill='%23b8eefc'/%3E%3Crect x='27' y='18' width='4' height='8' rx='1' fill='%237ce7ff'/%3E%3C/svg%3E">
@@ -104,8 +104,9 @@ html,body{height:100%;margin:0;overflow:hidden;background:#05060b;color:var(--fg
 .fly{position:fixed;font-family:var(--mono);font-weight:600;font-size:26px;pointer-events:none;animation:fly 1.1s ease-out forwards;z-index:5;text-shadow:0 0 18px currentColor}
 @keyframes fly{0%{opacity:0;transform:translate(-50%,8px)}20%{opacity:1}100%{opacity:0;transform:translate(-50%,-60px)}}
 
-.screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;z-index:10;overflow:auto;background:radial-gradient(ellipse at 50% 60%,rgba(5,6,11,.15),rgba(5,6,11,.65))}
-.panel{width:min(540px,100%);display:flex;flex-direction:column;align-items:center;text-align:center;gap:16px;background:rgba(6,7,14,.66);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--faint);border-radius:22px;padding:30px 28px}
+/* Screens sit straight on the sky: a soft pool of darkness behind the text instead of a card */
+.screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;z-index:10;overflow:auto;background:radial-gradient(ellipse 75% 70% at 50% 46%,rgba(3,4,9,.78) 0%,rgba(3,4,9,.5) 55%,rgba(3,4,9,.2) 100%)}
+.panel{width:min(540px,100%);display:flex;flex-direction:column;align-items:center;text-align:center;gap:16px;padding:30px 8px;text-shadow:0 1px 14px rgba(0,0,0,.65)}
 .word{display:flex;align-items:baseline;justify-content:center;gap:.06em;font-weight:800;letter-spacing:.04em;line-height:1}
 .word span{display:inline-block}
 .tag{color:var(--mute);font-size:17px;line-height:1.5;max-width:36ch}
@@ -113,25 +114,43 @@ html,body{height:100%;margin:0;overflow:hidden;background:#05060b;color:var(--fg
 .steps{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:10px;text-align:left;width:100%;max-width:420px}
 .steps li{display:grid;grid-template-columns:28px 1fr;gap:12px;font-size:15px;line-height:1.45;color:var(--mute)}
 .steps li b{color:var(--fg)}
-.steps .k{font-family:var(--mono);font-size:12px;color:var(--cyan);padding-top:2px}
+/* rule bullets shrink like the logo tiles */
+.steps .sq{display:block;justify-self:center;margin-top:5px;border-radius:2px;width:11px;height:11px;background:var(--fg)}
+.steps li:nth-child(2) .sq{width:9.5px;height:9.5px;margin-top:6px;background:color-mix(in srgb,var(--cyan) 30%,var(--fg))}
+.steps li:nth-child(3) .sq{width:8px;height:8px;margin-top:6.5px;background:color-mix(in srgb,var(--cyan) 60%,var(--fg))}
+.steps li:nth-child(4) .sq{width:6.5px;height:6.5px;margin-top:7px;background:var(--cyan)}
+.dive{font-family:var(--type);font-size:16px;font-weight:700;margin-top:-4px}
+.dive span{font-family:var(--sans);font-weight:500;color:var(--mute);margin-left:8px;font-size:14px}
 .btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:6px}
-.btn{font-family:var(--sans);font-weight:800;font-size:16px;letter-spacing:.02em;color:var(--ink);background:var(--fg);border:0;border-radius:999px;padding:13px 28px;cursor:pointer;transition:transform .12s,box-shadow .2s;box-shadow:0 0 0 0 rgba(255,255,255,.0)}
-.btn:hover{transform:translateY(-1px);box-shadow:0 0 30px rgba(255,255,255,.25)}
-.btn.sec{background:transparent;color:var(--fg);outline:1.5px solid rgba(243,245,250,.4)}
+/* Buttons are flat plates; a viewfinder closes in on the one you point at (the game is about zooming in) */
+.btn{position:relative;font-family:var(--sans);font-weight:800;font-size:16px;letter-spacing:.01em;color:var(--ink);background:var(--fg);border:0;border-radius:5px;padding:13px 28px;cursor:pointer;text-shadow:none}
+.btn::after{content:"";position:absolute;inset:-9px;pointer-events:none;opacity:0;transition:inset .22s cubic-bezier(.2,.9,.25,1),opacity .18s;
+  --c:var(--fg);background:
+  linear-gradient(var(--c),var(--c)) 0 0/9px 1.5px,linear-gradient(var(--c),var(--c)) 0 0/1.5px 9px,
+  linear-gradient(var(--c),var(--c)) 100% 0/9px 1.5px,linear-gradient(var(--c),var(--c)) 100% 0/1.5px 9px,
+  linear-gradient(var(--c),var(--c)) 0 100%/9px 1.5px,linear-gradient(var(--c),var(--c)) 0 100%/1.5px 9px,
+  linear-gradient(var(--c),var(--c)) 100% 100%/9px 1.5px,linear-gradient(var(--c),var(--c)) 100% 100%/1.5px 9px;background-repeat:no-repeat}
+.btn:hover::after,.btn:focus-visible::after{inset:-5px;opacity:1}
+.btn:active{transform:scale(.98)}
 .btns.stack{flex-direction:column;align-items:center;gap:10px}
 .btns.stack #btnDaily{min-width:min(280px,100%);font-size:17px;padding:15px 30px}
-.btn.quiet{font-size:14px;font-weight:700;padding:8px 22px;color:var(--mute);outline-color:rgba(243,245,250,.22)}
-.btn.quiet:hover{color:var(--fg);box-shadow:none}
-.btn:focus-visible,.ghost:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
-.foot{font-family:var(--mono);font-size:11.5px;color:var(--mute);letter-spacing:.05em}
+.btn:focus-visible{outline:none}
+.ghost:focus-visible,.lnk:focus-visible{outline:2px solid var(--cyan);outline-offset:3px;border-radius:3px}
+.links{display:flex;gap:22px;flex-wrap:wrap;justify-content:center;align-items:center}
+.lnk{font-family:var(--sans);font-weight:600;font-size:14.5px;color:var(--fg);background:none;border:0;padding:4px 0;cursor:pointer;text-decoration:underline;text-decoration-color:rgba(243,245,250,.32);text-underline-offset:5px;text-decoration-thickness:1px}
+.lnk:hover{text-decoration-color:var(--fg)}
+.lnk.mute{color:var(--mute);text-decoration:none}.lnk.mute:hover{color:var(--fg)}
+.foot{font-family:var(--sans);font-size:13px;color:var(--mute);line-height:1.5;max-width:44ch}
 .big{font-family:var(--mono);font-size:44px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1}
 .endT{font-size:clamp(30px,5vw,46px);font-weight:800;letter-spacing:-.02em;line-height:1.05}
 .recap{width:100%;max-width:440px;display:flex;flex-direction:column;gap:2px;font-size:14px}
 .recap div{display:grid;grid-template-columns:100px 1fr auto;gap:10px;padding:5px 0;border-bottom:1px solid var(--faint);text-align:left}
-.recap .l{font-family:var(--mono);font-size:11.5px;color:var(--mute);padding-top:2px;letter-spacing:.04em}
+.recap .l{font-size:13px;color:var(--mute);padding-top:1px}
+.recap.reps div{grid-template-columns:100px 1fr auto auto}
+.recap .rep{font-size:12px;color:var(--mute);text-underline-offset:3px}.recap .rep:hover{color:var(--fg)}
 .recap .p{font-family:var(--mono);font-variant-numeric:tabular-nums}
 .recap .x{color:var(--red)}
-pre#share{margin:0;font-family:var(--mono);font-size:13.5px;line-height:1.6;color:var(--fg);background:rgba(255,255,255,.06);border:1px solid var(--faint);border-radius:12px;padding:10px 16px;white-space:pre-wrap;user-select:all;width:100%;max-width:440px}
+pre#share{margin:0;font-family:var(--mono);font-size:13.5px;line-height:1.6;color:var(--fg);background:rgba(3,4,9,.55);border-left:2px solid var(--cyan);border-radius:0 4px 4px 0;padding:10px 16px;white-space:pre-wrap;user-select:all;width:100%;max-width:440px;text-shadow:none}
 #kb{position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;border:0;padding:0;font-size:16px}
 #scaleRead .cd{font-family:var(--type);font-size:34px;font-weight:700;line-height:1;margin-top:6px;font-variant-numeric:tabular-nums;transition:color .2s}
 #scaleRead .cd.warn{color:#ffe14d}
@@ -154,14 +173,41 @@ pre#share{text-align:left}
   .mark{font-size:12px;letter-spacing:.16em}#stats{gap:12px;font-size:11px}#stats .rd{display:none}
   #scaleRead .v{font-size:15px}#scaleRead .n{font-size:10px}#scaleRead .nx{display:none}#scaleRead .cd{font-size:28px}
   #play{padding-bottom:8px;gap:9px}#prompt{font-size:23px}#info{font-size:11px;gap:10px}#toast{font-size:15px}
-  .panel{padding:22px 18px;gap:12px}.steps li{font-size:13.5px;grid-template-columns:22px 1fr;gap:8px}.tag{font-size:15px}
+  .panel{padding:20px 4px;gap:12px}.steps li{font-size:13.5px;grid-template-columns:22px 1fr;gap:8px}.tag{font-size:15px}
+  .archHead h2{font-size:19px}.archHead p{font-size:13px}#starInfo .btn{font-size:14px;padding:10px 16px}
   .recap div{grid-template-columns:70px 1fr auto}.big{font-size:34px}pre#share{font-size:12px}
 }
 /* in-game text uses the typewriter face; title + end screens keep Manrope/JetBrains */
 #hud,#meter,#banner,.fly{--sans:var(--type);--mono:var(--type);font-family:var(--type)}
 #banner .b{letter-spacing:-.03em}
 #logo{align-items:flex-end;gap:6px;margin-bottom:4px}
-#logo .lt{display:grid;place-items:center;border-radius:24%;color:#0b0c12;font-family:var(--type);font-weight:700;line-height:1;letter-spacing:0;box-shadow:0 6px 30px rgba(124,231,255,.22);transform:none!important}
+#logo .lt{display:grid;place-items:center;border-radius:18%;color:#0b0c12;font-family:var(--type);font-weight:700;line-height:1;letter-spacing:0;text-shadow:none;transform:none!important}
+/* ---- Past dives: a planisphere drawn straight on the sky ---- */
+#scrArch{flex-direction:column;align-items:center;justify-content:flex-start;gap:6px;padding:max(16px,env(safe-area-inset-top,0px)) 16px max(16px,env(safe-area-inset-bottom,0px));background:radial-gradient(ellipse at 50% 50%,rgba(3,4,9,.86),rgba(3,4,9,.7))}
+.archHead{width:min(560px,100%);display:grid;grid-template-columns:auto 1fr;column-gap:16px;align-items:baseline}
+.archHead h2{margin:0;font-family:var(--type);font-size:22px;font-weight:700}
+.archHead p{grid-column:1/-1;margin:6px 0 0;color:var(--mute);font-size:14px;line-height:1.5;max-width:52ch}
+#chart{flex:1;min-height:0;width:min(640px,100%);overflow:visible;font-family:var(--type)}
+#chart .grid circle,#chart .grid line{fill:none;stroke:rgba(243,245,250,.07);stroke-width:1;vector-effect:non-scaling-stroke}
+#chart .future{fill:none;stroke:rgba(243,245,250,.28);stroke-width:1.2;stroke-dasharray:1 6;stroke-linecap:round;vector-effect:non-scaling-stroke}
+#chart .links line{stroke:rgba(124,231,255,.55);stroke-width:1;vector-effect:non-scaling-stroke}
+#chart .st{cursor:pointer;outline:none}
+#chart .hit{fill:transparent}
+#chart .core{fill:rgba(243,245,250,.42)}
+#chart .lit .core{fill:var(--fg)}
+#chart .halo{fill:rgba(190,225,255,.13)}
+#chart .today .core{fill:var(--gold)}
+#chart .ring{fill:none;stroke:var(--fg);stroke-width:1.2;opacity:0;vector-effect:non-scaling-stroke}
+#chart .sel .ring,#chart .st:focus-visible .ring{opacity:1}
+#chart .st:hover .core{fill:var(--fg)}
+#chart .pulse{fill:none;stroke:var(--gold);stroke-width:1;vector-effect:non-scaling-stroke;transform-box:fill-box;transform-origin:center;animation:pulse 2.6s ease-out infinite}
+@keyframes pulse{0%{transform:scale(.6);opacity:.9}100%{transform:scale(2.6);opacity:0}}
+#chart text{fill:var(--fg);font-weight:700}
+#chart .st:not(.today) text{fill:var(--mute)}
+#starInfo{width:min(560px,100%);display:grid;grid-template-columns:1fr auto;align-items:center;column-gap:16px;row-gap:2px;padding-top:6px;border-top:1px solid var(--faint)}
+#starInfo .si-t{font-family:var(--type);font-weight:700;font-size:15px}
+#starInfo .si-s{grid-column:1;color:var(--mute);font-size:13.5px;line-height:1.45}
+#starInfo .btn{grid-column:2;grid-row:1/3;font-size:15px;padding:11px 22px}
 .recap .p{white-space:nowrap}.recap .split{font-style:normal;color:var(--mute)}
 @media (max-width:560px){.recap .split{display:none}.recap div{grid-template-columns:64px 1fr auto}}
 [hidden]{display:none!important}
@@ -209,33 +255,44 @@ pre#share{text-align:left}
 <div class="screen" id="scrTitle">
   <div class="panel">
     <div class="word" id="logo"></div>
+    <div class="dive" id="diveLbl"></div>
     <div class="tag">Name it to shrink it. <b>7 rounds.</b> Your points pull you down through <b>12 layers of scale</b>, from the Cosmic Web to an atomic nucleus.</div>
     <ul class="steps">
-      <li><span class="k">01</span><span>Each round gives you a <b>category</b> and a <b>letter box</b>. Type any answer that fits the box.</span></li>
-      <li><span class="k">02</span><span><b>Your word sets the next box</b>: it's one letter shorter than what you typed. Long answers leave room. Short ones box you in.</span></li>
-      <li><span class="k">03</span><span>Points = <b>10 per letter + 3 per second left</b>. Every point threshold is a deeper layer, and a big round can skip layers.</span></li>
-      <li><span class="k">04</span><span><b>20 seconds</b> per round. If time runs out, you score 0 and stay on your layer.</span></li>
+      <li><i class="sq"></i><span>Each round gives you a <b>category</b> and a <b>letter box</b>. Type any answer that fits the box.</span></li>
+      <li><i class="sq"></i><span><b>Your word sets the next box</b>: it's one letter shorter than what you typed. Long answers leave room. Short ones box you in.</span></li>
+      <li><i class="sq"></i><span>Points = <b>10 per letter + 3 per second left</b>. Every point threshold is a deeper layer, and a big round can skip layers.</span></li>
+      <li><i class="sq"></i><span><b>20 seconds</b> per round. If time runs out, you score 0 and stay on your layer.</span></li>
     </ul>
-    <div class="btns stack"><button class="btn" id="btnDaily" type="button">Start shrinking</button><button class="btn sec quiet" id="btnPractice" type="button">Practice</button></div>
-    <button class="ghost mute" id="btnMuteTitle" type="button" aria-pressed="false" aria-label="Sound"></button>
-    <div class="foot" id="catCount"></div>
+    <div class="btns stack"><button class="btn" id="btnDaily" type="button">Start shrinking</button></div>
+    <div class="links"><button class="lnk" id="btnArch" type="button">Past shrinks</button><a class="lnk fb" target="_blank" rel="noopener" hidden>Send feedback</a><button class="lnk mute" id="btnMuteTitle" type="button" aria-pressed="false" aria-label="Sound"></button></div>
     <div class="foot" id="statsLine"></div>
-    <div class="foot" id="nextDive" style="color:var(--cyan)"></div>
+    <div class="foot" id="nextDive"></div>
   </div>
 </div>
 
 <div class="screen" id="scrEnd" hidden>
   <div class="panel">
-    <div class="foot" id="endKicker">YOU REACHED</div>
+    <div class="foot" id="endKicker">You reached</div>
     <div class="endT" id="endTitle">The atom</div>
     <div class="tag" id="endSub"></div>
     <div class="big" id="endScore">0</div>
-    <div class="btns"><button class="btn" id="btnCopy" type="button">Copy result</button><button class="btn sec" id="btnAgain" type="button">Practice dive</button></div>
+    <div class="btns"><button class="btn" id="btnCopy" type="button">Copy result</button></div>
+    <div class="links"><button class="lnk" id="btnArchEnd" type="button">Past shrinks</button><a class="lnk fb" target="_blank" rel="noopener" hidden>Send feedback</a></div>
     <pre id="share"></pre>
     <div class="recap" id="recap"></div>
     <div class="foot" id="endFoot"></div>
-    <div class="foot" id="endNext" style="color:var(--cyan)"></div>
+    <div class="foot" id="endNext"></div>
   </div>
+</div>
+
+<div class="screen" id="scrArch" hidden>
+  <div class="archHead">
+    <button class="lnk" id="archBack" type="button">Back</button>
+    <h2>Past shrinks</h2>
+    <p>Every star is one day's shrink, spiralling out from #1 at the centre. Tap a star to play that day. Past shrinks don't change your streak.</p>
+  </div>
+  <svg id="chart" role="group" aria-label="Star chart of every daily shrink"></svg>
+  <div id="starInfo" aria-live="polite"><div class="si-t" id="siT"></div><div class="si-s" id="siS"></div><button class="btn" id="siGo" type="button"></button></div>
 </div>
 
 <script>/* Three.js r128 (MIT) inlined so the game is one self-contained file */
@@ -415,8 +472,35 @@ const ROUNDS=7, TIME=20, BOX0=12, MINBOX=3;
 const layerFor=sc=>{let i=0;LEVELS.forEach((l,k)=>{if(sc>=l.at)i=k;});return i;};
 function hashStr(s){let h=2166136261>>>0;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
 function rng32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
-function todayKey(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
-function dailyNum(){const d=new Date();return Math.floor((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())-Date.UTC(2026,10,11))/864e5)+1;}
+// Shrink #1 was 2026-11-11. Keys are local calendar dates; numbers count whole days from #1.
+const DAY1=Date.UTC(2026,10,11);
+const keyOf=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+function todayKey(){return keyOf(new Date());}
+function dayNum(key){const [y,m,d]=key.split('-').map(Number);return Math.round((Date.UTC(y,m-1,d)-DAY1)/864e5)+1;}
+function dayKey(n){const d=new Date(DAY1+(n-1)*864e5);return d.getUTCFullYear()+'-'+String(d.getUTCMonth()+1).padStart(2,'0')+'-'+String(d.getUTCDate()).padStart(2,'0');}
+function dailyNum(){return dayNum(todayKey());}
+const runBase=key=>'shrinkle3:'+key;
+// Star chart: shrink #1 sits at the centre and each later day steps 20px further along one spiral arm (arms 26px apart)
+const ARM_GAP=26,STAR_STEP=20,ARM_B=ARM_GAP/(2*Math.PI),ARM_L0=ARM_B*2.4*2.4/2;
+function starPos(i){const th=Math.sqrt(2*(STAR_STEP*(i-1)+ARM_L0)/ARM_B),r=ARM_B*th;return {x:r*Math.cos(th),y:r*Math.sin(th)};}
+// The game is one file, shrinkle.html, but the address bar should only ever show the folder (shrinkle.lol/, …/shrinkle/)
+const cleanPath=p=>/\/shrinkle\.html$/.test(p)?p.replace(/shrinkle\.html$/,''):null;
+// The copied result. The last line is the full https link so chat apps turn it into a tappable preview card.
+function shareText({num,past,hist,score,layer,site}){
+  const l=LEVELS[layer],words=hist.filter(h=>h.ok).length;
+  const rows=hist.map(h=>h.ok?'🟩'.repeat(h.len)+'⬜'.repeat(Math.max(0,h.box-h.len))+` ${h.len} · ${h.pts} ${LEVELS[h.layer].em}`:`🟥 0 ${LEVELS[h.layer].em}`);
+  return `SHRINKLE #${num}${past?' (past shrink)':''} · ${l.em} ${l.name} · ${score} pts\n${words}/${ROUNDS} words · layer ${layer+1} of ${LEVELS.length}\n`+rows.join('\n')+'\n'+site;
+}
+// Fill a Google Form pre-filled link whose answers were typed as {num} {round} {category} {answer}
+function fillForm(tpl,vals){
+  return String(tpl||'').replace(/\{(\w+)\}|%7B(\w+)%7D/gi,(m,a,b)=>{const k=a||b;return k in vals?encodeURIComponent(String(vals[k])):m;});
+}
+// Layer + score of a saved result; results saved before Nov 13 2026 only kept display text
+function savedRun(d){
+  const layer=Number.isInteger(d.layer)?d.layer:Math.max(0,LEVELS.findIndex(l=>String(d.title||'').includes(l.name)));
+  const score=Number.isFinite(d.points)?d.points:(parseInt(d.score,10)||0);
+  return {layer,score};
+}
 // Same date + round + box size => same category for everyone (lists already used this game are skipped)
 function pickCat(base,round,box,usedLists){
   const rng=rng32(hashStr(base+'|'+round+'|'+box));
@@ -682,6 +766,9 @@ function step3D(dt){
 const $=id=>document.getElementById(id);
 // The live address lives only in the <head> og:url tag (shrinkle.lol)
 const SITE_URL=((document.querySelector('meta[property="og:url"]')||{}).content||'https://shrinkle.lol/').replace(/\/$/,'');
+// Feedback goes to a Google Form. FEEDBACK_FORM: the form's share link (empty hides "Send feedback").
+// FEEDBACK_REPORT: the form's pre-filled link made by typing {num} {round} {category} {answer} as answers (empty hides per-round "Report").
+const FEEDBACK_FORM='', FEEDBACK_REPORT='';
 let G=null;
 function store(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v);}catch(e){return null;}}
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -702,24 +789,31 @@ function renderTop(){
   $('score').textContent=G.score;$('roundLbl').textContent=`${Math.min(G.round+1,ROUNDS)}/${ROUNDS}`;
   renderMeter();placeMeter();
 }
-function startRun(mode){
+// mode 'daily' = today's dive (counts toward stats); 'archive' = a past day's dive, same categories that day had
+function startRun(mode,key=todayKey()){
   ac();
-  const base=mode==='daily'?'shrinkle3:'+todayKey():'practice:'+Math.random();
-  G={mode,base,round:0,box:BOX0,score:0,layer:0,hist:[],used:new Set(),usedLists:new Set(),buf:'',state:'intro',t:TIME,t0:0,lastTick:99,cat:null};
-  $('scrTitle').hidden=true;$('scrEnd').hidden=true;$('hud').hidden=false;$('meter').hidden=false;
-  $('modeLbl').textContent=mode==='daily'?`DAILY #${dailyNum()}`:'PRACTICE';
+  G={mode,key,num:dayNum(key),base:runBase(key),round:0,box:BOX0,score:0,layer:0,hist:[],used:new Set(),usedLists:new Set(),buf:'',state:'intro',t:TIME,t0:0,lastTick:99,cat:null};
+  $('scrTitle').hidden=true;$('scrEnd').hidden=true;$('scrArch').hidden=true;$('hud').hidden=false;$('meter').hidden=false;
+  $('modeLbl').textContent=mode==='daily'?`#${G.num}`:`#${G.num} past shrink`;
   zoomTo(0);renderTop();
-  banner('DIVE START',LEVELS[0].name,`${LEVELS[0].sc} · ${LEVELS[0].say}`);
+  banner('START SHRINKING',LEVELS[0].name,`${LEVELS[0].sc} · ${LEVELS[0].say}`);
   if(touch)focusKb();
   ask(1450);
 }
 function ask(delay){
-  G.cat=pickCat(G.base,G.round,G.box,G.usedLists);
-  G.buf='';G.state='intro';G.t=TIME;kb.value='';
-  $('play').classList.add('intro');$('prompt').textContent=G.cat.label;
-  renderTiles();renderInfo();renderTimer();renderTop();toast('');
-  setTimeout(()=>{if(!G||G.state!=='intro')return;$('play').classList.remove('intro');G.state='play';G.t0=performance.now();G.lastTick=99;focusKb();renderTiles();
-    if(touch&&document.activeElement!==kb)toast('Tap the box to type');},delay);
+  const run=G,cat=pickCat(G.base,G.round,G.box,G.usedLists);
+  G.cat=cat;G.buf='';G.state='intro';G.t=TIME;kb.value='';
+  $('play').classList.add('intro');renderTop();
+  // Swap the words only after the last round has faded out (0.3s), so the next category never shows before the zoom
+  setTimeout(()=>{if(G!==run||G.cat!==cat)return;$('prompt').textContent=cat.label;renderTiles();renderInfo();renderTimer();toast('');},320);
+  // Reveal once the delay is up AND the zoom has landed (on a slow phone the zoom can outlast the delay)
+  const reveal=()=>{
+    if(G!==run||G.cat!==cat||G.state!=='intro')return;
+    if(R&&R.trans)return setTimeout(reveal,60);
+    $('play').classList.remove('intro');G.state='play';G.t0=performance.now();G.lastTick=99;focusKb();renderTiles();
+    if(touch&&document.activeElement!==kb)toast('Tap the box to type');
+  };
+  setTimeout(reveal,Math.max(delay,360));
 }
 function submit(){
   if(!G||G.state!=='play')return;
@@ -733,7 +827,7 @@ function submit(){
   const w=m.n,idx=m.idx;
   const secs=Math.ceil(G.t),lenPts=w.length*10,timePts=secs*3,pts=lenPts+timePts,before=G.layer;
   G.score+=pts;G.layer=layerFor(G.score);G.used.add(list.id+':'+idx);G.usedLists.add(list.id);G.state='gap';kb.value='';
-  G.hist.push({ok:true,word:it.d,len:w.length,box:G.box,pts,lenPts,timePts,layer:G.layer});
+  G.hist.push({ok:true,word:it.d,len:w.length,box:G.box,pts,lenPts,timePts,layer:G.layer,cat:c.label,typed:typed.toUpperCase()});
   G.box=Math.max(MINBOX,w.length-1);
   $('score').textContent=G.score;
   toast(m.kind==='typo'?`Close enough · ${typed.toUpperCase()} → ${it.d} · +${pts}`:`${it.d} · +${lenPts} length · +${timePts} time`,'good');sfx.good();buzz(30);fly(`+${pts}`,'#7ce7ff');
@@ -743,8 +837,8 @@ function submit(){
 function miss(why){
   if(!G||G.state!=='play')return;
   G.state='gap';sfx.bad();G.usedLists.add(G.cat.list.id);
-  G.hist.push({ok:false,why,box:G.box,pts:0,layer:G.layer});
-  toast(`${why==='time'?"Time's up":'Skipped'} · 0 points · you stay at ${LEVELS[G.layer].name}`,'bad');
+  G.hist.push({ok:false,why,box:G.box,pts:0,layer:G.layer,cat:G.cat.label,typed:G.buf.toUpperCase()});
+  toast(`Time's up · 0 points · you stay at ${LEVELS[G.layer].name}`,'bad');
   setTimeout(()=>advance(G.layer),1100);
 }
 function advance(before){
@@ -777,46 +871,121 @@ function fly(text,color){const d=document.createElement('div');d.className='fly'
 
 function finish(){
   G.state='done';kb.blur();
-  const l=LEVELS[G.layer],nx=LEVELS[G.layer+1],words=G.hist.filter(h=>h.ok).length;
-  $('endKicker').textContent='DIVE COMPLETE · YOU REACHED';
+  const l=LEVELS[G.layer],nx=LEVELS[G.layer+1],daily=G.mode==='daily';
+  $('endKicker').textContent=daily?`Shrink #${G.num} complete. You reached`:`Past shrink #${G.num} complete. You reached`;
   $('endTitle').textContent=`${l.em} ${l.name}`;
   $('endSub').innerHTML=`<b>${l.sc}</b> · ${l.say}.`+(nx?` ${nx.at-G.score} more point${nx.at-G.score===1?'':'s'} would have reached the ${nx.name}.`:' The deepest layer there is.');
   $('endScore').textContent=`${G.score} pts`;
-  $('recap').innerHTML=G.hist.map((h,i)=>h.ok
-    ?`<div><span class="l">ROUND ${i+1}</span><span>${esc(h.word)} <span style="color:var(--mute)">(${h.len}/${h.box})</span></span><span class="p"><i class="split">${h.lenPts} + ${h.timePts} = </i>${h.pts} ${LEVELS[h.layer].em}</span></div>`
-    :`<div><span class="l">ROUND ${i+1}</span><span class="x">${h.why==='time'?'time ran out':'skipped'}</span><span class="p">0 ${LEVELS[h.layer].em}</span></div>`).join('');
-  const rows=G.hist.map(h=>h.ok?'🟩'.repeat(h.len)+'⬜'.repeat(Math.max(0,h.box-h.len))+` ${h.len} · ${h.pts} ${LEVELS[h.layer].em}`:`🟥 0 ${LEVELS[h.layer].em}`);
-  const head=G.mode==='daily'?`SHRINKLE #${dailyNum()}`:'SHRINKLE practice';
-  $('share').textContent=`${head} · ${l.em} ${l.name} · ${G.score} pts\n${words}/${ROUNDS} words · layer ${G.layer+1} of ${LEVELS.length}\n`+rows.join('\n')+'\n'+SITE_URL.replace(/^https?:\/\//,'');
-  if(G.mode==='daily'&&!loadJSON(DKEY())){
-    saveJSON(DKEY(),{kicker:$('endKicker').textContent,title:$('endTitle').textContent,sub:$('endSub').innerHTML,score:$('endScore').textContent,recap:$('recap').innerHTML,share:$('share').textContent});
-    const st=stats(),t=todayKey();st.streak=st.last===yesterdayKey()?st.streak+1:(st.last===t?st.streak:1);st.played++;st.total+=G.score;st.best=Math.max(st.best,G.score);st.deepest=Math.max(st.deepest,G.layer);st.last=t;saveJSON('shrinkle1k-stats',st);
+  $('recap').innerHTML=G.hist.map((h,i)=>{
+    const rep=FEEDBACK_REPORT?`<a class="rep" target="_blank" rel="noopener" href="${esc(fillForm(FEEDBACK_REPORT,{num:G.num,round:i+1,category:h.cat,answer:h.typed||'(none)'}))}">Report</a>`:'';
+    return h.ok
+      ?`<div><span class="l">Round ${i+1}</span><span>${esc(h.word)} <span style="color:var(--mute)">(${h.len}/${h.box})</span></span><span class="p"><i class="split">${h.lenPts} + ${h.timePts} = </i>${h.pts} ${LEVELS[h.layer].em}</span>${rep}</div>`
+      :`<div><span class="l">Round ${i+1}</span><span class="x">time ran out</span><span class="p">0 ${LEVELS[h.layer].em}</span>${rep}</div>`;}).join('');
+  $('recap').classList.toggle('reps',!!FEEDBACK_REPORT);
+  $('share').textContent=shareText({num:G.num,past:!daily,hist:G.hist,score:G.score,layer:G.layer,site:SITE_URL});
+  if(!loadJSON(DKEY(G.key))){
+    saveJSON(DKEY(G.key),{kicker:$('endKicker').textContent,title:$('endTitle').textContent,sub:$('endSub').innerHTML,score:$('endScore').textContent,recap:$('recap').innerHTML,share:$('share').textContent,layer:G.layer,points:G.score,archive:!daily});
+    if(daily){const st=stats(),t=G.key;st.streak=st.last===yesterdayKey()?st.streak+1:(st.last===t?st.streak:1);st.played++;st.total+=G.score;st.best=Math.max(st.best,G.score);st.deepest=Math.max(st.deepest,G.layer);st.last=t;saveJSON('shrinkle1k-stats',st);}
   }
-  $('endFoot').textContent=(G.mode==='daily'&&statsLine()?statsLine()+' · ':'')+LEGEND;
-  $('endNext').textContent=G.mode==='daily'?`Next dive in ${untilMidnight()}`:'';
-  $('btnCopy').textContent='Copy result';$('btnAgain').textContent='Practice dive';$('btnAgain').onclick=()=>startRun('practice');
+  $('endFoot').textContent=(daily&&statsLine()?statsLine()+' ':'')+LEGEND;
+  $('endNext').textContent=daily?`Next shrink in ${untilMidnight()}`:'';
+  $('btnCopy').textContent='Copy result';
   $('hud').hidden=true;$('meter').hidden=true;$('scrEnd').hidden=false;
   sfx.rare();
 }
 
 /* ============================== DAILY LOCK + STATS (per browser) ============================== */
-const LEGEND='🟩 letters · ⬜ unused box · 🟥 skipped';
-const DKEY=()=>'shrinkle1k-daily-'+todayKey();
+const LEGEND='🟩 letters, ⬜ unused box, 🟥 time ran out.';
+const DKEY=(k=todayKey())=>'shrinkle1k-daily-'+k;
 function loadJSON(k){try{return JSON.parse(store(k)||'null');}catch(e){return null;}}
 function saveJSON(k,v){store(k,JSON.stringify(v));}
 function stats(){return Object.assign({played:0,total:0,best:0,deepest:0,streak:0,last:''},loadJSON('shrinkle1k-stats')||{});}
 function yesterdayKey(){const d=new Date();d.setDate(d.getDate()-1);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function untilMidnight(){const n=new Date(),m=new Date(n);m.setHours(24,0,0,0);const s=Math.max(0,Math.floor((m-n)/1000));return [Math.floor(s/3600),Math.floor(s%3600/60),s%60].map(x=>String(x).padStart(2,'0')).join(':');}
-function statsLine(){const s=stats();if(!s.played)return '';return `PLAYED ${s.played} · AVG ${Math.round(s.total/s.played)} · BEST ${s.best} · DEEPEST ${LEVELS[s.deepest].em} · STREAK ${s.streak}`;}
-function renderTitle(){const done=loadJSON(DKEY());$('btnDaily').textContent=done?"See today's result":'Start shrinking';$('statsLine').textContent=statsLine();$('nextDive').textContent=done?`Today's dive is done · next dive in ${untilMidnight()}`:'';}
-function tickNext(){if(!loadJSON(DKEY()))return;const t=untilMidnight();if(!$('scrTitle').hidden)$('nextDive').textContent=`Today's dive is done · next dive in ${t}`;if(!$('scrEnd').hidden&&$('endNext').textContent)$('endNext').textContent=`Next dive in ${t}`;}
-function showSaved(d){
+function statsLine(){const s=stats();if(!s.played)return '';const d=LEVELS[s.deepest];return `${s.played} ${s.played===1?'shrink':'shrinks'} played. Average ${Math.round(s.total/s.played)}, best ${s.best}, deepest ${d.em} ${d.name}, streak ${s.streak}.`;}
+const longDate=k=>{const [y,m,d]=k.split('-').map(Number);return new Date(y,m-1,d).toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});};
+function renderTitle(){
+  const done=loadJSON(DKEY()),k=todayKey();
+  $('diveLbl').innerHTML=`Shrink #${dailyNum()} <span>${longDate(k)}</span>`;
+  $('btnDaily').textContent=done?"See today's result":'Start shrinking';$('statsLine').textContent=statsLine();
+  $('nextDive').textContent=done?`Today's shrink is done. The next one starts in ${untilMidnight()}.`:'';
+}
+function tickNext(){if(!loadJSON(DKEY()))return;const t=untilMidnight();if(!$('scrTitle').hidden)$('nextDive').textContent=`Today's shrink is done. The next one starts in ${t}.`;if(!$('scrEnd').hidden&&$('endNext').textContent)$('endNext').textContent=`Next shrink in ${t}`;}
+function showSaved(d,k=todayKey()){
   $('endKicker').textContent=d.kicker;$('endTitle').textContent=d.title;$('endSub').innerHTML=d.sub;$('endScore').textContent=d.score;$('recap').innerHTML=d.recap;$('share').textContent=d.share;
-  $('endFoot').textContent=(statsLine()?statsLine()+' · ':'')+LEGEND;$('endNext').textContent=`Next dive in ${untilMidnight()}`;
-  $('btnCopy').textContent='Copy result';$('btnAgain').textContent='Practice dive';$('btnAgain').onclick=()=>startRun('practice');
-  $('scrTitle').hidden=true;$('scrEnd').hidden=false;
+  const today=k===todayKey();
+  $('endFoot').textContent=(today&&statsLine()?statsLine()+' ':'')+LEGEND;$('endNext').textContent=today?`Next shrink in ${untilMidnight()}`:'';
+  $('btnCopy').textContent='Copy result';
+  $('scrTitle').hidden=true;$('scrArch').hidden=true;$('scrEnd').hidden=false;
 }
 function openDaily(){const d=loadJSON(DKEY());if(d)showSaved(d);else startRun('daily');}
+
+/* ============================== PAST DIVES (star chart) ============================== */
+const SVGNS='http://www.w3.org/2000/svg';
+let archFrom='scrTitle',archSel=0;
+function svgEl(tag,attrs,parent){const e=document.createElementNS(SVGNS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+function openArch(){
+  archFrom=!$('scrEnd').hidden?'scrEnd':'scrTitle';
+  $('scrTitle').hidden=true;$('scrEnd').hidden=true;$('scrArch').hidden=false;
+  archSel=Math.max(1,dailyNum());renderArch();
+  const t=document.querySelector(`#chart .st[data-n="${archSel}"]`);if(t)t.focus({preventScroll:true});
+}
+function closeArch(){$('scrArch').hidden=true;if(archFrom==='scrTitle')renderTitle();$(archFrom).hidden=false;}
+function renderArch(){
+  const svg=$('chart'),today=Math.max(1,dailyNum()),ahead=24;
+  const runs=[];for(let n=1;n<=today;n++){const d=loadJSON(DKEY(dayKey(n)));runs[n]=d?savedRun(d):null;}
+  const far=starPos(today+ahead),R=Math.max(120,Math.hypot(far.x,far.y)+26);
+  svg.setAttribute('viewBox',`${-R} ${-R} ${2*R} ${2*R}`);svg.innerHTML='';
+  const px=R*2/Math.max(1,Math.min(svg.clientWidth||600,svg.clientHeight||600)); // viewBox units per screen pixel
+  // planisphere grid: rings two arms apart, twelve spokes
+  const grid=svgEl('g',{class:'grid'},svg);
+  let outer=0;for(let r=ARM_GAP*2;r<R;r+=ARM_GAP*2){svgEl('circle',{r,cx:0,cy:0},grid);outer=r;}
+  for(let a=0;a<12;a++){const t=a*Math.PI/6;svgEl('line',{x1:(ARM_GAP*Math.cos(t)).toFixed(1),y1:(ARM_GAP*Math.sin(t)).toFixed(1),x2:(outer*Math.cos(t)).toFixed(1),y2:(outer*Math.sin(t)).toFixed(1)},grid);}
+  // where tomorrow's stars will appear
+  let d='';for(let n=today;n<=today+ahead;n++){const p=starPos(n);d+=(n===today?'M':'L')+p.x.toFixed(1)+' '+p.y.toFixed(1);}
+  svgEl('path',{class:'future',d},svg);
+  // constellation lines join days played back to back
+  const lines=svgEl('g',{class:'links'},svg);
+  for(let n=1;n<today;n++)if(runs[n]&&runs[n+1]){const a=starPos(n),b=starPos(n+1);svgEl('line',{x1:a.x.toFixed(1),y1:a.y.toFixed(1),x2:b.x.toFixed(1),y2:b.y.toFixed(1)},lines);}
+  for(let n=1;n<=today;n++){
+    const p=starPos(n),run=runs[n],isToday=n===today,k=dayKey(n);
+    const g=svgEl('g',{class:'st'+(run?' lit':'')+(isToday?' today':'')+(n===archSel?' sel':''),'data-n':n,tabindex:0,role:'button',
+      transform:`translate(${p.x.toFixed(1)} ${p.y.toFixed(1)})`,
+      'aria-label':`Shrink #${n}, ${longDate(k)}${isToday?', today':''}. `+(run?`Reached ${LEVELS[run.layer].name} with ${run.score} points.`:'Not played.')},svg);
+    svgEl('circle',{class:'hit',r:Math.max(10,11*px)},g);
+    if(isToday)svgEl('circle',{class:'pulse',r:6},g);
+    // brighter, bigger star = deeper layer reached that day
+    const r=run?1.7+run.layer*0.16:isToday?2.8:1.25;
+    if(run&&run.layer>=6)svgEl('circle',{class:'halo',r:r*2.2},g);
+    svgEl('circle',{class:'core',r},g);
+    svgEl('circle',{class:'ring',r:r+5},g);
+    if(isToday||n===1||n===archSel){const t=svgEl('text',{x:(r+7).toFixed(1),y:4,'font-size':(11*px).toFixed(1)},g);t.textContent=isToday?`#${n} today`:`#${n}`;}
+  }
+  renderStarInfo(runs);
+}
+function renderStarInfo(runs){
+  const n=archSel,k=dayKey(n),isToday=n===dailyNum(),saved=loadJSON(DKEY(k)),run=saved&&savedRun(saved);
+  $('siT').textContent=isToday?`Shrink #${n}, today`:`Shrink #${n}`;
+  const when=longDate(k)+'. ';
+  if(run){const l=LEVELS[run.layer];$('siS').textContent=when+`You reached ${l.em} ${l.name} with ${run.score} points.`;$('siGo').textContent='See result';}
+  else if(isToday){$('siS').textContent=when+'It counts toward your streak.';$('siGo').textContent='Start shrinking';}
+  else{$('siS').textContent=when+'Not played yet. Same categories everyone got that day.';$('siGo').textContent='Start shrinking';}
+}
+function pickStar(n){archSel=n;renderArch();const t=document.querySelector(`#chart .st[data-n="${n}"]`);if(t)t.focus({preventScroll:true});}
+$('chart').addEventListener('click',e=>{const g=e.target.closest('.st');if(g)pickStar(+g.dataset.n);});
+$('chart').addEventListener('keydown',e=>{
+  const g=e.target.closest('.st');if(!g)return;const n=+g.dataset.n,max=Math.max(1,dailyNum());
+  if(e.key==='Enter'||e.key===' '){e.preventDefault();pickStar(n);$('siGo').click();}
+  else if(e.key==='ArrowLeft'||e.key==='ArrowDown'){e.preventDefault();pickStar(Math.max(1,n-1));}
+  else if(e.key==='ArrowRight'||e.key==='ArrowUp'){e.preventDefault();pickStar(Math.min(max,n+1));}
+});
+$('siGo').onclick=()=>{
+  const k=dayKey(archSel),saved=loadJSON(DKEY(k));
+  if(saved)showSaved(saved,k);else if(k===todayKey())startRun('daily');else startRun('archive',k);
+};
+$('archBack').onclick=closeArch;
+$('btnArch').onclick=openArch;$('btnArchEnd').onclick=openArch;
+document.querySelectorAll('a.fb').forEach(a=>{if(FEEDBACK_FORM){a.href=FEEDBACK_FORM;a.hidden=false;}});
 
 /* ============================== MUTE ============================== */
 const ICON_ON='<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
@@ -838,7 +1007,8 @@ function setBuf(v){
 kb.addEventListener('input',()=>setBuf(kb.value));
 addEventListener('keydown',e=>{
   if(e.metaKey||e.ctrlKey||e.altKey)return;
-  if(!$('scrTitle').hidden&&e.key==='Enter'){e.preventDefault();openDaily();return;}
+  if(!$('scrArch').hidden&&e.key==='Escape'){e.preventDefault();closeArch();return;}
+  if(!$('scrTitle').hidden&&e.key==='Enter'&&!(e.target.closest&&e.target.closest('button,a'))){e.preventDefault();openDaily();return;}
   if(!G||G.state!=='play')return;
   if(e.key==='Enter'){e.preventDefault();submit();return;}
   if(e.target===kb)return;
@@ -847,20 +1017,20 @@ addEventListener('keydown',e=>{
 });
 $('hud').addEventListener('pointerup',e=>{if(G&&G.state==='play'&&!e.target.closest('button')){focusKb();if($('toast').textContent==='Tap the box to type')toast('');}});
 $('btnDaily').onclick=openDaily;
-$('btnPractice').onclick=()=>startRun('practice');
 $('btnCopy').onclick=()=>{const txt=$('share').textContent,ok=()=>$('btnCopy').textContent='Copied';
   const sel=()=>{const r=document.createRange();r.selectNodeContents($('share'));const s=getSelection();s.removeAllRanges();s.addRange(r);$('btnCopy').textContent='Press Ctrl/⌘+C';};
   try{navigator.clipboard.writeText(txt).then(ok,sel);}catch(e){sel();}};
 function fitVV(){const vv=window.visualViewport;document.documentElement.style.setProperty('--vvh',(vv?vv.height:innerHeight)+'px');if(vv&&vv.offsetTop)window.scrollTo(0,0);}
 if(window.visualViewport){visualViewport.addEventListener('resize',fitVV);visualViewport.addEventListener('scroll',fitVV);}
-addEventListener('resize',()=>{fitVV();placeMeter();if(G&&G.state!=='done')renderTiles();});
+addEventListener('resize',()=>{fitVV();placeMeter();if(G&&G.state!=='done')renderTiles();if(!$('scrArch').hidden)renderArch();});
 
 /* ============================== BOOT ============================== */
 (function boot(){
+  // http(s) only: opening the file straight from disk (file://) keeps its path
+  try{const p=cleanPath(location.pathname);if(p&&/^https?:$/.test(location.protocol))history.replaceState(null,'',p+location.search+location.hash);}catch(e){}
   const logo=$('logo'),base=Math.min(72,Math.floor((innerWidth-110)/5.6));
   'SHRINKLE'.split('').forEach((ch,i)=>{const s=document.createElement('span'),z=Math.round(base*0.95*(1-i*0.085));s.className='lt';s.textContent=ch;s.style.width=s.style.height=z+'px';s.style.fontSize=Math.round(z*0.6)+'px';s.style.background=`color-mix(in srgb,#7ce7ff ${i*13}%,#f3f5fa)`;logo.appendChild(s);});
-  const best=store('shrinkle3-best-'+todayKey());
-  $('catCount').textContent=`DAILY #${dailyNum()} · ${CATS.length.toLocaleString()} CATEGORIES · ${LEVELS.length} LAYERS · ${ROUNDS} ROUNDS`; renderTitle(); setInterval(tickNext,1000);
+  renderTitle(); setInterval(tickNext,1000);
   fitVV();setMuted(muted);renderMeter();init3D();zoomTo(0);
   let last=performance.now();
   function loop(now){
