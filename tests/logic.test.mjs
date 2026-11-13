@@ -9,7 +9,7 @@ function load() {
   const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)];
   const game = scripts[scripts.length - 1][1];
   const code = game.split('/* ============================== SOUND')[0];
-  return new Function(code + ';return {CATS,LISTS,LEVELS,typoDist,matchAnswer,norm,dayNum,dayKey,runBase,starPos,savedRun,fillForm,cleanPath,shareText}')();
+  return new Function(code + ';return {CATS,LISTS,LEVELS,typoDist,matchAnswer,norm,dayNum,dayKey,runBase,starPos,savedRun,fillForm,cleanPath,shareText,unlimitedBase,pickCat,BOX0}')();
 }
 const T = load();
 const cat = (label) => {
@@ -79,11 +79,25 @@ test('copied result ends with a real https://shrinkle.lol link so chats show the
     { ok: true, len: 11, box: 12, pts: 170, layer: 2 },
     { ok: false, box: 10, pts: 0, layer: 2 },
   ];
-  const t = T.shareText({ num: 2, past: false, hist, score: 170, layer: 2, site: 'https://shrinkle.lol' }).split('\n');
+  const t = T.shareText({ mode: 'daily', num: 2, hist, score: 170, layer: 2, site: 'https://shrinkle.lol' }).split('\n');
   assert.equal(t[0], 'SHRINKLE #2 · ☀️ Solar System · 170 pts');
   assert.equal(t[1], '1/7 words · layer 3 of 12');
   assert.equal(t[2], '🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩⬜ 11 · 170 ☀️');
   assert.equal(t[3], '🟥 0 ☀️');
   assert.equal(t[t.length - 1], 'https://shrinkle.lol');
-  assert.match(T.shareText({ num: 1, past: true, hist, score: 170, layer: 2, site: 'https://shrinkle.lol' }), /^SHRINKLE #1 \(past shrink\) · /);
+  assert.match(T.shareText({ mode: 'archive', num: 1, hist, score: 170, layer: 2, site: 'https://shrinkle.lol' }), /^SHRINKLE #1 \(past shrink\) · /);
+});
+test('an Unlimited result says Unlimited instead of a shrink number and still ends with the link', () => {
+  const hist = [{ ok: true, len: 11, box: 12, pts: 170, layer: 2 }];
+  const t = T.shareText({ mode: 'unlimited', num: null, hist, score: 170, layer: 2, site: 'https://shrinkle.lol' }).split('\n');
+  assert.equal(t[0], 'SHRINKLE Unlimited · ☀️ Solar System · 170 pts');
+  assert.equal(t[t.length - 1], 'https://shrinkle.lol');
+});
+test('every Unlimited run gets its own random categories, never the daily ones', () => {
+  const bases = new Set();
+  for (let i = 0; i < 50; i++) bases.add(T.unlimitedBase());
+  assert.equal(bases.size, 50);
+  for (const b of bases) assert.ok(!b.startsWith(T.runBase('')), `${b} looks like a daily seed`);
+  const firsts = new Set([...bases].map((b) => T.pickCat(b, 0, T.BOX0, new Set()).label));
+  assert.ok(firsts.size > 5, `only ${firsts.size} different opening categories in 50 runs`);
 });
