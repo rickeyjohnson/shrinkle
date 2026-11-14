@@ -581,11 +581,23 @@ function genPool(p){
   }
   const s2=new Set(),s3=new Set(),bg=new Set(),p2=new Set(),tg=new Set();
   ents.forEach(({n})=>{ if(n.length>3){s2.add(n.slice(-2));s3.add(n.slice(-3));} if(n.length>2)p2.add(n.slice(0,2)); for(let k=0;k<n.length-1;k++) bg.add(n.substr(k,2)); for(let k=0;k<n.length-2;k++) tg.add(n.substr(k,3)); });
-  p2.forEach(s=>f(`${P}${J}starting with "${s.toUpperCase()}"`,n=>n.startsWith(s),1.5));
-  tg.forEach(s=>f(`${P}${J}containing "${s.toUpperCase()}"`,n=>n.includes(s),0.3,0.5));
-  s2.forEach(s=>f(`${P}${J}ending in "-${s.toUpperCase()}"`,n=>n.length>3&&n.endsWith(s),2));
-  s3.forEach(s=>f(`${P}${J}ending in "-${s.toUpperCase()}"`,n=>n.length>4&&n.endsWith(s),2));
-  bg.forEach(b=>f(`${P}${J}containing "${b.toUpperCase()}"`,n=>n.includes(b),0.4,0.6));
+  // Index each answer's 2- and 3-letter pieces once, so every "starting/ending/containing" filter is a lookup, not a scan
+  // (same answers, same order as filtering `ents`, so the categories come out identical)
+  const P2=new Map(),S2=new Map(),S3=new Map(),BG=new Map(),TG=new Map();
+  const ix=(m,k,i)=>{let a=m.get(k);if(!a)m.set(k,a=[]);if(a[a.length-1]!==i)a.push(i);};
+  ents.forEach(({n},i)=>{
+    if(n.length>=2) ix(P2,n.slice(0,2),i);
+    if(n.length>3) ix(S2,n.slice(-2),i);
+    if(n.length>4) ix(S3,n.slice(-3),i);
+    for(let k=0;k<n.length-1;k++) ix(BG,n.substr(k,2),i);
+    for(let k=0;k<n.length-2;k++) ix(TG,n.substr(k,3),i);
+  });
+  const g=(label,is=[],w,maxFrac=0.92)=>{if(is.length>=3&&is.length<=tot*maxFrac) addCat(p,label,is.map(i=>ents[i]),w);};
+  p2.forEach(s=>g(`${P}${J}starting with "${s.toUpperCase()}"`,P2.get(s),1.5));
+  tg.forEach(s=>g(`${P}${J}containing "${s.toUpperCase()}"`,TG.get(s),0.3,0.5));
+  s2.forEach(s=>g(`${P}${J}ending in "-${s.toUpperCase()}"`,S2.get(s),2));
+  s3.forEach(s=>g(`${P}${J}ending in "-${s.toUpperCase()}"`,S3.get(s),2));
+  bg.forEach(b=>g(`${P}${J}containing "${b.toUpperCase()}"`,BG.get(b),0.4,0.6));
   f(`${P}${J}with a double letter`,n=>/(.)\1/.test(n),1.5);
   for(const c of 'eaiorstnlu') f(`${P}${J}with no ${c.toUpperCase()}`,n=>!n.includes(c),0.4);
   f(`${P}${J}ending in a vowel`,n=>/[aeiou]$/.test(n),2);
