@@ -559,7 +559,38 @@ function savedRun(d){
 }
 // Same date + round + box size => same category for everyone (lists already used this game are skipped)
 function pickCat(base,round,box,usedLists,day=base.slice(-10)){
-  return pickCatV1(base,round,box,usedLists);
+  return day<NEW_FROM?pickCatV1(base,round,box,usedLists):pickCatV2(base,round,box,usedLists,day);
+}
+// Which of rounds 2-7 take an old list (2 of them) and which new rounds get a letter twist (2 more): from the day alone, never the data
+function dayPlan(base){
+  const rng=rng32(hashStr(base+'|plan')),r=[1,2,3,4,5,6];
+  for(let i=r.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[r[i],r[j]]=[r[j],r[i]];}
+  return {old:new Set(r.slice(0,2)),twist:new Set(r.slice(2,4))};
+}
+// Rendezvous hashing: lowest score wins (weighted by w), so adding a prompt or answer only changes the picks it wins outright
+const hscore=(s,w=1)=>-Math.log((hashStr(s)+0.5)/4294967296)/w;
+// From NEW_FROM on: round 1 is a plain new prompt; rounds 2-7 follow the day plan; a list is never used twice in a dive
+function pickCatV2(base,round,box,usedLists,day){
+  const plan=dayPlan(base),seed=base+'|'+round+'|'+box+'|';
+  const want=round===0?'plain':plan.old.has(round)?'old':plan.twist.has(round)?'twist':'plain';
+  const order={plain:['plain','old'],twist:['twist','plain','old'],old:['old','plain']}[want];
+  const ok={plain:c=>c.list.fresh&&c.list.from<=day&&c.whole,twist:c=>c.list.fresh&&c.list.from<=day&&!c.whole,old:c=>!c.list.fresh};
+  const pick=(kind,need)=>{
+    const byList=new Map();
+    for(const c of CATS){
+      if(usedLists.has(c.list.id)||c.cum[box]<need||!ok[kind](c)) continue;
+      const s=hscore(seed+c.label,c.w),b=byList.get(c.list);
+      if(!b||s<b.s) byList.set(c.list,{c,s});
+    }
+    let best=null,bs=Infinity;
+    for(const [L,b] of byList){const s=hscore(seed+L.id);if(s<bs){bs=s;best=b.c;}}
+    return best;
+  };
+  for(const need of [box>=8?10:box>=5?6:4,3]) for(const kind of order){
+    const c=pick(kind,kind==='twist'?Math.min(need,6):need); if(c) return c;
+  }
+  const avail=c=>c.whole&&c.cum[box]>=3&&(!c.list.fresh||c.list.from<=day);
+  return CATS.find(c=>avail(c)&&!usedLists.has(c.list.id))||CATS.find(avail)||CATS[0];
 }
 // The picker every dive before NEW_FROM used, unchanged, over the old categories only
 function pickCatV1(base,round,box,usedLists){

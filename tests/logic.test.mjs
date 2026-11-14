@@ -10,7 +10,7 @@ function load() {
   const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)];
   const game = scripts[scripts.length - 1][1];
   const code = game.split('/* ============================== SOUND')[0];
-  return new Function(code + ';return {CATS,LISTS,LEVELS,typoDist,matchAnswer,norm,dayNum,dayKey,runBase,starPos,savedRun,fillForm,cleanPath,shareText,pickCat,NEW_FROM}')();
+  return new Function(code + ';return {CATS,LISTS,LEVELS,typoDist,matchAnswer,norm,dayNum,dayKey,runBase,starPos,savedRun,fillForm,cleanPath,shareText,pickCat,NEW_FROM,dayPlan,addPrompts}')();
 }
 const T = load();
 const cat = (label) => {
@@ -149,4 +149,32 @@ test('twists on new prompts read "<prompt> · <twist>"', () => {
   assert.ok(T.CATS.some(c => c.list.id === 'p-pixar' && c.label.startsWith('Pixar movies · starting with ')));
   assert.ok(T.CATS.some(c => c.list.fresh && / · containing "/.test(c.label)));
   assert.ok(!T.CATS.some(c => !c.list.fresh && c.label.includes(' · ')));
+});
+
+// ---- Categories: the picker from NEW_FROM on ----
+const days = (n, from = T.NEW_FROM) => Array.from({ length: n }, (_, i) => T.dayKey(T.dayNum(from) + i));
+const dive = (TT, key, path) => { const used = new Set(); return path.map((box, r) => { const c = TT.pickCat(TT.runBase(key), r, box, used); used.add(c.list.id); return c; }); };
+const ROOMY = [12, 11, 10, 9, 8, 7, 6];
+test('from NEW_FROM on, round 1 is always a plain new prompt', () => {
+  for (const k of days(90)) { const c = T.pickCat(T.runBase(k), 0, 12, new Set()); assert.ok(c.list.fresh && c.whole, `${k}: ${c.label}`); }
+});
+test('rounds 2-7 have exactly 2 old-list rounds when the box is roomy', () => {
+  for (const k of days(90)) assert.equal(dive(T, k, ROOMY).slice(1).filter(c => !c.list.fresh).length, 2, k);
+});
+test('new rounds carry letter twists, including "containing"', () => {
+  const tw = days(90).flatMap(k => dive(T, k, ROOMY)).filter(c => c.list.fresh && !c.whole);
+  assert.ok(tw.length >= 90, `${tw.length} twisted rounds in 90 days`);
+  assert.ok(tw.some(c => c.label.includes(' · containing "')));
+});
+test('a list is never used twice in a dive, and every pick has at least 3 answers that fit the box', () => {
+  for (const k of days(60)) for (const path of [ROOMY, [12, 8, 6, 4, 3, 3, 3], [12, 5, 4, 3, 3, 3, 3]]) {
+    const cs = dive(T, k, path);
+    assert.equal(new Set(cs.map(c => c.list.id)).size, 7, k);
+    cs.forEach((c, r) => assert.ok(c.cum[path[r]] >= 3, `${k} r${r + 1} ${c.label} at box ${path[r]}`));
+  }
+});
+test('a later prompt batch does not change earlier days', () => {
+  const T2 = load(), before = days(30).map(k => dive(T2, k, ROOMY).map(c => c.label).join('|'));
+  T2.addPrompts('2099-01-01', [['p-zz', 'Test things', 'thing', 'Alpha,Bravo,Charlie,Delta,Echo,Foxtrot,Golf,Hotel,India,Juliet,Kilo,Lima']]);
+  assert.deepEqual(days(30).map(k => dive(T2, k, ROOMY).map(c => c.label).join('|')), before);
 });
