@@ -65,7 +65,7 @@ https://shrinkle.lol
 
 ## Categories
 
-There are about 19,000 categories, generated at load time. The title screen shows the live count. They come from two kinds of list.
+There are about 19,000 categories, generated at load time. They come from two kinds of list.
 
 **Specific prompts (111 of them).** These are hand-written in the spirit of [Krillion](https://krillion.io): each one cuts through something you know in a way that makes you think. Some examples:
 - *Shows from Disney Channel, Nickelodeon or Cartoon Network*
@@ -100,6 +100,12 @@ Each prompt has its own complete answer list. The lists are built from reference
 - Picks use rendezvous hashing. So adding prompts later (each batch carries a start date) never changes the categories of days already played.
 
 Shrinks from before the specific prompts arrived (`NEW_FROM` in `shrinkle.html`) replay with exactly the categories they had.
+
+**Before you deploy:**
+- Set `NEW_FROM` to the day *after* the deploy goes live. Players' dates are their local calendar day, so the deploy day itself must stay on the old categories.
+- Give any later batch of prompts (`addPrompts(date, rows)`) a start date after its own deploy too.
+- Fixing a typo in an existing new prompt's answers is safe, as long as it's rare.
+- Don't edit the 27 old reference lists. A test pins them, because changing them would change past shrinks.
 
 ## Tech
 

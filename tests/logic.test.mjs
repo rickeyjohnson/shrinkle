@@ -10,7 +10,7 @@ function load() {
   const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)];
   const game = scripts[scripts.length - 1][1];
   const code = game.split('/* ============================== SOUND')[0];
-  return new Function(code + ';return {CATS,LISTS,LEVELS,typoDist,matchAnswer,norm,dayNum,dayKey,runBase,starPos,savedRun,fillForm,cleanPath,shareText,pickCat,NEW_FROM,dayPlan,addPrompts}')();
+  return new Function(code + ';return {CATS,LISTS,LEVELS,typoDist,matchAnswer,norm,dayNum,dayKey,runBase,starPos,savedRun,fillForm,cleanPath,shareText,pickCat,NEW_FROM,dayPlan,addPrompts,formName}')();
 }
 const T = load();
 const cat = (label) => {
@@ -149,6 +149,47 @@ test('twists on new prompts read "<prompt> · <twist>"', () => {
   assert.ok(T.CATS.some(c => c.list.id === 'p-pixar' && c.label.startsWith('Pixar movies · starting with ')));
   assert.ok(T.CATS.some(c => c.list.fresh && / · containing "/.test(c.label)));
   assert.ok(!T.CATS.some(c => !c.list.fresh && c.label.includes(' · ')));
+});
+
+// ---- Review fixes: honest messages and the answers people actually give ----
+test('"doesn\'t fit" names the form the player typed, not a different form that does fit', () => {
+  const c = cat('Pixar movies · starting with T'), r = T.matchAnswer(c, 'incredibles', new Set(), 12);
+  assert.equal(r.kind, 'notcat');
+  assert.equal(r.n, 'incredibles');
+  assert.equal(T.formName(c.list.items[r.idx], r.n), 'Incredibles');
+});
+test('an answer too long for the box says so, even after the box cut it short', () => {
+  const r = T.matchAnswer(cat('Shows from Disney Channel, Nickelodeon or Cartoon Network'), 'stevenuniver', new Set(), 12);
+  assert.equal(r.kind, 'toolong');
+  assert.equal(r.n, 'stevenuniverse');
+});
+test('new answers keep their own capitals', () => {
+  const ds = T.LISTS.find(l => l.id === 'p-kidstv').items.map(it => it.d);
+  assert.ok(ds.includes('iCarly'));
+  assert.ok(ds.includes('Phineas and Ferb'));
+});
+test('answers players commonly give are on the lists', () => {
+  const ok = {
+    'Famous towers and skyscrapers': ['empirestate', 'chrysler', 'petronas'],
+    'Famous bridges': ['brooklyn', 'mackinac'],
+    'Candy bars and candy brands': ['sourpatch', 'jellybeans', 'reesespieces', 'cadbury', 'lollipop', 'gummyworms', 'hersheyskisses'],
+    'Breakfast cereals': ['honeybunches'],
+    'Shows from Disney Channel, Nickelodeon or Cartoon Network': ['powerpuff', 'littleeinsteins', 'ninjago', 'yogabbagabba', 'houseofanubis'],
+    'Names for groups of animals': ['murmuration', 'shiver', 'rafter', 'covey'],
+    'Sounds animals make': ['squeal', 'heehaw'],
+    'Mobs in Minecraft': ['zombiepigman', 'mushroomcow'],
+    'Star Wars characters': ['artoo', 'threepio'],
+    'Marvel superheroes from the MCU movies': ['daredevil'],
+  };
+  for (const [label, words] of Object.entries(ok)) for (const w of words) assert.equal(T.matchAnswer(cat(label), w, new Set(), 20).kind, 'exact', `${label}: ${w}`);
+});
+test('no alcohol answers (school-friendly)', () => {
+  for (const [label, w] of [['Foods named after a place', 'champagne'], ['Foods named after a place', 'irishcoffee'], ['Drinks on a coffee shop menu', 'irishcoffee']])
+    assert.equal(T.matchAnswer(cat(label), w, new Set(), 20).kind, 'unknown', `${label}: ${w}`);
+});
+test('"isn\'t on our ___ list" names the prompt, not a whole domain', () => {
+  const broad = new Set(['country', 'city', 'person', 'place', 'state capital']);
+  for (const L of fresh()) assert.ok(!broad.has(L.one), `${L.id}: "${L.one}"`);
 });
 
 const fits = (L, box) => { const need = box >= 8 ? 10 : box >= 5 ? 6 : 4; return T.CATS.some(c => c.list === L && c.whole && c.cum[box] >= need); };
