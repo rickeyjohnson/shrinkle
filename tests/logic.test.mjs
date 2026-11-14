@@ -3,13 +3,14 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import { createHash } from 'node:crypto';
 
 function load() {
   const html = readFileSync(fileURLToPath(new URL('../shrinkle.html', import.meta.url)), 'utf8');
   const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)];
   const game = scripts[scripts.length - 1][1];
   const code = game.split('/* ============================== SOUND')[0];
-  return new Function(code + ';return {CATS,LISTS,LEVELS,typoDist,matchAnswer,norm,dayNum,dayKey,runBase,starPos,savedRun,fillForm,cleanPath,shareText}')();
+  return new Function(code + ';return {CATS,LISTS,LEVELS,typoDist,matchAnswer,norm,dayNum,dayKey,runBase,starPos,savedRun,fillForm,cleanPath,shareText,pickCat,NEW_FROM}')();
 }
 const T = load();
 const cat = (label) => {
@@ -86,4 +87,36 @@ test('copied result ends with a real https://shrinkle.lol link so chats show the
   assert.equal(t[3], '🟥 0 ☀️');
   assert.equal(t[t.length - 1], 'https://shrinkle.lol');
   assert.match(T.shareText({ num: 1, past: true, hist, score: 170, layer: 2, site: 'https://shrinkle.lol' }), /^SHRINKLE #1 \(past shrink\) · /);
+});
+
+// ---- Categories: past days keep their old picker ----
+test('old categories are generated exactly as before', () => {
+  const old = T.CATS.filter(c => !c.list.fresh);
+  const h = createHash('sha256').update(old.map(c => c.list.id + '|' + c.label + '|' + c.words.join(',') + '|' + c.w).join('\n')).digest('hex').slice(0, 16);
+  assert.equal(old.length, 5200);
+  assert.equal(h, '5d0cefd53051e6c2');
+});
+// Picks made by main at ee778d1 along each box path (each pick's list is then marked used, as the game does)
+const V1 = {
+  '2026-11-11#0': ['Vegetables', 'Zodiac signs', 'Musical instruments', 'Planets, moons & dwarf planets', 'U.S. presidents (last name)', 'Fruits', 'Car brands'],
+  '2026-11-11#1': ['Vegetables', 'Southern states', 'Sports', 'Languages', 'Body parts', 'Animals', 'Car brands'],
+  '2026-11-11#2': ['Vegetables', 'Shapes', 'Months & days of the week', 'Languages ending in "-AN"', 'Greek & Roman gods', 'Body parts with a double letter', 'Car brands ending in a vowel'],
+  '2026-11-12#0': ['Foods & dishes', 'Fruits', 'Vegetables', 'Birds', 'Jobs', 'Original 151 Pokémon', 'Car brands'],
+  '2026-11-12#1': ['Foods & dishes', 'Shapes', 'Car brands', 'Mammals starting with a vowel', 'Body parts', 'Jobs', 'Greek & Roman gods'],
+  '2026-11-12#2': ['Foods & dishes', 'Zodiac signs', 'NFL team nicknames', 'NBA team nicknames', 'U.S. presidents (last name)', 'Clothing', 'Musical instruments'],
+  '2026-11-13#0': ['U.S. presidents (last name)', 'Dog breeds', 'Animals', 'Musical instruments', 'Greek & Roman gods', 'Car brands', 'Body parts'],
+  '2026-11-13#1': ['U.S. presidents (last name)', 'Sports', 'Car brands', 'Shapes', 'Body parts', 'Mammals', 'Clothing'],
+  '2026-11-13#2': ['U.S. presidents (last name)', 'Months & days of the week', 'Western states', 'Foods & dishes', 'Landlocked countries', 'Musical instruments', 'Jobs'],
+};
+const PATHS = [[12, 11, 9, 7, 5, 4, 3], [12, 8, 6, 4, 3, 3, 3], [12, 12, 10, 10, 8, 8, 6]];
+test('days before NEW_FROM replay exactly the categories they had', () => {
+  for (const [k, labels] of Object.entries(V1)) {
+    const [key, pi] = k.split('#'), used = new Set();
+    assert.ok(key < T.NEW_FROM, `${key} is before launch`);
+    PATHS[pi].forEach((box, r) => {
+      const c = T.pickCat(T.runBase(key), r, box, used);
+      assert.equal(c.label, labels[r], `${k} round ${r + 1}`);
+      used.add(c.list.id);
+    });
+  }
 });

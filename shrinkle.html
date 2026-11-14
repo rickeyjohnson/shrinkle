@@ -451,6 +451,8 @@ function genPool(p){
   f(`${P} that start and end with the same letter`,n=>n[0]===n[n.length-1],1.5);
 }
 POOLS.forEach(genPool);
+// The categories every dive before NEW_FROM was picked from, in their original order
+const CATS_OLD=CATS.slice();
 
 
 /* ============================== DIVE ============================== */
@@ -501,12 +503,18 @@ function savedRun(d){
   const score=Number.isFinite(d.points)?d.points:(parseInt(d.score,10)||0);
   return {layer,score};
 }
+// Day the specific prompts start (the day after the deploy). Earlier days keep the picker and categories they shipped with.
+const NEW_FROM='2026-11-14';
 // Same date + round + box size => same category for everyone (lists already used this game are skipped)
-function pickCat(base,round,box,usedLists){
+function pickCat(base,round,box,usedLists,day=base.slice(-10)){
+  return pickCatV1(base,round,box,usedLists);
+}
+// The picker every dive before NEW_FROM used, unchanged, over the old categories only
+function pickCatV1(base,round,box,usedLists){
   const rng=rng32(hashStr(base+'|'+round+'|'+box));
   for(const need of [box>=8?10:box>=5?6:4,3]){
     const byList=new Map();
-    for(const c of CATS){
+    for(const c of CATS_OLD){
       if(usedLists.has(c.list.id)||c.cum[box]<need||c.w<1) continue;
       if(round===0&&!c.whole) continue;
       if(!byList.has(c.list.id)) byList.set(c.list.id,[]);
@@ -518,7 +526,7 @@ function pickCat(base,round,box,usedLists){
     for(const c of cand){r-=c.w;if(r<=0)return c;}
     return cand[cand.length-1];
   }
-  return CATS.find(c=>c.whole&&c.cum[box]>=3)||CATS[0];
+  return CATS_OLD.find(c=>c.whole&&c.cum[box]>=3)||CATS_OLD[0];
 }
 const catSet=c=>c._set||(c._set=new Set(c.words));
 const fitCount=(c,cap)=>c.cum[Math.max(0,Math.min(40,cap))];
