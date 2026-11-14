@@ -151,6 +151,19 @@ test('twists on new prompts read "<prompt> · <twist>"', () => {
   assert.ok(!T.CATS.some(c => !c.list.fresh && c.label.includes(' · ')));
 });
 
+const fits = (L, box) => { const need = box >= 8 ? 10 : box >= 5 ? 6 : 4; return T.CATS.some(c => c.list === L && c.whole && c.cum[box] >= need); };
+test('enough new prompts fit every box size', () => {
+  for (let box = 3; box <= 12; box++) {
+    const n = fresh().filter(L => fits(L, box)).length, min = box >= 5 ? 15 : box === 4 ? 8 : 4;
+    assert.ok(n >= min, `box ${box}: ${n} prompts fit, want ${min}`);
+  }
+});
+test('about 115 new prompts, at least 30 with short answers', () => {
+  assert.ok(fresh().length >= 110, `${fresh().length} new prompts`);
+  const short = fresh().filter(L => L.items.filter(it => it.ns.some(n => n.length <= 4)).length >= 3).length;
+  assert.ok(short >= 30, `${short} prompts with 3+ short answers`);
+});
+
 // ---- Categories: the picker from NEW_FROM on ----
 const days = (n, from = T.NEW_FROM) => Array.from({ length: n }, (_, i) => T.dayKey(T.dayNum(from) + i));
 const dive = (TT, key, path) => { const used = new Set(); return path.map((box, r) => { const c = TT.pickCat(TT.runBase(key), r, box, used); used.add(c.list.id); return c; }); };
