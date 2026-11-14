@@ -120,3 +120,33 @@ test('days before NEW_FROM replay exactly the categories they had', () => {
     });
   }
 });
+
+// ---- Categories: the new specific prompts ----
+const fresh = () => T.LISTS.filter(L => L.fresh);
+test('new prompt data is clean', () => {
+  assert.ok(fresh().length >= 20, `${fresh().length} new prompts`);
+  for (const L of fresh()) {
+    assert.ok(L.items.length >= 8, `${L.id} has ${L.items.length} answers`);
+    assert.equal(L.src.split(',').filter(s => s.trim()).length, L.items.length, `${L.id} has a duplicate entry`);
+    for (const it of L.items) for (const r of it.raws) {
+      assert.ok(!/\d/.test(r), `${L.id}: digit in "${r}"`);
+      assert.ok(T.norm(r).length >= 2, `${L.id}: "${r}" is too short`);
+      assert.equal(L.map[T.norm(r)], it.idx, `${L.id}: "${r}" belongs to another answer`);
+    }
+  }
+});
+test('a leading "The" is optional on new prompts', () => {
+  const c = cat('Shows from Disney Channel, Nickelodeon or Cartoon Network');
+  assert.equal(T.matchAnswer(c, 'fairlyoddparents', new Set(), 20).kind, 'exact');
+  assert.equal(T.matchAnswer(c, 'thefairlyoddparents', new Set(), 20).kind, 'exact');
+});
+test('"&" and "and" both count on new prompts', () => {
+  const c = cat('Shows from Disney Channel, Nickelodeon or Cartoon Network');
+  assert.equal(T.matchAnswer(c, 'phineasandferb', new Set(), 20).kind, 'exact');
+  assert.equal(T.matchAnswer(c, 'phineasferb', new Set(), 20).kind, 'exact');
+});
+test('twists on new prompts read "<prompt> · <twist>"', () => {
+  assert.ok(T.CATS.some(c => c.list.id === 'p-pixar' && c.label.startsWith('Pixar movies · starting with ')));
+  assert.ok(T.CATS.some(c => c.list.fresh && / · containing "/.test(c.label)));
+  assert.ok(!T.CATS.some(c => !c.list.fresh && c.label.includes(' · ')));
+});
