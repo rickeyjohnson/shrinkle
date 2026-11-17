@@ -10,7 +10,7 @@ function load() {
   const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)];
   const game = scripts[scripts.length - 1][1];
   const code = game.split('/* ============================== SOUND')[0];
-  return new Function(code + ';return {CATS,LISTS,LEVELS,typoDist,matchAnswer,norm,dayNum,dayKey,runBase,starPos,savedRun,fillForm,cleanPath,shareText,pickCat,NEW_FROM,dayPlan,addPrompts,formName}')();
+  return new Function(code + ';return {CATS,LISTS,LEVELS,typoDist,matchAnswer,norm,dayNum,dayKey,runBase,starPos,savedRun,fillForm,cleanPath,shareText,pickCat,NEW_FROM,dayPlan,addPrompts,formName,addTwist,LETTER_SHARE}')();
 }
 const T = load();
 const cat = (label) => {
@@ -192,7 +192,7 @@ test('"isn\'t on our ___ list" names the prompt, not a whole domain', () => {
   for (const L of fresh()) assert.ok(!broad.has(L.one), `${L.id}: "${L.one}"`);
 });
 
-const fits = (L, box) => { const need = box >= 8 ? 10 : box >= 5 ? 6 : 4; return T.CATS.some(c => c.list === L && c.whole && c.cum[box] >= need); };
+const fits = (L, box) => { const need = box >= 8 ? 10 : box >= 5 ? 6 : 4; return T.CATS.some(c => c.list === L && c.kind === 'base' && c.whole && c.cum[box] >= need); };
 test('enough new prompts fit every box size', () => {
   for (let box = 3; box <= 12; box++) {
     const n = fresh().filter(L => fits(L, box)).length, min = box >= 5 ? 15 : box === 4 ? 8 : 4;
@@ -210,15 +210,16 @@ const days = (n, from = T.NEW_FROM) => Array.from({ length: n }, (_, i) => T.day
 const dive = (TT, key, path) => { const used = new Set(); return path.map((box, r) => { const c = TT.pickCat(TT.runBase(key), r, box, used); used.add(c.list.id); return c; }); };
 const ROOMY = [12, 11, 10, 9, 8, 7, 6];
 test('from NEW_FROM on, round 1 is always a plain new prompt', () => {
-  for (const k of days(90)) { const c = T.pickCat(T.runBase(k), 0, 12, new Set()); assert.ok(c.list.fresh && c.whole, `${k}: ${c.label}`); }
+  for (const k of days(90)) { const c = T.pickCat(T.runBase(k), 0, 12, new Set()); assert.ok(c.list.fresh && c.whole && c.kind === 'base', `${k}: ${c.label}`); }
 });
 test('rounds 2-7 have exactly 2 old-list rounds when the box is roomy', () => {
   for (const k of days(90)) assert.equal(dive(T, k, ROOMY).slice(1).filter(c => !c.list.fresh).length, 2, k);
 });
-test('new rounds carry letter twists, including "containing"', () => {
-  const tw = days(90).flatMap(k => dive(T, k, ROOMY)).filter(c => c.list.fresh && !c.whole);
+test('twisted new rounds are mostly meaning twists, and letter twists still include "containing"', () => {
+  const tw = days(90).flatMap(k => dive(T, k, ROOMY)).filter(c => c.list.fresh && (c.kind === 'mean' || !c.whole));
   assert.ok(tw.length >= 90, `${tw.length} twisted rounds in 90 days`);
-  assert.ok(tw.some(c => c.label.includes(' · containing "')));
+  assert.ok(tw.some(c => c.kind === 'mean'));
+  assert.ok(tw.some(c => c.kind !== 'mean' && c.label.includes(' · containing "')));
 });
 test('a list is never used twice in a dive, and every pick has at least 3 answers that fit the box', () => {
   for (const k of days(60)) for (const path of [ROOMY, [12, 8, 6, 4, 3, 3, 3], [12, 5, 4, 3, 3, 3, 3]]) {
@@ -230,5 +231,79 @@ test('a list is never used twice in a dive, and every pick has at least 3 answer
 test('a later prompt batch does not change earlier days', () => {
   const T2 = load(), before = days(30).map(k => dive(T2, k, ROOMY).map(c => c.label).join('|'));
   T2.addPrompts('2099-01-01', [['p-zz', 'Test things', 'thing', 'Alpha,Bravo,Charlie,Delta,Echo,Foxtrot,Golf,Hotel,India,Juliet,Kilo,Lima']]);
+  assert.deepEqual(days(30).map(k => dive(T2, k, ROOMY).map(c => c.label).join('|')), before);
+});
+
+// ---- Meaning twists: groups inside a prompt by time, place or type ----
+const PATHS3 = [ROOMY, [12, 8, 6, 4, 3, 3, 3], [12, 5, 4, 3, 3, 3, 3]];
+const WEAK = /(with no [A-Z]|with an? [A-Z]|ending in [A-Z]|with only one vowel type)$/;
+test('meaning twists read "<prompt> · <twist>" and hold only tagged answers', () => {
+  const c = cat('Pixar movies · from the 2000s');
+  assert.equal(c.kind, 'mean');
+  assert.equal(c.whole, true);
+  assert.equal(T.matchAnswer(c, 'ratatouille', new Set(), 20).kind, 'exact');
+  assert.equal(T.matchAnswer(c, 'coco', new Set(), 20).kind, 'notcat');
+});
+test('an answer counts in every twist it is tagged with, alias forms included', () => {
+  for (const [label, w] of [['Pixar movies · from the 2000s', 'cars'], ['Pixar movies · from the 2010s', 'cars'], ['Pixar movies · from the 2010s', 'toystory'],
+    ['Pixar movies · from the 2000s', 'incredibles'], ['Pixar movies · from the 2010s', 'theincredibles']])
+    assert.equal(T.matchAnswer(cat(label), w, new Set(), 20).kind, 'exact', `${label}: ${w}`);
+});
+test('a typo of an answer outside the twist is not accepted', () => {
+  assert.equal(T.matchAnswer(cat('Pixar movies'), 'elemntal', new Set(), 20).kind, 'typo');
+  assert.notEqual(T.matchAnswer(cat('Pixar movies · from the 2000s'), 'elemntal', new Set(), 20).kind, 'typo');
+});
+test('every tag is a twist its prompt defines, and every twist has at least 4 answers', () => {
+  assert.ok(fresh().some(L => L.twists && Object.keys(L.twists).length), 'no prompt has twists');
+  for (const L of fresh()) {
+    const tw = L.twists || {};
+    for (const it of L.items) for (const t of it.tags) assert.ok(tw[t], `${L.id}: "${it.d}" has undefined tag "${t}"`);
+    for (const [code, { say }] of Object.entries(tw)) {
+      assert.match(code, /^[a-z0-9]+$/, `${L.id}: tag code "${code}"`);
+      const c = T.CATS.find(x => x.list === L && x.kind === 'mean' && x.label === L.label + ' · ' + say);
+      assert.ok(c, `${L.id}: twist "${say}" has no category (fewer than 3 forms, or the same answers as another twist)`);
+      assert.ok(new Set(c.words.map(w => L.map[w])).size >= 4, `${L.id}: twist "${say}" has under 4 answers`);
+    }
+  }
+});
+test('new prompts never generate the weak letter twists', () => {
+  const bad = T.CATS.filter(c => c.list.fresh && WEAK.test(c.label));
+  assert.equal(bad.length, 0, bad.slice(0, 3).map(c => c.label).join(' | '));
+});
+test('from NEW_FROM on, the weak letter twists are never served', () => {
+  for (const k of days(60)) for (const path of PATHS3) for (const c of dive(T, k, path)) assert.ok(!c.weak && !WEAK.test(c.label), `${k}: ${c.label}`);
+});
+test('about 1 twist round in 4 is a letter round, decided by day and round alone', () => {
+  assert.equal(T.LETTER_SHARE, 0.25);
+  let tw = 0, lt = 0;
+  for (const k of days(400)) {
+    const p = T.dayPlan(T.runBase(k));
+    for (const r of p.letter) assert.ok(p.twist.has(r), `${k}: letter round ${r} is not a twist round`);
+    tw += p.twist.size; lt += p.letter.size;
+  }
+  assert.ok(lt / tw >= 0.18 && lt / tw <= 0.32, `letter share ${(lt / tw).toFixed(3)}`);
+});
+test('a twist round serves a meaning twist when one fits', () => {
+  let checked = 0;
+  for (const k of days(90)) {
+    const base = T.runBase(k), plan = T.dayPlan(base), used = new Set();
+    ROOMY.forEach((box, r) => {
+      const c = T.pickCat(base, r, box, used);
+      if (plan.twist.has(r) && !plan.letter.has(r)) {
+        const need = Math.min(box >= 8 ? 10 : box >= 5 ? 6 : 4, 4);
+        const fitsOne = T.CATS.some(m => m.kind === 'mean' && !used.has(m.list.id) && m.cum[box] >= need && m.from <= k && m.list.from <= k);
+        if (fitsOne) { checked++; assert.equal(c.kind, 'mean', `${k} r${r + 1}: ${c.label}`); }
+      }
+      used.add(c.list.id);
+    });
+  }
+  assert.ok(checked > 0, 'no twist round had a fitting meaning twist');
+});
+test('a twist dated later does not change earlier days', () => {
+  const T2 = load(), before = days(30).map(k => dive(T2, k, ROOMY).map(c => c.label).join('|'));
+  const L = T2.LISTS.find(l => l.id === 'p-kidstv');
+  L.items.slice(0, 8).forEach(it => it.tags.push('zz')); // as if tags were added to the data later
+  T2.addTwist(L, 'zz', 'test twist', '2099-01-01');
+  assert.ok(T2.CATS.some(c => c.label === L.label + ' · test twist'));
   assert.deepEqual(days(30).map(k => dive(T2, k, ROOMY).map(c => c.label).join('|')), before);
 });

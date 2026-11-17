@@ -350,7 +350,8 @@ const D_SHAPES=`circle,square,triangle,rectangle,star,heart,oval,diamond,hexagon
    display case, no digits (spell numbers out or leave the entry out). */
 const PROMPTS_A=[ // TV and movies
 ['p-kidstv','Shows from Disney Channel, Nickelodeon or Cartoon Network',"kids' show",`Hannah Montana,Wizards of Waverly Place,The Suite Life of Zack and Cody|Suite Life,The Suite Life on Deck,That's So Raven,Lizzie McGuire,Even Stevens,Kim Possible,Phineas and Ferb,Good Luck Charlie,Jessie,Austin and Ally,Shake It Up,Liv and Maddie,Girl Meets World,Bunk'd,K.C. Undercover,Andi Mack,Raven's Home,Sonny with a Chance,Jonas,The Proud Family,Recess,Gravity Falls,Amphibia,The Owl House,Star vs. the Forces of Evil,Big City Greens,DuckTales,Fish Hooks,Kick Buttowski,American Dragon Jake Long|American Dragon,The Replacements,Lilo and Stitch The Series,Doc McStuffins,Mickey Mouse Clubhouse,Sofia the First,Bluey,Bizaardvark,Stuck in the Middle,Dog with a Blog,A.N.T. Farm,Pair of Kings,Lab Rats,Mighty Med,Kickin' It,Zeke and Luther,Cory in the House,Moon Girl and Devil Dinosaur,Kiff,Hailey's On It,Phil of the Future,Bear in the Big Blue House,PB and J Otter,The Book of Pooh,Rolie Polie Olie,Handy Manny,Special Agent Oso,Jake and the Never Land Pirates,Vampirina,PJ Masks,Elena of Avalor,Muppet Babies,Puppy Dog Pals,Gabby Duran and the Unsittables,Secrets of Sulphur Springs,Sydney to the Max,Little Einsteins,Milo Murphy's Law,The Ghost and Molly McGee,Wizards Beyond Waverly Place,Yo Gabba Gabba,House of Anubis,Ninjago,SpongeBob SquarePants|SpongeBob,The Fairly OddParents|Fairly Odd Parents,Danny Phantom,Jimmy Neutron,Rugrats,Hey Arnold,Doug,Rocko's Modern Life,The Wild Thornberrys,CatDog,Ren and Stimpy,Aaahh Real Monsters|Real Monsters,All Grown Up,As Told by Ginger,Invader Zim,Avatar The Last Airbender|Avatar|Last Airbender,The Legend of Korra|Korra,iCarly,Drake and Josh,Victorious,Sam and Cat,Henry Danger,Danger Force,The Thundermans,Big Time Rush,Ned's Declassified School Survival Guide|Ned's Declassified,Unfabulous,All That,Kenan and Kel,The Amanda Show,Clarissa Explains It All,Are You Afraid of the Dark,Blue's Clues,Dora the Explorer|Dora,Go Diego Go,Wonder Pets,The Backyardigans,Paw Patrol,Bubble Guppies,Team Umizoomi,Peppa Pig,Blaze and the Monster Machines,The Loud House,The Casagrandes,Harvey Beaks,Sanjay and Craig,Breadwinners,Teenage Mutant Ninja Turtles|Ninja Turtles,Back at the Barnyard,The Penguins of Madagascar,Fanboy and Chum Chum,T.U.F.F. Puppy,My Life as a Teenage Robot,ChalkZone,El Tigre,The Mighty B,Game Shakers,Nicky Ricky Dicky and Dawn,Bella and the Bulldogs,School of Rock,The Haunted Hathaways,Every Witch Way,How to Rock,Big Nate,The Angry Beavers,Rocket Power,Little Bill,Oswald,Max and Ruby,Little Bear,Franklin,Ni Hao Kai-Lan,Shimmer and Shine,Butterbean's Cafe,Top Wing,LazyTown,Dexter's Laboratory|Dexter's Lab,The Powerpuff Girls|Powerpuff,Johnny Bravo,Cow and Chicken,Courage the Cowardly Dog|Courage,Ed Edd n Eddy|Ed Edd and Eddy,Samurai Jack,Codename Kids Next Door|Kids Next Door,Foster's Home for Imaginary Friends|Foster's,The Grim Adventures of Billy and Mandy|Billy and Mandy,Camp Lazlo,My Gym Partner's a Monkey,Chowder,The Marvelous Misadventures of Flapjack|Flapjack,Ben Ten,Adventure Time,Regular Show,The Amazing World of Gumball|Gumball,Steven Universe,Clarence,Uncle Grandpa,Teen Titans Go,Teen Titans,We Bare Bears,Over the Garden Wall,OK K.O. Let's Be Heroes|OK KO,Craig of the Creek,Apple and Onion,Victor and Valentino,Infinity Train,Summer Camp Island,Sheep in the Big City,Time Squad,Megas XLR,Hi Hi Puffy AmiYumi,Robotboy,The Secret Saturdays,Generator Rex,Mighty Magiswords,Unikitty,Total Drama,Johnny Test,Jellystone,Star Wars The Clone Wars|The Clone Wars|Clone Wars,Mao Mao Heroes of Pure Heart|Mao Mao`],
-['p-pixar','Pixar movies','Pixar movie',`Toy Story,A Bug's Life,Monsters Inc|Monsters Incorporated,Finding Nemo,The Incredibles,Cars,Ratatouille,WALL-E|Wally,Up,Brave,Monsters University,Inside Out,The Good Dinosaur,Finding Dory,Coco,Onward,Soul,Luca,Turning Red,Lightyear,Elemental,Elio,Hoppers`],
+['p-pixar','Pixar movies','Pixar movie',`Toy Story:10s,A Bug's Life,Monsters Inc|Monsters Incorporated:00s,Finding Nemo:00s,The Incredibles:00s:10s,Cars:00s:10s,Ratatouille:00s,WALL-E|Wally:00s,Up:00s,Brave:10s,Monsters University:10s,Inside Out:10s:20s,The Good Dinosaur:10s,Finding Dory:10s,Coco:10s,Onward:20s,Soul:20s,Luca:20s,Turning Red:20s,Lightyear:20s,Elemental:20s,Elio:20s,Hoppers:20s`,
+  {'00s':'from the 2000s','10s':'from the 2010s','20s':'from the 2020s'}],
 ['p-disney','Disney animated movies','Disney movie',`Snow White and the Seven Dwarfs|Snow White,Pinocchio,Fantasia,Dumbo,Bambi,Saludos Amigos,The Three Caballeros,Make Mine Music,Fun and Fancy Free,Melody Time,The Adventures of Ichabod and Mr. Toad|Ichabod and Mr. Toad,Cinderella,Alice in Wonderland,Peter Pan,Lady and the Tramp,Sleeping Beauty,One Hundred and One Dalmatians|Dalmatians,The Sword in the Stone,The Jungle Book,The Aristocats,Robin Hood,The Many Adventures of Winnie the Pooh|Winnie the Pooh,The Rescuers,The Fox and the Hound,The Black Cauldron,The Great Mouse Detective,Oliver and Company,The Little Mermaid,The Rescuers Down Under,Beauty and the Beast,Aladdin,The Lion King,Pocahontas,The Hunchback of Notre Dame,Hercules,Mulan,Tarzan,Dinosaur,The Emperor's New Groove,Atlantis The Lost Empire|Atlantis,Lilo and Stitch,Treasure Planet,Brother Bear,Home on the Range,Chicken Little,Meet the Robinsons,Bolt,The Princess and the Frog,Tangled,Wreck-It Ralph,Frozen,Big Hero Six|Big Hero,Zootopia,Moana,Ralph Breaks the Internet,Raya and the Last Dragon|Raya,Encanto,Strange World,Wish`],
 ['p-dreamworks','DreamWorks animated movies','DreamWorks movie',`Antz,The Prince of Egypt,The Road to El Dorado,Chicken Run,Shrek,Shrek the Third,Shrek Forever After,Spirit Stallion of the Cimarron|Spirit,Sinbad Legend of the Seven Seas|Sinbad,Shark Tale,Madagascar,Wallace and Gromit The Curse of the Were-Rabbit|Wallace and Gromit,Over the Hedge,Flushed Away,Bee Movie,Kung Fu Panda,Monsters vs. Aliens,How to Train Your Dragon,Megamind,Puss in Boots,Rise of the Guardians,The Croods,Turbo,Mr. Peabody and Sherman|Peabody and Sherman,Penguins of Madagascar,Home,Trolls,The Boss Baby,Captain Underpants,Abominable,Trolls World Tour,The Bad Guys,Puss in Boots The Last Wish|The Last Wish,Ruby Gillman Teenage Kraken|Ruby Gillman,The Wild Robot,Dog Man`],
 ['p-princess','Disney princesses (plus Elsa and Anna)','princess',`Snow White,Cinderella,Aurora|Sleeping Beauty|Briar Rose,Ariel,Belle,Jasmine,Pocahontas,Mulan|Fa Mulan,Tiana,Rapunzel,Merida,Moana,Raya,Elsa,Anna`],
@@ -556,7 +557,9 @@ animalSets.forEach(([l,s])=>{const ks=new Set(s.split(',').map(e=>norm(e.split('
 
 const CATS=[]; const seenCat=new Set();
 const AN=new Set('AEFHILMNORSX');
-function addCat(p,label,ents,w){
+// `weak`: a letter twist that reads as spelling trivia ("with no E", "with an A", "ending in N"). Kept on the old lists for
+// days before NEW_FROM; new prompts never get them and the picker from NEW_FROM on never serves them.
+function addCat(p,label,ents,w,weak=false){
   if(ents.length<3) return;
   const words=ents.map(e=>e.n);
   const key=p.list.id+'|'+words.join(',');
@@ -564,20 +567,23 @@ function addCat(p,label,ents,w){
   const cum=new Array(41).fill(0), byLen=new Array(41).fill(0);
   words.forEach(x=>byLen[Math.min(40,x.length)]++);
   for(let i=1;i<41;i++) cum[i]=cum[i-1]+byLen[i];
-  CATS.push({label,list:p.list,words,byLen,cum,w,kind:p.kind,whole:w===40});
+  const c={label,list:p.list,words,byLen,cum,w,kind:p.kind,whole:w===40};
+  if(weak) c.weak=true;
+  CATS.push(c); return c;
 }
+// Every way of writing every answer in a pool, in list order
+function entsOf(p){const ents=[];p.items.forEach(it=>it.ns.forEach((n,k)=>ents.push({n,raw:it.raws[k]||it.raws[0]})));return ents;}
 function genPool(p){
   // New prompts read "Pixar movies · starting with C"; old labels stay exactly as they were
-  const P=p.label, J=p.list.fresh?' · ':' ', ents=[];
-  p.items.forEach(it=>it.ns.forEach((n,k)=>ents.push({n,raw:it.raws[k]||it.raws[0]})));
+  const P=p.label, J=p.list.fresh?' · ':' ', ents=entsOf(p);
   const tot=ents.length;
   addCat(p,P,ents,40);
-  const f=(label,pred,w,maxFrac=0.92)=>{const ws=ents.filter(e=>pred(e.n,e.raw)); if(ws.length>=3&&ws.length<=tot*maxFrac) addCat(p,label,ws,w);};
+  const f=(label,pred,w,maxFrac=0.92,weak=false)=>{if(weak&&p.list.fresh) return; const ws=ents.filter(e=>pred(e.n,e.raw)); if(ws.length>=3&&ws.length<=tot*maxFrac) addCat(p,label,ws,w,weak);};
   for(const c of 'abcdefghijklmnopqrstuvwxyz'){
     const C=c.toUpperCase();
     f(`${P}${J}starting with ${C}`,n=>n[0]===c,5);
-    f(`${P}${J}ending in ${C}`,n=>n[n.length-1]===c,2);
-    f(`${P}${J}with ${AN.has(C)?'an':'a'} ${C}`,n=>n.includes(c),0.8,0.7);
+    f(`${P}${J}ending in ${C}`,n=>n[n.length-1]===c,2,0.92,true);
+    f(`${P}${J}with ${AN.has(C)?'an':'a'} ${C}`,n=>n.includes(c),0.8,0.7,true);
   }
   const s2=new Set(),s3=new Set(),bg=new Set(),p2=new Set(),tg=new Set();
   ents.forEach(({n})=>{ if(n.length>3){s2.add(n.slice(-2));s3.add(n.slice(-3));} if(n.length>2)p2.add(n.slice(0,2)); for(let k=0;k<n.length-1;k++) bg.add(n.substr(k,2)); for(let k=0;k<n.length-2;k++) tg.add(n.substr(k,3)); });
@@ -599,11 +605,11 @@ function genPool(p){
   s3.forEach(s=>g(`${P}${J}ending in "-${s.toUpperCase()}"`,S3.get(s),2));
   bg.forEach(b=>g(`${P}${J}containing "${b.toUpperCase()}"`,BG.get(b),0.4,0.6));
   f(`${P}${J}with a double letter`,n=>/(.)\1/.test(n),1.5);
-  for(const c of 'eaiorstnlu') f(`${P}${J}with no ${c.toUpperCase()}`,n=>!n.includes(c),0.4);
+  for(const c of 'eaiorstnlu') f(`${P}${J}with no ${c.toUpperCase()}`,n=>!n.includes(c),0.4,0.92,true);
   f(`${P}${J}ending in a vowel`,n=>/[aeiou]$/.test(n),2);
   f(`${P}${J}starting with a vowel`,n=>/^[aeiou]/.test(n),2);
   f(`${P}${J}with 2+ words`,(n,raw)=>/\s/.test(raw.trim()),2);
-  f(`${P}${J}with only one vowel type`,n=>new Set(n.replace(/[^aeiou]/g,'')).size===1,0.4);
+  f(`${P}${J}with only one vowel type`,n=>new Set(n.replace(/[^aeiou]/g,'')).size===1,0.4,0.92,true);
   f(`${P}${J}that start and end with the same letter`,n=>n[0]===n[n.length-1],1.5);
 }
 POOLS.forEach(genPool);
@@ -611,11 +617,22 @@ POOLS.forEach(genPool);
 const CATS_OLD=CATS.slice();
 // Day the specific prompts start (the day after the deploy). Earlier days keep the picker and categories they shipped with.
 const NEW_FROM='2026-11-14';
-// A batch of specific prompts: rows of [id, label, one, answers]. Days before `from` never see them.
+// A meaning twist: the answers of fresh list L tagged `code` (":code" after the answer), shown as "<prompt> · <say>".
+// It is one whole category with no letter twists on top. Days before `from` never see it, so tagging later can't change a past day.
+function addTwist(L,code,say,from){
+  pool(L,L.label+' · '+say,it=>it.tags.includes(code),'mean');
+  const p=POOLS[POOLS.length-1], c=addCat(p,p.label,entsOf(p),40);
+  if(c) c.from=from;
+  (L.twists||(L.twists={}))[code]={say,from};
+  return c;
+}
+// A batch of specific prompts: rows of [id, label, one, answers, twists?]. Days before `from` never see them.
+// twists maps a tag code to its wording, or to [wording, start date] for a twist added after the prompt shipped.
 function addPrompts(from,rows){
-  return rows.map(([id,label,one,str])=>{
+  return rows.map(([id,label,one,str,twists])=>{
     const L=addList(id,label,one,str,undefined,{fresh:true,from});
     pool(L,label,null,'base');genPool(POOLS[POOLS.length-1]);
+    for(const [code,v] of Object.entries(twists||{})){const [say,tf]=Array.isArray(v)?v:[v,from];addTwist(L,code,say,tf);}
     return L;
   });
 }
@@ -679,20 +696,32 @@ function savedRun(d){
 function pickCat(base,round,box,usedLists,day=base.slice(-10)){
   return day<NEW_FROM?pickCatV1(base,round,box,usedLists):pickCatV2(base,round,box,usedLists,day);
 }
-// Which of rounds 2-7 take an old list (2 of them) and which new rounds get a letter twist (2 more): from the day alone, never the data
+// Which of rounds 2-7 take an old list (2 of them) and which new rounds get a twist (2 more): from the day alone, never the data.
+// A twist round is a meaning twist ("· from the 2000s"); about 1 in 4 (LETTER_SHARE) is a letter twist instead, by day and round.
+const LETTER_SHARE=0.25;
 function dayPlan(base){
   const rng=rng32(hashStr(base+'|plan')),r=[1,2,3,4,5,6];
   for(let i=r.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[r[i],r[j]]=[r[j],r[i]];}
-  return {old:new Set(r.slice(0,2)),twist:new Set(r.slice(2,4))};
+  const twist=new Set(r.slice(2,4));
+  return {old:new Set(r.slice(0,2)),twist,letter:new Set([...twist].filter(k=>hashStr(base+'|letter|'+k)<LETTER_SHARE*4294967296))};
 }
 // Rendezvous hashing: lowest score wins (weighted by w), so adding a prompt or answer only changes the picks it wins outright
 const hscore=(s,w=1)=>-Math.log((hashStr(s)+0.5)/4294967296)/w;
-// From NEW_FROM on: round 1 is a plain new prompt; rounds 2-7 follow the day plan; a list is never used twice in a dive
+// From NEW_FROM on: round 1 is a plain new prompt; rounds 2-7 follow the day plan; a list is never used twice in a dive.
+// A twist round tries a meaning twist first (a letter twist first on its letter rounds), then the other, then a plain prompt, then an old list.
 function pickCatV2(base,round,box,usedLists,day){
   const plan=dayPlan(base),seed=base+'|'+round+'|'+box+'|';
-  const want=round===0?'plain':plan.old.has(round)?'old':plan.twist.has(round)?'twist':'plain';
-  const order={plain:['plain','old'],twist:['twist','plain','old'],old:['old','plain']}[want];
-  const ok={plain:c=>c.list.fresh&&c.list.from<=day&&c.whole,twist:c=>c.list.fresh&&c.list.from<=day&&!c.whole,old:c=>!c.list.fresh};
+  const want=round===0?'plain':plan.old.has(round)?'old':plan.twist.has(round)?(plan.letter.has(round)?'letter':'mean'):'plain';
+  const order={plain:['plain','old'],mean:['mean','letter','plain','old'],letter:['letter','mean','plain','old'],old:['old','plain']}[want];
+  const live=c=>c.list.fresh&&c.list.from<=day;
+  const ok={
+    plain:c=>live(c)&&c.kind==='base'&&c.whole,
+    mean:c=>live(c)&&c.kind==='mean'&&c.from<=day,
+    letter:c=>live(c)&&c.kind==='base'&&!c.whole&&!c.weak,
+    old:c=>!c.list.fresh&&!c.weak,
+  };
+  // How many answers must fit the box: meaning twists can be small groups, letter twists a bit bigger, whole lists the most
+  const bar={mean:4,letter:6};
   const pick=(kind,need)=>{
     const byList=new Map();
     for(const c of CATS){
@@ -705,7 +734,7 @@ function pickCatV2(base,round,box,usedLists,day){
     return best;
   };
   for(const need of [box>=8?10:box>=5?6:4,3]) for(const kind of order){
-    const c=pick(kind,kind==='twist'?Math.min(need,6):need); if(c) return c;
+    const c=pick(kind,Math.min(need,bar[kind]||need)); if(c) return c;
   }
   const avail=c=>c.whole&&c.cum[box]>=3&&(!c.list.fresh||c.list.from<=day);
   return CATS.find(c=>avail(c)&&!usedLists.has(c.list.id))||CATS.find(avail)||CATS[0];
