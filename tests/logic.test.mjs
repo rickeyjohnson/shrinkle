@@ -319,3 +319,12 @@ test('tagged prompts, batches A–C', () => {
   inTwist('Dinosaurs · from the Jurassic', ['tyrannosaurus'], 'notcat');
   inTwist('Harry Potter characters · in Slytherin', ['hermione'], 'notcat');
 });
+test('tagged prompts, batches D–F', () => {
+  assert.ok(tagged().length >= 55, `${tagged().length} prompts have twists`);
+  inTwist('Famous bridges · in Europe', ['towerbridge'], 'exact');
+  inTwist('Instruments in an orchestra · in the brass section', ['trumpet'], 'exact');
+  inTwist('Cheeses · from France', ['brie'], 'exact');
+  inTwist('Positions in team sports · in baseball', ['shortstop'], 'exact');
+  inTwist('Instruments in an orchestra · in the brass section', ['violin'], 'notcat');
+  inTwist('Famous bridges · in Europe', ['goldengate'], 'notcat');
+});
