@@ -338,3 +338,14 @@ test('batch G: time prompts', () => {
   inTwist('Boy bands and girl groups · from South Korea', ['bts'], 'exact');
   inTwist('Studio Ghibli movies · directed by Hayao Miyazaki', ['graveofthefireflies'], 'notcat');
 });
+const H_IDS = ['p-rivers', 'p-mountains', 'p-volcanoes', 'p-lakes', 'p-landmarks', 'p-castles', 'p-themeparks', 'p-soccer', 'p-mlb', 'p-nhl', 'p-dishes', 'p-snacksworld', 'p-civs', 'p-mythgods', 'p-carmodels', 'p-airlines', 'p-festivals', 'p-worldinstr', 'p-provinces', 'p-streets', 'p-isles', 'p-beaches'];
+test('batch H: place prompts', () => {
+  const h = fresh().filter(L => H_IDS.includes(L.id));
+  assert.ok(h.length >= 20, `${h.length} batch H prompts`);
+  for (const L of h) assert.ok(Object.keys(L.twists || {}).length >= 1, `${L.id} has no twists`);
+  assert.ok(fresh().length >= 150, `${fresh().length} new prompts in all`);
+  inTwist('Rivers of the world · in Africa', ['nile'], 'exact');
+  inTwist('Famous soccer clubs · in Spain', ['realmadrid'], 'exact');
+  inTwist('NHL teams · from Canada', ['mapleleafs'], 'exact');
+  inTwist('NHL teams · from Canada', ['bruins'], 'notcat');
+});
