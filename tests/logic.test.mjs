@@ -307,3 +307,15 @@ test('a twist dated later does not change earlier days', () => {
   assert.ok(T2.CATS.some(c => c.label === L.label + ' · test twist'));
   assert.deepEqual(days(30).map(k => dive(T2, k, ROOMY).map(c => c.label).join('|')), before);
 });
+const tagged = () => fresh().filter(L => L.twists && Object.keys(L.twists).length);
+const inTwist = (label, words, kind) => { for (const w of words) assert.equal(T.matchAnswer(cat(label), w, new Set(), 25).kind, kind, `${label}: ${w}`); };
+test('tagged prompts, batches A–C', () => {
+  assert.ok(tagged().length >= 25, `${tagged().length} prompts have twists`);
+  inTwist('Harry Potter characters · in Slytherin', ['draco', 'snape'], 'exact');
+  inTwist('Star Wars characters · who are Sith', ['vader'], 'exact');
+  inTwist('Star Wars characters · who are Jedi', ['anakin'], 'exact');
+  inTwist('Dinosaurs · from the Jurassic', ['stegosaurus'], 'exact');
+  inTwist('Gemstones and birthstones · that are red', ['ruby'], 'exact');
+  inTwist('Dinosaurs · from the Jurassic', ['tyrannosaurus'], 'notcat');
+  inTwist('Harry Potter characters · in Slytherin', ['hermione'], 'notcat');
+});
