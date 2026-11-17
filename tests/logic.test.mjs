@@ -313,7 +313,7 @@ test('tagged prompts, batches A–C', () => {
   assert.ok(tagged().length >= 25, `${tagged().length} prompts have twists`);
   inTwist('Harry Potter characters · in Slytherin', ['draco', 'snape'], 'exact');
   inTwist('Star Wars characters · who are Sith', ['vader'], 'exact');
-  inTwist('Star Wars characters · who are Jedi', ['anakin'], 'exact');
+  inTwist('Star Wars characters · who trained as Jedi', ['anakin'], 'exact');
   inTwist('Dinosaurs · from the Jurassic', ['stegosaurus'], 'exact');
   inTwist('Gemstones and birthstones · that are red', ['ruby'], 'exact');
   inTwist('Dinosaurs · from the Jurassic', ['tyrannosaurus'], 'notcat');
