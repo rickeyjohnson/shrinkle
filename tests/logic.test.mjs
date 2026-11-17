@@ -328,3 +328,13 @@ test('tagged prompts, batches D–F', () => {
   inTwist('Instruments in an orchestra · in the brass section', ['violin'], 'notcat');
   inTwist('Famous bridges · in Europe', ['goldengate'], 'notcat');
 });
+const G_IDS = ['p-dcoms', 'p-anime', 'p-ghibli', 'p-musicals', 'p-bands', 'p-fads', 'p-gameseries', 'p-apple', 'p-legendary', 'p-netflix', 'p-missions', 'p-sitcoms', 'p-onename', 'p-gameshows', 'p-reality', 'p-movieseries', 'p-bookseries', 'p-pokegames'];
+test('batch G: time prompts', () => {
+  const g = fresh().filter(L => G_IDS.includes(L.id));
+  assert.ok(g.length >= 17, `${g.length} batch G prompts`);
+  for (const L of g) assert.ok(Object.keys(L.twists || {}).length >= 2, `${L.id} has under 2 twists`);
+  inTwist('Disney Channel Original Movies · from the 2000s', ['highschoolmusical'], 'exact');
+  inTwist('Studio Ghibli movies · directed by Hayao Miyazaki', ['spiritedaway'], 'exact');
+  inTwist('Boy bands and girl groups · from South Korea', ['bts'], 'exact');
+  inTwist('Studio Ghibli movies · directed by Hayao Miyazaki', ['graveofthefireflies'], 'notcat');
+});
