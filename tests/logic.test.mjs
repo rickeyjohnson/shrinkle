@@ -128,6 +128,16 @@ const V1 = {
   '2026-11-13#0': ['U.S. presidents (last name)', 'Dog breeds', 'Animals', 'Musical instruments', 'Greek & Roman gods', 'Car brands', 'Body parts'],
   '2026-11-13#1': ['U.S. presidents (last name)', 'Sports', 'Car brands', 'Shapes', 'Body parts', 'Mammals', 'Clothing'],
   '2026-11-13#2': ['U.S. presidents (last name)', 'Months & days of the week', 'Western states', 'Foods & dishes', 'Landlocked countries', 'Musical instruments', 'Jobs'],
+  // Days played on the live site (main at fdb3c1c) while this branch was being built: they must replay too
+  '2026-11-14#0': ['Dog breeds', 'Greek & Roman gods starting with a vowel', 'Animals starting with H', 'Fruits', 'Car brands', 'Chemical elements', 'Body parts'],
+  '2026-11-14#1': ['Dog breeds', 'Original 151 Pokémon', 'Greek & Roman gods starting with a vowel', 'Car brands', 'Body parts', 'Mammals', 'Foods & dishes'],
+  '2026-11-14#2': ['Dog breeds', 'Jobs ending in "-ER"', 'Car brands', 'Mammals', 'Fruits', 'Sports', 'Languages'],
+  '2026-11-16#0': ['The first 30 elements', 'Animals', 'NFL team nicknames', 'Dog breeds', 'Sports', 'NBA team nicknames', 'Car brands'],
+  '2026-11-16#1': ['The first 30 elements', 'Vegetables', 'Sports', 'Original 151 Pokémon', 'Car brands', 'Body parts', 'Mammals'],
+  '2026-11-16#2': ['The first 30 elements', 'Animals', 'Clothing', 'Original 151 Pokémon starting with D', 'Musical instruments', 'Colors', 'Foods & dishes starting with C'],
+  '2026-11-18#0': ['Clothing', 'African countries', 'Body parts', 'Colors', 'Vegetables', 'Planets, moons & dwarf planets', 'Animals'],
+  '2026-11-18#1': ['Clothing', 'Jobs', 'Fast food chains', 'Sports', 'Car brands', 'Mammals', 'Body parts'],
+  '2026-11-18#2': ['Clothing', 'Countries ending in E', 'Southern states', 'Shapes', 'Months & days of the week', 'Car brands', 'Fast food chains'],
 };
 const PATHS = [[12, 11, 9, 7, 5, 4, 3], [12, 8, 6, 4, 3, 3, 3], [12, 12, 10, 10, 8, 8, 6]];
 test('days before NEW_FROM replay exactly the categories they had', () => {
