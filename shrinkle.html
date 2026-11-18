@@ -894,8 +894,11 @@ function savedRun(d){
   const score=Number.isFinite(d.points)?d.points:(parseInt(d.score,10)||0);
   return {layer,score};
 }
+// The day a seed belongs to. Daily and past-shrink seeds end in their date; an Unlimited seed is random,
+// so it always gets the current categories (today, and never earlier than launch day)
+function seedDay(base){const d=base.slice(-10);if(/^\d{4}-\d{2}-\d{2}$/.test(d))return d;const t=todayKey();return t<NEW_FROM?NEW_FROM:t;}
 // Same date + round + box size => same category for everyone (lists already used this game are skipped)
-function pickCat(base,round,box,usedLists,day=base.slice(-10)){
+function pickCat(base,round,box,usedLists,day=seedDay(base)){
   return day<NEW_FROM?pickCatV1(base,round,box,usedLists):pickCatV2(base,round,box,usedLists,day);
 }
 // Which of rounds 2-7 take an old list (2 of them) and which new rounds get a twist (2 more): from the day alone, never the data.

@@ -94,6 +94,13 @@ test('an Unlimited result says Unlimited instead of a shrink number and still en
   assert.equal(t[0], 'SHRINKLE Unlimited · ☀️ Solar System · 170 pts');
   assert.equal(t[t.length - 1], 'https://shrinkle.lol');
 });
+test('Unlimited runs always deal the current categories (a specific prompt first), never the pre-launch picker', () => {
+  // An Unlimited seed is random, not a date, so the picker must not read a "day" out of it
+  for (let i = 0; i < 300; i++) {
+    const b = T.unlimitedBase(), c = T.pickCat(b, 0, T.BOX0, new Set());
+    assert.ok(c.list.fresh && c.kind === 'base' && c.whole, `${b}: round 1 dealt ${c.label}`);
+  }
+});
 test('every Unlimited run gets its own random categories, never the daily ones', () => {
   const bases = new Set();
   for (let i = 0; i < 50; i++) bases.add(T.unlimitedBase());
