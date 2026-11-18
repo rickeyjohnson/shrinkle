@@ -70,9 +70,62 @@ https://shrinkle.lol
 
 ## Categories
 
-There are 5,200 categories, generated at load time from 27 reference lists. The lists include countries (tagged with continent, population and landlocked), U.S. states (region), chemical elements, animals (mammals, birds, sea creatures, bugs, reptiles), foods, sports, instruments, Gen 1 Pokémon, NFL/NBA teams, world capitals, languages and more. Each list is combined with filters such as *starts with*, *ends in "-IA"*, *contains "IN"*, *has a double letter* and *10M+ people*, and any combination with fewer than 3 answers is dropped.
+There are about 22,000 categories, generated at load time. They come from two kinds of list.
 
-Each round's category is picked from the date, the round number and your current box size, so every pick is guaranteed to have answers that fit.
+**Specific prompts (151 of them).** These are hand-written in the spirit of [Krillion](https://krillion.io): each one cuts through something you know in a way that makes you think. Some examples:
+- *Shows from Disney Channel, Nickelodeon or Cartoon Network*
+- *Living birds bigger than a chicken*
+- *Animals that sting*
+- *Names for groups of animals*
+- *State capitals that aren't their state's biggest city*
+- *Mobs in Minecraft*
+- *Disney Channel Original Movies*
+- *Famous landmarks in world cities*
+
+Each prompt has its own complete answer list. The lists are built from reference lists (rosters, filmographies, Wikipedia "List of…" pages) and stick to sets that can be listed in full, so a right answer is rarely turned away. A leading "The" is optional, and "&" and "and" both count.
+
+**Reference lists (27 of them).** These include:
+- countries, tagged with continent, population and landlocked
+- U.S. states, tagged with region
+- chemical elements
+- animals
+- foods
+- sports
+- Gen 1 Pokémon
+- NFL/NBA teams
+- world capitals
+- and more
+
+**Time, place and type twists.** Most specific prompts have named groups inside their answers, for example:
+- *Pixar movies · from the 2000s*
+- *Famous bridges · in Europe*
+- *Harry Potter characters · in Slytherin*
+- *Instruments in an orchestra · in the brass section*
+- *Gemstones and birthstones · that are red*
+
+An answer is tagged in the row's answer string (`Cars:00s:10s`), and the row's fifth element names each tag (`{'00s':'from the 2000s', …}`). An answer counts in every group it fairly belongs to: "Cars" is a Pixar movie from the 2000s *and* the 2010s. Every twist has at least 4 answers.
+
+**Letter twists.** Both kinds of list are combined with filters such as *starting with S*, *ending in "-IA"*, *containing "IN"* and *with a double letter*. On the specific prompts a twist reads "Pixar movies · starting with C". Any combination with fewer than 3 answers is dropped. Spelling-trivia twists (*with no E*, *with an A*, *ending in N*, *with only one vowel type*) are no longer built for specific prompts, and dives from `NEW_FROM` on never deal them.
+
+**How a dive is dealt:**
+- **Round 1** is always a plain specific prompt.
+- **Rounds 2–7** have 2 rounds from the reference lists and 4 from the specific prompts. 2 of those 4 carry a twist.
+  - A twist round deals a time, place or type twist when one fits your box (at least 4 fitting answers).
+  - About 1 twist round in 4 (`LETTER_SHARE`, by date and round) deals a letter twist instead, for variety.
+  - Overall, letter twists come up on about 1 round in 11, and time, place or type twists on about 1 in 5.
+- A list is never used twice in one dive.
+- Every pick has answers that fit your current box. If your box has shrunk too far for any specific prompt, that round falls back to a reference list.
+- Picks are seeded by the date, the round and your box size, so everyone with the same box gets the same category.
+- Picks use rendezvous hashing. So adding prompts later (each batch carries a start date) never changes the categories of days already played.
+
+Shrinks from before the specific prompts arrived (`NEW_FROM` in `shrinkle.html`) replay with exactly the categories they had.
+
+**Before you deploy:**
+- Set `NEW_FROM` to the day *after* the deploy goes live. Players' dates are their local calendar day, so the deploy day itself must stay on the old categories.
+- Give any later batch of prompts (`addPrompts(date, rows)`) a start date after its own deploy too.
+- To add a twist to a prompt that has already shipped, tag its answers and give the twist its own start date: `{'90s':['from the 1990s','2027-01-15']}`. Days before that date never deal it.
+- Fixing a typo in an existing new prompt's answers is safe, as long as it's rare.
+- Don't edit the 27 old reference lists. A test pins them, because changing them would change past shrinks.
 
 ## Tech
 
