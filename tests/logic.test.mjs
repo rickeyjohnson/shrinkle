@@ -299,6 +299,26 @@ test('a twist round serves a meaning twist when one fits', () => {
   }
   assert.ok(checked > 0, 'no twist round had a fitting meaning twist');
 });
+test('a twist dated later is never dealt before its start date', () => {
+  // Every other new prompt counts as already used, so each meaning round has to choose among p-kidstv's twists,
+  // and the future-dated one would win some of them if the start-date check were missing
+  const T2 = load(), L = T2.LISTS.find(l => l.id === 'p-kidstv');
+  L.items.slice(0, 12).forEach(it => it.tags.push('zz'));
+  const label = L.label + ' · ' + 'test twist';
+  T2.addTwist(L, 'zz', 'test twist', '2099-01-01');
+  const others = new Set(T2.LISTS.filter(l => l.fresh && l !== L).map(l => l.id));
+  let meaningRounds = 0;
+  for (const k of days(60)) {
+    const base = T2.runBase(k), plan = T2.dayPlan(base);
+    for (const r of plan.twist) {
+      if (plan.letter.has(r)) continue;
+      const c = T2.pickCat(base, r, 12, new Set(others));
+      if (c.kind === 'mean') meaningRounds++;
+      assert.notEqual(c.label, label, `${k} round ${r + 1} dealt a twist dated 2099`);
+    }
+  }
+  assert.ok(meaningRounds > 50, `${meaningRounds} meaning rounds checked`);
+});
 test('a twist dated later does not change earlier days', () => {
   const T2 = load(), before = days(30).map(k => dive(T2, k, ROOMY).map(c => c.label).join('|'));
   const L = T2.LISTS.find(l => l.id === 'p-kidstv');
