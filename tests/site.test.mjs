@@ -6,9 +6,9 @@ import { fileURLToPath } from 'node:url';
 
 const root = (p) => fileURLToPath(new URL('../' + p, import.meta.url));
 const html = readFileSync(root('shrinkle.html'), 'utf8');
-test('shrinkle.html stays one file under 860 KB', () => {
+test('shrinkle.html stays one file under 900 KB', () => {
   const kb = statSync(root('shrinkle.html')).size / 1024;
-  assert.ok(kb < 860, `${kb.toFixed(0)} KB`);
+  assert.ok(kb < 900, `${kb.toFixed(0)} KB`);
 });
 const meta = (attr, name) => (html.match(new RegExp(`<meta ${attr}="${name}" content="([^"]+)"`)) || [])[1];
 

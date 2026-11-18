@@ -349,3 +349,24 @@ test('batch H: place prompts', () => {
   inTwist('NHL teams · from Canada', ['mapleleafs'], 'exact');
   inTwist('NHL teams · from Canada', ['bruins'], 'notcat');
 });
+
+// ---- Meaning twists: coverage and the mix a player actually sees ----
+test('meaning twists fit roomy boxes', () => {
+  const fitMean = (box, need) => fresh().filter(L => T.CATS.some(c => c.list === L && c.kind === 'mean' && c.cum[box] >= need)).length;
+  assert.ok(fitMean(8, 6) >= 25, `box 8: ${fitMean(8, 6)} prompts have a meaning twist with 6+ fits`);
+  assert.ok(fitMean(5, 6) >= 10, `box 5: ${fitMean(5, 6)} prompts have a meaning twist with 6+ fits`);
+});
+test('meaning twists lead the twist rounds, and letter twists are the exception', () => {
+  let tw = 0, mean = 0;
+  for (const k of days(120)) {
+    const plan = T.dayPlan(T.runBase(k));
+    dive(T, k, ROOMY).forEach((c, r) => { if (plan.twist.has(r)) { tw++; if (c.kind === 'mean') mean++; } });
+  }
+  assert.ok(mean / tw >= 0.55, `meaning twists on ${(100 * mean / tw).toFixed(1)}% of twist rounds`);
+  let all = 0, letter = 0;
+  for (const k of days(120)) for (const path of PATHS3) for (const c of dive(T, k, path)) {
+    all++;
+    if (c.kind !== 'mean' && !c.whole && (c.list.fresh || c.kind !== 'tag')) letter++;
+  }
+  assert.ok(letter / all <= 0.15, `letter twists on ${(100 * letter / all).toFixed(1)}% of all rounds`);
+});
